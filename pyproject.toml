@@ -1,0 +1,54 @@
+[build-system]
+requires = ["pdm-pep517"]
+build-backend = "pdm.pep517.api"
+
+[project]
+name = "EqxVision"
+authors = [{name = "Contributing Authors", email = "aditya.91.singh@gmail.com"}]
+dynamic = ["version", "description"]
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.8"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies=[
+    'jax==0.3.15',
+    'chex==0.1.3',
+    'equinox==0.5.6',
+    "mkdocs",
+    "mkdocstrings[python-legacy]>=0.18",
+    "Jinja2>=2.11.1",
+    "Markdown>=3.3",
+    "MarkupSafe>=1.1",
+    "mkdocs>=1.2",
+    "mkdocs-autorefs>=0.3.1",
+    "pymdown-extensions>=6.3",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/paganpasta/eqxvision"
+"Bug Tracker" = "https://github.com/paganpasta/eqxvision/issues"
+
+
+[project.optional-dependencies]
+crystal = ["mkdocstrings-crystal>=0.3.4"]
+python-legacy = ["mkdocstrings-python-legacy>=0.2.1"]
+python = ["mkdocstrings-python>=0.5.2"]
+test = [
+    "pre-commit",
+    "bluepy",
+    "pytest"
+]
+
+[project.entry-points."mkdocs.plugins"]
+mkdocstrings = "mkdocstrings.plugin:MkdocstringsPlugin"
