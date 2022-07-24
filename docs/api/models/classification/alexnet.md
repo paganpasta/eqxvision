@@ -12,4 +12,4 @@
 
 ---
 
-::: eqxvision.models.alexnet.alexnet
+::: eqxvision.models.alexnet
