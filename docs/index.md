@@ -1,17 +1,56 @@
-# Welcome to MkDocs
+# EqxVision
 
-For full documentation visit [mkdocs.org](http://mkdocs.org).
+EqxVision is a Python library providing computer vision models to the [Equinox](https://docs.kidger.site/equinox/) ecosystem.
 
-## Commands
+## Installation
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs help` - Print this help message.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 
-## Project layout
+```bash
+pip install eqxvision
+```
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+## Usage
+
+```python
+import jax
+import jax.random as jr
+import equinox as eqx
+from eqxvision.models import resnet18
+
+@eqx.filter_jit
+def forward(net, images, key):
+    keys = jax.random.split(key, images.shape[0])
+    jax.vmap(net)(images, key=keys)
+
+net = resnet18(num_classes=1000)
+
+images = jr.uniform(jr.PRNGKey(0), shape=(1,3,224,224))
+output = forward(net, images, jr.PRNGKey(0))
+```
+
+## Tips
+- Use `jax.vmap(net, axis_name='batch')(images)` for models with `batchnorms`.
+- Don't forget to call `eqx.inference` for switching to `inference` mode.
+
+## Roadmap
+
+- [ ] Add VGGs, Inception, GoogLeNet
+- [ ] Add/Explore functionality to load weights directly from torch.pth
+- [ ] Doc fixes
+- [ ] Build fixes
+- [ ] Pre-commit Hooks
+
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
+## Acknowledgements
+- [Torchvision](https://pytorch.org/vision/stable/index.html)
+- [Equinox](https://github.com/patrick-kidger/equinox)
+- [Patrick Kidger](https://github.com/patrick-kidger)
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
