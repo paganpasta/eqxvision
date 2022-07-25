@@ -1,13 +1,14 @@
 from typing import Any, Optional
-from equinox.custom_types import Array
 
-import jax
-import jax.random as jrandom
-import jax.numpy as jnp
 import equinox as eqx
 import equinox.nn as nn
+import jax
+import jax.numpy as jnp
+import jax.random as jrandom
+from equinox.custom_types import Array
 
 from ...layers import ReLU
+
 
 model_urls = {
     "alexnet": "https://download.pytorch.org/models/alexnet-owt-7be5be79.pth",
@@ -16,25 +17,38 @@ model_urls = {
 
 class AlexNet(eqx.Module):
     """A simple port of torchvision.models.alexnet"""
+
     features: eqx.Module
     avgpool: eqx.Module
     classifier: eqx.Module
 
     def __init__(
-            self,
-            num_classes: int = 1000,
-            dropout: float = 0.5,
-            *,
-            key: Optional["jax.random.PRNGKey"] = jrandom.PRNGKey(0)
+        self,
+        num_classes: int = 1000,
+        dropout: float = 0.5,
+        *,
+        key: Optional["jax.random.PRNGKey"] = None
     ) -> None:
         """**Arguments:**
 
-        - `num_classes`: Number of classes. Decides the shape of the final output `(num_classes,)`.
-        - `dropout`: Parameter used for the `equinox.nn.Dropout` layers.
+        - `num_classes`: Number of classes in the classification task.
+                        Also controls the final output shape `(num_classes,)`. Defaults to `1000`.
+        - `dropout`: Parameter used for the `equinox.nn.Dropout` layers. Defaults to `0.5`.
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
             initialisation. (Keyword only argument.)
+
+        ???+ note "JIT call:"
+
+            ```python
+            @eqx.filter_jit
+            def forward(model, x, key):
+               keys = jax.random.split(key, x.shape[0])
+               return jax.vmap(model)(x, key=keys)
+            ```
         """
         super().__init__()
+        if not key:
+            key = jrandom.PRNGKey(0)
         keys = jrandom.split(key, 21)
 
         self.features = eqx.nn.Sequential(
@@ -51,8 +65,8 @@ class AlexNet(eqx.Module):
                 ReLU(),
                 nn.Conv2d(256, 256, kernel_size=3, padding=1, key=keys[10]),
                 ReLU(),
-                nn.MaxPool2d(kernel_size=3, stride=2)
-             ]
+                nn.MaxPool2d(kernel_size=3, stride=2),
+            ]
         )
         self.avgpool = nn.AdaptiveAvgPool2d((6, 6))
         self.classifier = nn.Sequential(
@@ -63,19 +77,17 @@ class AlexNet(eqx.Module):
                 nn.Dropout(p=dropout),
                 nn.Linear(4096, 4096, key=keys[18]),
                 ReLU(),
-                nn.Linear(4096, num_classes, key=keys[20])
+                nn.Linear(4096, num_classes, key=keys[20]),
             ]
         )
 
     def __call__(
-        self, x: Array,
-        *,
-        key: Optional["jax.random.PRNGKey"] = None
+        self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None
     ) -> Array:
         """**Arguments:**
 
-            - `x`: The input. Should be a JAX array with `3` channels.
-            - `key`: Utilised by few layers in the network such as `nn.Dropout`.
+        - `x`: The input. Should be a JAX array with `3` channels.
+        - `key`: Utilised by few layers in the network such as `nn.Dropout`.
         """
         keys = jrandom.split(key, 3)
         x = self.features(x, key=keys[0])
@@ -92,5 +104,5 @@ def alexnet(**kwargs: Any) -> AlexNet:
 
     """
     model = AlexNet(**kwargs)
-    #TODO: Add comptability with torch weights
+    # TODO: Add comptability with torch weights
     return model

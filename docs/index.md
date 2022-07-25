@@ -1,10 +1,10 @@
-# EqxVision
+# Eqxvision
 
-EqxVision is a Python library providing computer vision models to the [Equinox](https://docs.kidger.site/equinox/) ecosystem.
+Eqxvision is a package of popular computer vision model architectures built using [Equinox](https://docs.kidger.site/equinox/).
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install eqxvision.
 
 ```bash
 pip install eqxvision
@@ -12,7 +12,7 @@ pip install eqxvision
 
 ## Usage
 
-```python
+```python title="example.py"
 import jax
 import jax.random as jr
 import equinox as eqx

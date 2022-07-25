@@ -126,10 +126,10 @@ html {
 /* Change default colours for <a> tags */
 
 [data-md-color-scheme="default"] {
-    --md-typeset-a-color: rgb(0, 152, 248) !important;
+    --md-typeset-a-color: rgb(0, 124, 201) !important;
 }
 [data-md-color-scheme="slate"] {
-    --md-typeset-a-color: rgb(0, 152, 248) !important;
+    --md-typeset-a-color: rgb(0, 124, 201) !important;
 }
 
 /* Highlight functions, classes etc. type signatures. Really helps to make clear where

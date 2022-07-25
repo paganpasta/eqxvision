@@ -1,7 +1,7 @@
-import pytest
-import eqxvision.models as models
-import jax
 import equinox as eqx
+import jax
+
+import eqxvision.models as models
 
 
 class TestResNet:
@@ -39,7 +39,7 @@ class TestResNet:
         @eqx.filter_jit
         def forward(net, x, key):
             keys = jax.random.split(key, x.shape[0])
-            ans = jax.vmap(net, axis_name="batch")(x)
+            ans = jax.vmap(net, axis_name="batch")(x, key=keys)
             return ans
 
         model = models.wide_resnet50_2(num_classes=1000)
@@ -64,4 +64,3 @@ class TestResNet:
         model = models.resnext101_32x8d(num_classes=1000)
         output = forward(model, self.random_image, getkey())
         assert output.shape == self.answer
-
