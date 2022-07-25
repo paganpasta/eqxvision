@@ -12,7 +12,7 @@ pip install eqxvision
 
 ## Usage
 
-```python title="example.py"
+```python title="forward.py"
 import jax
 import jax.random as jr
 import equinox as eqx
@@ -21,17 +21,28 @@ from eqxvision.models import resnet18
 @eqx.filter_jit
 def forward(net, images, key):
     keys = jax.random.split(key, images.shape[0])
-    jax.vmap(net)(images, key=keys)
-
+    output = jax.vmap(net)(images, key=keys)
+    ...
+    
 net = resnet18(num_classes=1000)
 
 images = jr.uniform(jr.PRNGKey(0), shape=(1,3,224,224))
 output = forward(net, images, jr.PRNGKey(0))
 ```
 
+```python title="set_inference.py"
+import equinox as eqx
+from eqxvision.models import resnet18
+
+net = resnet18(num_classes=1000)
+net = eqx.tree_inference(net, True)
+```
+
 ## Tips
-- Use `jax.vmap(net, axis_name='batch')(images)` for models with `batchnorms`.
-- Don't forget to call `eqx.inference` for switching to `inference` mode.
+- Checkout the documentation for a sample usage for each model;
+- Better to use `@equinox.jit_filter` instead of `@jax.jit`;
+- Use `jax.vmap(net, axis_name='batch')(images)` for models with `batchnorms`;
+- Don't forget to switch to `inference` mode for evaluations.
 
 ## Roadmap
 
