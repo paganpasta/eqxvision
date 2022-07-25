@@ -43,7 +43,8 @@ class AlexNet(eqx.Module):
             @eqx.filter_jit
             def forward(model, x, key):
                keys = jax.random.split(key, x.shape[0])
-               return jax.vmap(model)(x, key=keys)
+               output = jax.vmap(model)(x, key=keys)
+               ...
             ```
         """
         super().__init__()
@@ -81,13 +82,11 @@ class AlexNet(eqx.Module):
             ]
         )
 
-    def __call__(
-        self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None
-    ) -> Array:
+    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels.
-        - `key`: Utilised by few layers in the network such as `nn.Dropout`.
+        - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
         """
         keys = jrandom.split(key, 3)
         x = self.features(x, key=keys[0])
