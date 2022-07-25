@@ -205,7 +205,7 @@ class ResNet(eqx.Module):
         groups: int = 1,
         width_per_group: int = 64,
         replace_stride_with_dilation: List[bool] = None,
-        norm_layer: eqx.Module = eqex.BatchNorm,
+        norm_layer: eqx.Module = None,
         *,
         key: Optional["jax.random.PRNGKey"] = None,
     ):
@@ -230,8 +230,8 @@ class ResNet(eqx.Module):
             @eqx.filter_jit
             def forward(net, x, key):
                 keys = jax.random.split(key, x.shape[0])
-                ans = jax.vmap(net, axis_name="batch")(x, key=keys)
-                return ans
+                output = jax.vmap(net, axis_name="batch")(x, key=keys)
+                ...
             ```
 
         ??? Failure "Exceptions:"
@@ -241,6 +241,9 @@ class ResNet(eqx.Module):
 
         """
         super(ResNet, self).__init__()
+        if not norm_layer:
+            norm_layer = eqex.BatchNorm
+
         if eqex.BatchNorm != norm_layer:
             raise NotImplementedError(
                 f"{type(norm_layer)} is not currently supported. Use `eqx.experimental.BatchNorm` instead."
@@ -352,13 +355,11 @@ class ResNet(eqx.Module):
 
         return nn.Sequential(layers)
 
-    def __call__(
-        self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None
-    ) -> Array:
+    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels.
-        - `key`: Utilised by few layers in the network such as `nn.Dropout`.
+        - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
         """
         keys = jrandom.split(key, 6)
         x = self.conv1(x, key=keys[0])

@@ -1,4 +1,5 @@
 from .alexnet import AlexNet, alexnet
+from .googlenet import GoogLeNet, googlenet
 from .resnet import (
     ResNet,
     resnet18,
@@ -9,5 +10,5 @@ from .resnet import (
     resnext50_32x4d,
     resnext101_32x8d,
     wide_resnet50_2,
-    wide_resnet101_2
+    wide_resnet101_2,
 )

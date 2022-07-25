@@ -26,7 +26,7 @@ theme:
 site_name: EqxVision
 site_description: The documentation for EqxVision library, a vision library built on Equinox.
 site_author: Contributing Authors
-site_url: https://docs.kidger.site/equinox
+site_url:
 
 repo_url: https://github.com/paganpasta/eqxvision
 repo_name: paganpasta/eqxvision
@@ -87,6 +87,7 @@ nav:
     - Full API:
         - Classification models:
             - 'api/models/classification/alexnet.md'
+            - 'api/models/classification/googlenet.md'
             - 'api/models/classification/resnets.md'
         - Vision layers:
             - 'api/layers/layers.md'
