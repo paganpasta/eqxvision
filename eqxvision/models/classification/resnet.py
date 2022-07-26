@@ -4,11 +4,10 @@ import equinox as eqx
 import equinox.experimental as eqex
 import equinox.nn as nn
 import jax
+import jax.nn as jnn
 import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
-
-from ...layers import ReLU
 
 
 model_urls = {
@@ -47,14 +46,14 @@ def conv1x1(in_planes, out_planes, stride=1, key=None):
 
 
 class ResNetBasicBlock(eqx.Module):
-    expansion: int = eqx.static_field()
+    expansion: int
     conv1: eqx.Module
     bn1: eqx.Module
-    relu: eqx.Module
+    relu: Callable
     conv2: eqx.Module
     bn2: eqx.Module
     downsample: eqx.Module
-    stride: int = eqx.static_field()
+    stride: int
 
     def __init__(
         self,
@@ -80,7 +79,7 @@ class ResNetBasicBlock(eqx.Module):
         self.expansion = 1
         self.conv1 = conv3x3(inplanes, planes, stride, key=keys[0])
         self.bn1 = norm_layer(planes, axis_name="batch")
-        self.relu = ReLU()
+        self.relu = jnn.relu
         self.conv2 = conv3x3(planes, planes, key=keys[1])
         self.bn2 = norm_layer(planes, axis_name="batch")
         if downsample:
@@ -110,16 +109,16 @@ class ResNetBottleneck(eqx.Module):
     # according to "Deep residual learning for image recognition"https://arxiv.org/abs/1512.03385.
     # This variant is also known as ResNet V1.5 and improves accuracy according to
     # https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch.
-    expansion: int = eqx.static_field()
+    expansion: int
     conv1: eqx.Module
     bn1: eqx.Module
     conv2: eqx.Module
     bn2: eqx.Module
     conv3: eqx.Module
     bn3: eqx.Module
-    relu: eqx.Module
+    relu: Callable
     downsample: eqx.Module
-    stride: int = eqx.static_field()
+    stride: int
 
     def __init__(
         self,
@@ -146,7 +145,7 @@ class ResNetBottleneck(eqx.Module):
         self.bn2 = norm_layer(width, axis_name="batch")
         self.conv3 = conv1x1(width, planes * self.expansion, key=keys[2])
         self.bn3 = norm_layer(planes * self.expansion, axis_name="batch")
-        self.relu = ReLU()
+        self.relu = jnn.relu
         if downsample:
             self.downsample = downsample
         else:
@@ -180,14 +179,14 @@ EXPANSIONS = {ResNetBasicBlock: 1, ResNetBottleneck: 4}
 class ResNet(eqx.Module):
     """A simple port of torchvision.models.resnet"""
 
-    _norm_layer: Callable = eqx.static_field()
-    inplanes: int = eqx.static_field()
-    dilation: int = eqx.static_field()
-    groups: Sequence[int] = eqx.static_field()
-    base_width: int = eqx.static_field()
+    _norm_layer: Callable
+    inplanes: int
+    dilation: int
+    groups: Sequence[int]
+    base_width: int
     conv1: eqx.Module
     bn1: eqx.Module
-    relu: eqx.Module
+    relu: jnn.relu
     maxpool: eqx.Module
     layer1: eqx.Module
     layer2: eqx.Module
@@ -276,7 +275,7 @@ class ResNet(eqx.Module):
             key=keys[0],
         )
         self.bn1 = norm_layer(input_size=self.inplanes, axis_name="batch")
-        self.relu = ReLU()
+        self.relu = jnn.relu
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.layer1 = self._make_layer(block, 64, layers[0], key=keys[1])
         self.layer2 = self._make_layer(
@@ -361,6 +360,8 @@ class ResNet(eqx.Module):
         - `x`: The input. Should be a JAX array with `3` channels.
         - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
         """
+        if key is None:
+            raise RuntimeError("The model requires a PRNGKey.")
         keys = jrandom.split(key, 6)
         x = self.conv1(x, key=keys[0])
         x = self.bn1(x)

@@ -10,6 +10,5 @@
 
 ---
 
----
 
 ::: eqxvision.models.googlenet

@@ -3,11 +3,12 @@ from typing import Any, Optional
 import equinox as eqx
 import equinox.nn as nn
 import jax
+import jax.nn as jnn
 import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
 
-from ...layers import ReLU
+from ...layers import Chain
 
 
 model_urls = {
@@ -50,35 +51,35 @@ class AlexNet(eqx.Module):
         super().__init__()
         if not key:
             key = jrandom.PRNGKey(0)
-        keys = jrandom.split(key, 21)
+        keys = jrandom.split(key, 8)
 
-        self.features = eqx.nn.Sequential(
+        self.features = Chain(
             [
                 nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2, key=keys[0]),
-                ReLU(),
+                jnn.relu,
                 nn.MaxPool2d(kernel_size=3, stride=2),
-                nn.Conv2d(64, 192, kernel_size=5, padding=2, key=keys[3]),
-                ReLU(),
+                nn.Conv2d(64, 192, kernel_size=5, padding=2, key=keys[1]),
+                jnn.relu,
                 nn.MaxPool2d(kernel_size=3, stride=2),
-                nn.Conv2d(192, 384, kernel_size=3, padding=1, key=keys[6]),
-                ReLU(),
-                nn.Conv2d(384, 256, kernel_size=3, padding=1, key=keys[8]),
-                ReLU(),
-                nn.Conv2d(256, 256, kernel_size=3, padding=1, key=keys[10]),
-                ReLU(),
+                nn.Conv2d(192, 384, kernel_size=3, padding=1, key=keys[2]),
+                jnn.relu,
+                nn.Conv2d(384, 256, kernel_size=3, padding=1, key=keys[3]),
+                jnn.relu,
+                nn.Conv2d(256, 256, kernel_size=3, padding=1, key=keys[4]),
+                jnn.relu,
                 nn.MaxPool2d(kernel_size=3, stride=2),
             ]
         )
         self.avgpool = nn.AdaptiveAvgPool2d((6, 6))
-        self.classifier = nn.Sequential(
+        self.classifier = Chain(
             [
                 nn.Dropout(p=dropout),
-                nn.Linear(256 * 6 * 6, 4096, key=keys[15]),
-                ReLU(),
+                nn.Linear(256 * 6 * 6, 4096, key=keys[5]),
+                jnn.relu,
                 nn.Dropout(p=dropout),
-                nn.Linear(4096, 4096, key=keys[18]),
-                ReLU(),
-                nn.Linear(4096, num_classes, key=keys[20]),
+                nn.Linear(4096, 4096, key=keys[6]),
+                jnn.relu,
+                nn.Linear(4096, num_classes, key=keys[7]),
             ]
         )
 
@@ -88,11 +89,13 @@ class AlexNet(eqx.Module):
         - `x`: The input. Should be a JAX array with `3` channels.
         - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
         """
-        keys = jrandom.split(key, 3)
+        if key is None:
+            raise RuntimeError("The model requires a PRNGKey.")
+        keys = jrandom.split(key, 2)
         x = self.features(x, key=keys[0])
-        x = self.avgpool(x, key=keys[1])
+        x = self.avgpool(x)
         x = jnp.ravel(x)
-        x = self.classifier(x, key=keys[2])
+        x = self.classifier(x, key=keys[1])
         return x
 
 
