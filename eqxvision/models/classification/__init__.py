@@ -12,3 +12,11 @@ from .resnet import (
     wide_resnet50_2,
     wide_resnet101_2,
 )
+from .vit import (
+    VisionTransformer,
+    vit_base,
+    vit_small,
+    vit_tiny,
+    VitAttention,
+    VitBlock,
+)
