@@ -23,8 +23,8 @@ theme:
              name: Switch to light mode
 
 
-site_name: EqxVision
-site_description: The documentation for EqxVision library, a vision library built on Equinox.
+site_name: Eqxvision
+site_description: The documentation for Eqxvision, a vision package built on Equinox.
 site_author: Contributing Authors
 site_url:
 
@@ -89,5 +89,9 @@ nav:
             - 'api/models/classification/alexnet.md'
             - 'api/models/classification/googlenet.md'
             - 'api/models/classification/resnets.md'
-        - Vision layers:
-            - 'api/layers/layers.md'
+            - 'api/models/classification/vit.md'
+        - Vision Layers:
+            - 'api/layers/chain.md'
+            - 'api/layers/drop_path.md'
+            - 'api/layers/mlp.md'
+            - 'api/layers/patch.md'

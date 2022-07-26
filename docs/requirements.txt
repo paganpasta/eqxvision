@@ -3,7 +3,7 @@ jax[cpu]
 jaxlib
 equinox
 
-#MARKDOWN
+#Markdown
 jinja2==3.0.3
 Markdown>=3.3
 MarkupSafe>=1.1

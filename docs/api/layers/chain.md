@@ -1,13 +1,8 @@
-# AlexNet
+# Chain
 
----
-
-::: eqxvision.models.AlexNet
+::: eqxvision.layers.Chain
     selection:
         members:
             - __init__
             - __call__
 
----
-
-::: eqxvision.models.alexnet

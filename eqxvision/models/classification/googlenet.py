@@ -17,7 +17,7 @@ model_urls = {
 class GoogLeNet(eqx.Module):
     """A simple port of torchvision.models.GoogLeNet"""
 
-    aux_logits: bool = eqx.static_field()
+    aux_logits: bool
     conv1: eqx.Module
     maxpool1: nn.MaxPool2d
     conv2: eqx.Module
@@ -134,6 +134,8 @@ class GoogLeNet(eqx.Module):
         - `x`: The input. Should be a JAX array with `3` channels.
         - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
         """
+        if key is None:
+            raise RuntimeError("The model requires a PRNGKey.")
         keys = jrandom.split(key, 14)
         # N x 3 x 224 x 224
         x = self.conv1(x, key=keys[0])
