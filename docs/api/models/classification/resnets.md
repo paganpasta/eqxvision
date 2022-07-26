@@ -1,11 +1,10 @@
-# ResNets
+# ResNet Family
 
 ::: eqxvision.models.ResNet
     selection:
         members:
             - __init__
             - __call__
----
 
 ---
 

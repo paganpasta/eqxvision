@@ -1,13 +1,8 @@
-# AlexNet
+# Mlp Projection
 
----
-
-::: eqxvision.models.AlexNet
+::: eqxvision.layers.MlpProjection
     selection:
         members:
             - __init__
             - __call__
 
----
-
-::: eqxvision.models.alexnet

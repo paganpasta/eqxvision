@@ -1,13 +1,7 @@
-# AlexNet
+# Drop Path
 
----
-
-::: eqxvision.models.AlexNet
+::: eqxvision.layers.DropPath
     selection:
         members:
             - __init__
             - __call__
-
----
-
-::: eqxvision.models.alexnet
