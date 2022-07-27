@@ -91,7 +91,7 @@ nav:
             - 'api/models/classification/resnets.md'
             - 'api/models/classification/vit.md'
         - Vision Layers:
-            - 'api/layers/chain.md'
+            - 'api/layers/activation.md'
             - 'api/layers/drop_path.md'
             - 'api/layers/mlp.md'
             - 'api/layers/patch.md'

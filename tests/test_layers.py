@@ -16,10 +16,10 @@ def test_chain(getkey):
         c_counter += 1
         return jax.vmap(net)(xs, key=keys)
 
-    chain = layers.Chain(
+    chain = eqx.nn.Sequential(
         [
             eqx.nn.Identity(),
-            jnn.relu,
+            layers.Activation(jnn.relu),
         ]
     )
     x = jnp.array([[-1, -2, -3], [1, 2, 3]])
