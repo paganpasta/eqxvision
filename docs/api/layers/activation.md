@@ -1,6 +1,6 @@
-# Chain
+# Activation
 
-::: eqxvision.layers.Chain
+::: eqxvision.layers.Activation
     selection:
         members:
             - __init__
