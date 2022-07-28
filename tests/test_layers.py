@@ -7,7 +7,7 @@ import jax.random as jrandom
 import eqxvision.layers as layers
 
 
-def test_chain(getkey):
+def test_activation(getkey):
     c_counter = 0
 
     @eqx.filter_jit
