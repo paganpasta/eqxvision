@@ -18,7 +18,7 @@ pip install eqxvision
     import jax
     import jax.random as jr
     import equinox as eqx
-    from eqxvision.models import resnet18
+    from eqxvision.models import alexnet
     
     @eqx.filter_jit
     def forward(net, images, key):
@@ -26,7 +26,7 @@ pip install eqxvision
         output = jax.vmap(net)(images, key=keys)
         ...
         
-    net = resnet18(num_classes=1000)
+    net = alexnet(num_classes=1000)
     
     images = jr.uniform(jr.PRNGKey(0), shape=(1,3,224,224))
     output = forward(net, images, jr.PRNGKey(0))
@@ -36,9 +36,9 @@ pip install eqxvision
 
     ```python
     import equinox as eqx
-    from eqxvision.models import resnet18
+    from eqxvision.models import alexnet
     
-    net = resnet18(num_classes=1000)
+    net = alexnet(num_classes=1000)
     net = eqx.tree_inference(net, True)
     ```
 

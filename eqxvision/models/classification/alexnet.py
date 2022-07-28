@@ -8,7 +8,7 @@ import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
 
-from ...layers import Chain
+from ...layers import Activation
 
 
 model_urls = {
@@ -53,32 +53,32 @@ class AlexNet(eqx.Module):
             key = jrandom.PRNGKey(0)
         keys = jrandom.split(key, 8)
 
-        self.features = Chain(
+        self.features = nn.Sequential(
             [
                 nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2, key=keys[0]),
-                jnn.relu,
+                Activation(jnn.relu),
                 nn.MaxPool2d(kernel_size=3, stride=2),
                 nn.Conv2d(64, 192, kernel_size=5, padding=2, key=keys[1]),
-                jnn.relu,
+                Activation(jnn.relu),
                 nn.MaxPool2d(kernel_size=3, stride=2),
                 nn.Conv2d(192, 384, kernel_size=3, padding=1, key=keys[2]),
-                jnn.relu,
+                Activation(jnn.relu),
                 nn.Conv2d(384, 256, kernel_size=3, padding=1, key=keys[3]),
-                jnn.relu,
+                Activation(jnn.relu),
                 nn.Conv2d(256, 256, kernel_size=3, padding=1, key=keys[4]),
-                jnn.relu,
+                Activation(jnn.relu),
                 nn.MaxPool2d(kernel_size=3, stride=2),
             ]
         )
         self.avgpool = nn.AdaptiveAvgPool2d((6, 6))
-        self.classifier = Chain(
+        self.classifier = nn.Sequential(
             [
                 nn.Dropout(p=dropout),
                 nn.Linear(256 * 6 * 6, 4096, key=keys[5]),
-                jnn.relu,
+                Activation(jnn.relu),
                 nn.Dropout(p=dropout),
                 nn.Linear(4096, 4096, key=keys[6]),
-                jnn.relu,
+                Activation(jnn.relu),
                 nn.Linear(4096, num_classes, key=keys[7]),
             ]
         )
