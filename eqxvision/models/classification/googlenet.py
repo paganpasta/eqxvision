@@ -81,7 +81,7 @@ class GoogLeNet(eqx.Module):
         inception_block = blocks[1]
         inception_aux_block = blocks[2]
 
-        if not key:
+        if key is None:
             key = jrandom.PRNGKey(0)
         keys = jrandom.split(key, 20)
 

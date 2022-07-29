@@ -220,9 +220,9 @@ class VisionTransformer(eqx.Module):
         """
 
         super().__init__()
-        if not key:
+        if key is None:
             key = jrandom.PRNGKey(0)
-        keys = jrandom.split(key, depth + 2)
+        keys = jrandom.split(key, depth + 3)
         self.inference = False
         self.num_features = embed_dim
         self.patch_embed = PatchEmbed(
@@ -259,7 +259,9 @@ class VisionTransformer(eqx.Module):
         self.norm = norm_layer(embed_dim)
         # Classifier head
         self.fc = (
-            nn.Linear(embed_dim, num_classes) if num_classes > 0 else nn.Identity()
+            nn.Linear(embed_dim, num_classes, key=keys[-1])
+            if num_classes > 0
+            else nn.Identity()
         )
         # ToDo: Initialization scheme of the weights
 
