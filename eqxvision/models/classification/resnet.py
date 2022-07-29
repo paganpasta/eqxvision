@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Sequence, Type, Union
+from typing import Any, Callable, List, Optional, Sequence, Type, Union
 
 import equinox as eqx
 import equinox.experimental as eqex
@@ -179,7 +179,7 @@ EXPANSIONS = {ResNetBasicBlock: 1, ResNetBottleneck: 4}
 class ResNet(eqx.Module):
     """A simple port of torchvision.models.resnet"""
 
-    _norm_layer: Callable
+    _norm_layer: Any
     inplanes: int
     dilation: int
     groups: Sequence[int]
@@ -204,7 +204,7 @@ class ResNet(eqx.Module):
         groups: int = 1,
         width_per_group: int = 64,
         replace_stride_with_dilation: List[bool] = None,
-        norm_layer: eqx.Module = None,
+        norm_layer: Any = None,
         *,
         key: Optional["jax.random.PRNGKey"] = None,
     ):
@@ -247,7 +247,7 @@ class ResNet(eqx.Module):
             raise NotImplementedError(
                 f"{type(norm_layer)} is not currently supported. Use `eqx.experimental.BatchNorm` instead."
             )
-        if not key:
+        if key is None:
             key = jrandom.PRNGKey(0)
 
         keys = jrandom.split(key, 6)
