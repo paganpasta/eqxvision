@@ -179,7 +179,6 @@ EXPANSIONS = {ResNetBasicBlock: 1, ResNetBottleneck: 4}
 class ResNet(eqx.Module):
     """A simple port of torchvision.models.resnet"""
 
-    _norm_layer: Any
     inplanes: int
     dilation: int
     groups: Sequence[int]
@@ -251,7 +250,6 @@ class ResNet(eqx.Module):
             key = jrandom.PRNGKey(0)
 
         keys = jrandom.split(key, 6)
-        self._norm_layer = norm_layer
         self.inplanes = 64
         self.dilation = 1
         if replace_stride_with_dilation is None:
@@ -277,11 +275,12 @@ class ResNet(eqx.Module):
         self.bn1 = norm_layer(input_size=self.inplanes, axis_name="batch")
         self.relu = jnn.relu
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.layer1 = self._make_layer(block, 64, layers[0], key=keys[1])
+        self.layer1 = self._make_layer(block, 64, layers[0], norm_layer, key=keys[1])
         self.layer2 = self._make_layer(
             block,
             128,
             layers[1],
+            norm_layer,
             stride=2,
             dilate=replace_stride_with_dilation[0],
             key=keys[2],
@@ -290,6 +289,7 @@ class ResNet(eqx.Module):
             block,
             256,
             layers[2],
+            norm_layer,
             stride=2,
             dilate=replace_stride_with_dilation[1],
             key=keys[3],
@@ -298,6 +298,7 @@ class ResNet(eqx.Module):
             block,
             512,
             layers[3],
+            norm_layer,
             stride=2,
             dilate=replace_stride_with_dilation[2],
             key=keys[4],
@@ -306,9 +307,10 @@ class ResNet(eqx.Module):
         self.fc = nn.Linear(512 * EXPANSIONS[block], num_classes, key=keys[5])
         # TODO: Zero initialize BNs as per torchvision
 
-    def _make_layer(self, block, planes, blocks, stride=1, dilate=False, key=None):
+    def _make_layer(
+        self, block, planes, blocks, norm_layer, stride=1, dilate=False, key=None
+    ):
         keys = jrandom.split(key, blocks + 1)
-        norm_layer = self._norm_layer
         downsample = None
         previous_dilation = self.dilation
         if dilate:
