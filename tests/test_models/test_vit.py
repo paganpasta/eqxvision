@@ -110,8 +110,8 @@ class TestVit:
             return jax.vmap(net)(x, key=keys)
 
         random_input = jax.random.uniform(key=getkey(), shape=(1, 3, 224, 224))
-        answer = (1, 192)
-        net = models.vit_tiny()
+        answer = (1, 1000)
+        net = models.vit_tiny(num_classes=1000)
         keys = jax.random.split(getkey(), random_input.shape[0])
 
         output = forward(net, random_input, keys)
@@ -119,14 +119,14 @@ class TestVit:
         assert c_counter == 1
 
         answer = (1, 384)
-        net = models.vit_small()
+        net = models.vit_small(num_classes=0)
 
         output = forward(net, random_input, keys)
         assert output.shape == answer
         assert c_counter == 2
 
         answer = (1, 768)
-        net = models.vit_base()
+        net = models.vit_base(num_classes=0)
 
         output = forward(net, random_input, keys)
         assert output.shape == answer
