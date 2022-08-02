@@ -10,6 +10,8 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install eqxvisi
 pip install eqxvision
 ```
 
+*requires:* `python>=3.7`
+
 ## Usage
 
 ```python title="forward.py"
@@ -21,7 +23,7 @@ from eqxvision.models import alexnet
 @eqx.filter_jit
 def forward(net, images, key):
     keys = jax.random.split(key, images.shape[0])
-    output = jax.vmap(net)(images, key=keys)
+    output = jax.vmap(net, axis_name=('batch'))(images, key=keys)
     ...
     
 net = alexnet(num_classes=1000)
@@ -41,7 +43,7 @@ net = eqx.tree_inference(net, True)
 ## Tips
 - Checkout the documentation for a sample usage for each model;
 - Better to use `@equinox.jit_filter` instead of `@jax.jit`;
-- Use `jax.vmap(net, axis_name='batch')(images)` for models with `batchnorms`;
+- Advisable to use `jax.vmap` with `axis_name='batch'` for all models;
 - Don't forget to switch to `inference` mode for evaluations.
 
 
@@ -51,9 +53,9 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ## Acknowledgements
-- [Torchvision](https://pytorch.org/vision/stable/index.html)
 - [Equinox](https://github.com/patrick-kidger/equinox)
 - [Patrick Kidger](https://github.com/patrick-kidger)
+- [Torchvision](https://pytorch.org/vision/stable/index.html)
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

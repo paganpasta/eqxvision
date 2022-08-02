@@ -38,15 +38,6 @@ class AlexNet(eqx.Module):
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
             initialisation. (Keyword only argument.)
 
-        ???+ note "JIT call:"
-
-            ```python
-            @eqx.filter_jit
-            def forward(model, x, key):
-               keys = jax.random.split(key, x.shape[0])
-               output = jax.vmap(model)(x, key=keys)
-               ...
-            ```
         """
         super().__init__()
         if not key:
@@ -87,7 +78,7 @@ class AlexNet(eqx.Module):
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels.
-        - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
+        - `key`: Required parameter.
         """
         if key is None:
             raise RuntimeError("The model requires a PRNGKey.")

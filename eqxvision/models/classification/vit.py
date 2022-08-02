@@ -193,7 +193,7 @@ class VisionTransformer(eqx.Module):
         - `patch_size`: Size of the patch to construct from the input image. Defaults to `(16, 16)`.
         - `in_chans`: Number of input channels. Defaults to `3`.
         - `num_classes`: Number of classes in the classification task.
-                         Also controls the final output shape `(num_classes,)`. `0` simply returns the embeddings.
+                         Also controls the final output shape `(num_classes,)`.
         - `embed_dim`: The dimension of the resulting embedding of the patch. Defaults to `768`.
         - `depth`: Number of `VitBlocks` in the network.
         - `num_heads`: The number of equal parts to split the input along the `dim`.
@@ -206,16 +206,6 @@ class VisionTransformer(eqx.Module):
         - `norm_layer`: Normalisation applied to the intermediate outputs. Defaults to `equinox.nn.LayerNorm`.
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
-
-        ???+ note "JIT call:"
-
-            ```python
-            @eqx.filter_jit
-            def forward(net, x, keys):
-                #with `nn.LayerNorm`
-                return jax.vmap(net)(x, key=keys)
-                ...
-            ```
 
         """
 
@@ -258,18 +248,14 @@ class VisionTransformer(eqx.Module):
         ]
         self.norm = norm_layer(embed_dim)
         # Classifier head
-        self.fc = (
-            nn.Linear(embed_dim, num_classes, key=keys[-1])
-            if num_classes > 0
-            else nn.Identity()
-        )
+        self.fc = nn.Linear(embed_dim, num_classes, key=keys[-1])
         # ToDo: Initialization scheme of the weights
 
     def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
         - `x`: The input `JAX` array.
-        - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
+        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`.
         """
         keys = jrandom.split(key, len(self.blocks))
         x = self.patch_embed(x)

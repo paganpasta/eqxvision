@@ -100,7 +100,10 @@ class TestVit:
         assert output.shape == answer
         assert c_counter == 2
 
-    def test_vit_variants(self, getkey):
+    @pytest.mark.parametrize(
+        "model_func", [models.vit_tiny, models.vit_small, models.vit_base]
+    )
+    def test_vit_variants(self, model_func, getkey):
         c_counter = 0
 
         @eqx.filter_jit
@@ -111,23 +114,8 @@ class TestVit:
 
         random_input = jax.random.uniform(key=getkey(), shape=(1, 3, 224, 224))
         answer = (1, 1000)
-        net = models.vit_tiny(num_classes=1000)
+        net = model_func(num_classes=1000)
         keys = jax.random.split(getkey(), random_input.shape[0])
 
         output = forward(net, random_input, keys)
         assert output.shape == answer
-        assert c_counter == 1
-
-        answer = (1, 384)
-        net = models.vit_small(num_classes=0)
-
-        output = forward(net, random_input, keys)
-        assert output.shape == answer
-        assert c_counter == 2
-
-        answer = (1, 768)
-        net = models.vit_base(num_classes=0)
-
-        output = forward(net, random_input, keys)
-        assert output.shape == answer
-        assert c_counter == 3

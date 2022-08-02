@@ -177,7 +177,7 @@ EXPANSIONS = {ResNetBasicBlock: 1, ResNetBottleneck: 4}
 
 
 class ResNet(eqx.Module):
-    """A simple port of torchvision.models.resnet"""
+    """A simple port of `torchvision.models.resnet`"""
 
     inplanes: int
     dilation: int
@@ -221,16 +221,6 @@ class ResNet(eqx.Module):
         - `norm_layer`: Normalisation to be applied on the inputs. Defaults to `equinox.BatchNorm`.
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
-
-        ???+ note "JIT call:"
-
-            ```python
-            @eqx.filter_jit
-            def forward(net, x, key):
-                keys = jax.random.split(key, x.shape[0])
-                output = jax.vmap(net, axis_name="batch")(x, key=keys)
-                ...
-            ```
 
         ??? Failure "Exceptions:"
 
@@ -360,7 +350,7 @@ class ResNet(eqx.Module):
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels.
-        - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
+        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`.
         """
         if key is None:
             raise RuntimeError("The model requires a PRNGKey.")
