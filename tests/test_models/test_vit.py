@@ -57,27 +57,6 @@ class TestVit:
         assert attn.shape == answer_attn
         assert c_counter == 2
 
-    def test_vit_call(self, getkey):
-        c_counter = 0
-
-        @eqx.filter_jit
-        def forward(net, x, keys):
-            nonlocal c_counter
-            c_counter += 1
-            return jax.vmap(net)(x, key=keys)
-
-        random_input = jax.random.uniform(key=getkey(), shape=(1, 3, 224, 224))
-        answer = (1, 768)
-        net = models.VisionTransformer(img_size=224, patch_size=16)
-        keys = jax.random.split(getkey(), random_input.shape[0])
-
-        output = forward(net, random_input, keys)
-        assert output.shape == answer
-
-        random_input = jax.random.uniform(key=getkey(), shape=(1, 3, 224, 224))
-        forward(net, random_input, keys)
-        assert c_counter == 1
-
     def test_vit_self_attention(self, getkey):
         c_counter = 0
 
