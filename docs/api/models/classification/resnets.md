@@ -1,4 +1,4 @@
-# ResNet Family
+# ResNets
 
 ::: eqxvision.models.ResNet
     selection:
