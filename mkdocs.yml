@@ -90,6 +90,7 @@ nav:
             - 'api/models/classification/googlenet.md'
             - 'api/models/classification/resnets.md'
             - 'api/models/classification/vit.md'
+            - 'api/models/classification/vgg.md'
         - Vision Layers:
             - 'api/layers/activation.md'
             - 'api/layers/drop_path.md'
