@@ -70,7 +70,8 @@ def load_torch_weights(
     new_leaves = []
     for leaf in leaves:
         if isinstance(leaf, jnp.ndarray):
-            new_leaves.append(next(weights_iterator))
+            new_weights = jnp.reshape(next(weights_iterator), leaf.shape)
+            new_leaves.append(new_weights)
         else:
             new_leaves.append(leaf)
 
