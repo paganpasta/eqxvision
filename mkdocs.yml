@@ -96,3 +96,4 @@ nav:
             - 'api/layers/drop_path.md'
             - 'api/layers/mlp.md'
             - 'api/layers/patch.md'
+        - 'api/utils.md'
