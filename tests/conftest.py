@@ -1,8 +1,8 @@
 import random
 
+import jax.numpy as jnp
 import jax.random as jrandom
 import pytest
-import jax.numpy as jnp
 
 
 @pytest.fixture()
