@@ -9,11 +9,6 @@ import jax.random as jrandom
 from equinox.custom_types import Array
 
 
-model_urls = {
-    "googlenet": "https://download.pytorch.org/models/googlenet-1378be20.pth",
-}
-
-
 class GoogLeNet(eqx.Module):
     """A simple port of torchvision.models.GoogLeNet"""
 
@@ -43,7 +38,7 @@ class GoogLeNet(eqx.Module):
     def __init__(
         self,
         num_classes: int = 1000,
-        aux_logits: bool = False,
+        aux_logits: bool = True,
         blocks: Optional[List[Callable[..., eqx.Module]]] = None,
         dropout: float = 0.2,
         dropout_aux: float = 0.7,
@@ -55,7 +50,7 @@ class GoogLeNet(eqx.Module):
 
         - `num_classes`: Number of classes in the classification task.
                         Also controls the final output shape `(num_classes,)`. Defaults to `1000`.
-        - `aux_logits`: Whether to use `aux` branch or not. Defaults to `False`.
+        - `aux_logits`: If `True`, two auxiliary branches are added to the network. Defaults to `True`.
         - `blocks`: Blocks for constructing the network.
         - `dropout`: Dropout applied on the `main` branch. Defaults to `0.2`.
         - `dropout_aux`: Dropout applied on the `aux` branches. Defaults to `0.7`.
@@ -102,8 +97,8 @@ class GoogLeNet(eqx.Module):
             832, 384, 192, 384, 48, 128, 128, key=keys[11]
         )
 
-        self.aux1 = nn.Identity()
-        self.aux2 = nn.Identity()
+        self.aux1 = None
+        self.aux2 = None
         if aux_logits:
             self.aux1 = inception_aux_block(
                 512, num_classes, dropout=dropout_aux, key=keys[12]
@@ -147,7 +142,7 @@ class GoogLeNet(eqx.Module):
         # N x 480 x 14 x 14
         x = self.inception4a(x, key=keys[6])
         # N x 512 x 14 x 14
-        if not self.aux_logits:
+        if self.aux_logits:
             aux1 = self.aux1(x, key=keys[7])
 
         x = self.inception4b(x, key=keys[8])
@@ -156,7 +151,7 @@ class GoogLeNet(eqx.Module):
         # N x 512 x 14 x 14
         x = self.inception4d(x, key=keys[10])
         # N x 528 x 14 x 14
-        if not self.aux_logits:
+        if self.aux_logits:
             aux2 = self.aux2(x, key=keys[11])  # Key here, a bad thing?
 
         x = self.inception4e(x, key=keys[12])
@@ -276,7 +271,7 @@ class InceptionAux(eqx.Module):
         # N x 128 x 4 x 4
         x = jnp.ravel(x)
         # N x 2048
-        x = jnn.relu(self.fc1(x), inplace=True)
+        x = jnn.relu(self.fc1(x))
         # N x 1024
         x = self.dropout(x, key=keys[1])
         # N x 1024

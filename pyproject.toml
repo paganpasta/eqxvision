@@ -15,9 +15,10 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies=[
-    'jax==0.3.15',
-    'jaxlib==0.3.15',
     'equinox',
+    'jax',
+    'jaxlib',
+    'torchvision==0.11.0+cpu'
 ]
 
 [project.urls]
@@ -29,6 +30,7 @@ test = [
     "pre-commit",
     "bluepy",
     "pytest",
+    "torchvision==0.11.0+cpu"
 ]
 
 docs=[

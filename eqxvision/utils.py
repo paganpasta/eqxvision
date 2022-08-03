@@ -16,6 +16,27 @@ except ImportError:
 
 _TEMP_DIR = "/tmp/.eqx"
 _Url = NewType("_Url", str)
+MODEL_URLS = {
+    "alexnet": "https://download.pytorch.org/models/alexnet-owt-7be5be79.pth",
+    "googlenet": "https://download.pytorch.org/models/googlenet-1378be20.pth",
+    "resnet18": "https://download.pytorch.org/models/resnet18-5c106cde.pth",
+    "resnet34": "https://download.pytorch.org/models/resnet34-333f7ec4.pth",
+    "resnet50": "https://download.pytorch.org/models/resnet50-19c8e357.pth",
+    "resnet101": "https://download.pytorch.org/models/resnet101-5d3b4d8f.pth",
+    "resnet152": "https://download.pytorch.org/models/resnet152-b121ed2d.pth",
+    "resnext50_32x4d": "https://download.pytorch.org/models/resnext50_32x4d-7cdf4587.pth",
+    "resnext101_32x8d": "https://download.pytorch.org/models/resnext101_32x8d-8ba56ff5.pth",
+    "wide_resnet50_2": "https://download.pytorch.org/models/wide_resnet50_2-95faca4d.pth",
+    "wide_resnet101_2": "https://download.pytorch.org/models/wide_resnet101_2-32ee1156.pth",
+    "vgg11": "https://download.pytorch.org/models/vgg11-8a719046.pth",
+    "vgg13": "https://download.pytorch.org/models/vgg13-19584684.pth",
+    "vgg16": "https://download.pytorch.org/models/vgg16-397923af.pth",
+    "vgg19": "https://download.pytorch.org/models/vgg19-dcbb9e9d.pth",
+    "vgg11_bn": "https://download.pytorch.org/models/vgg11_bn-6002323d.pth",
+    "vgg13_bn": "https://download.pytorch.org/models/vgg13_bn-abd245e5.pth",
+    "vgg16_bn": "https://download.pytorch.org/models/vgg16_bn-6c64b313.pth",
+    "vgg19_bn": "https://download.pytorch.org/models/vgg19_bn-c79401a0.pth",
+}
 
 
 def load_torch_weights(
@@ -63,15 +84,21 @@ def load_torch_weights(
 
     weights = torch.load(filepath, map_location="cpu")
     weights_iterator = iter(
-        [jnp.asarray(weight.detach().numpy()) for _, weight in weights.items()]
+        [
+            jnp.asarray(weight.detach().numpy())
+            for name, weight in weights.items()
+            if "bn.running" not in name and "bn.num" not in name
+        ]
     )
     leaves, tree_def = jtu.tree_flatten(model)
 
     new_leaves = []
     for leaf in leaves:
-        if isinstance(leaf, jnp.ndarray):
-            new_weights = jnp.reshape(next(weights_iterator), leaf.shape)
-            new_leaves.append(new_weights)
+        if isinstance(leaf, jnp.ndarray) and not (
+            leaf.size == 1 and isinstance(leaf.item(), bool)
+        ):
+            new_weights = next(weights_iterator)
+            new_leaves.append(jnp.reshape(new_weights, leaf.shape))
         else:
             new_leaves.append(leaf)
 

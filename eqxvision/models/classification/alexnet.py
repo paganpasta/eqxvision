@@ -9,12 +9,7 @@ import jax.random as jrandom
 from equinox.custom_types import Array
 
 from ...layers import Activation
-from ...utils import load_torch_weights
-
-
-model_urls = {
-    "alexnet": "https://download.pytorch.org/models/alexnet-owt-7be5be79.pth",
-}
+from ...utils import load_torch_weights, MODEL_URLS
 
 
 class AlexNet(eqx.Module):
@@ -105,5 +100,5 @@ def alexnet(pretrained: bool = False, **kwargs: Any) -> AlexNet:
     """
     model = AlexNet(**kwargs)
     if pretrained:
-        load_torch_weights(model, url=model_urls["alexnet"])
+        model = load_torch_weights(model, url=MODEL_URLS["alexnet"])
     return model

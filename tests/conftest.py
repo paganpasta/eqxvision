@@ -17,9 +17,9 @@ def getkey():
     return _getkey
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def demo_image():
-    img = Image.open("static/img.png")
+    img = Image.open("./tests/static/img.png")
     img = img.convert("RGB")
 
     transform = transforms.Compose(
@@ -29,10 +29,17 @@ def demo_image():
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
         ]
     )
-    return transform(img).unsqueeze(0)
+    return jnp.asarray(transform(img).unsqueeze(0))
 
 
-@pytest.fixture()
-def alexnet_preds():
-    ckpt = torch.load("static/alexnet.pred.pth")
-    return ckpt["feats"].detach().numpy(), ckpt["output"].detach().numpy()
+@pytest.fixture(scope="session")
+def net_preds():
+    gt_dicts = {}
+
+    ckpt = torch.load("./tests/static/alexnet.pred.pth")
+    gt_dicts["alexnet"] = ckpt["output"].detach().numpy()
+
+    ckpt = torch.load("./tests/static/vgg11.pred.pth")
+    gt_dicts["vgg11"] = ckpt["output"].detach().numpy()
+
+    return gt_dicts
