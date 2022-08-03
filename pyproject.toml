@@ -19,7 +19,7 @@ dependencies=[
     'jax',
     'jaxlib',
     "torch >=1.7.1",
-    "torchvision = >=0.10.0"
+    "torchvision >=0.10.0"
 ]
 
 [project.urls]
