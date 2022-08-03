@@ -48,7 +48,6 @@ net = eqx.tree_inference(net, True)
 - Advisable to use `jax.vmap` with `axis_name='batch'` for all models
 - Don't forget to switch to `inference` mode for evaluations
 
-
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
