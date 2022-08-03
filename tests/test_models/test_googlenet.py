@@ -15,6 +15,6 @@ class TestGoogLeNet:
             ans = jax.vmap(net, axis_name="batch")(x, key=keys)
             return ans
 
-        model = models.googlenet(num_classes=1000)
+        model = models.googlenet(num_classes=1000, aux_logits=False)
         output = forward(model, self.random_image, getkey())
         assert output.shape == self.answer

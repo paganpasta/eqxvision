@@ -40,11 +40,14 @@ net = alexnet(num_classes=1000)
 net = eqx.tree_inference(net, True)
 ```
 
+## What's New?
+- `[Experimental]`Now supports loading PyTorch weights from `torchvision` for models **without** BatchNorm
+
 ## Tips
-- Checkout the documentation for a sample usage for each model;
-- Better to use `@equinox.jit_filter` instead of `@jax.jit`;
-- Advisable to use `jax.vmap` with `axis_name='batch'` for all models;
-- Don't forget to switch to `inference` mode for evaluations.
+- Better to use `@equinox.jit_filter` instead of `@jax.jit`
+- Advisable to use `jax.vmap` with `axis_name='batch'` for all models
+- Don't forget to switch to `inference` mode for evaluations
+
 
 
 ## Contributing

@@ -10,18 +10,8 @@ import jax.random as jrandom
 from equinox.custom_types import Array
 
 from ...layers import Activation
+from ...utils import load_torch_weights, MODEL_URLS
 
-
-_model_urls = {
-    "vgg11": "https://download.pytorch.org/models/vgg11-8a719046.pth",
-    "vgg13": "https://download.pytorch.org/models/vgg13-19584684.pth",
-    "vgg16": "https://download.pytorch.org/models/vgg16-397923af.pth",
-    "vgg19": "https://download.pytorch.org/models/vgg19-dcbb9e9d.pth",
-    "vgg11_bn": "https://download.pytorch.org/models/vgg11_bn-6002323d.pth",
-    "vgg13_bn": "https://download.pytorch.org/models/vgg13_bn-abd245e5.pth",
-    "vgg16_bn": "https://download.pytorch.org/models/vgg16_bn-6c64b313.pth",
-    "vgg19_bn": "https://download.pytorch.org/models/vgg19_bn-c79401a0.pth",
-}
 
 _cfgs: Dict[str, List[Union[str, int]]] = {
     "A": [64, "M", 128, "M", 256, 256, "M", 512, 512, "M", 512, 512, "M"],
@@ -166,12 +156,18 @@ def _vgg(cfg: str, batch_norm: bool, **kwargs: Any) -> VGG:
     return model
 
 
-def vgg11(**kwargs: Any) -> VGG:
+def vgg11(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 11-layer model (configuration "A") from
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
+        **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
     """
-    return _vgg("A", False, **kwargs)
+    model = _vgg("A", False, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["vgg11"])
+    return model
 
 
 def vgg11_bn(**kwargs: Any) -> VGG:
@@ -182,12 +178,18 @@ def vgg11_bn(**kwargs: Any) -> VGG:
     return _vgg("A", True, **kwargs)
 
 
-def vgg13(**kwargs: Any) -> VGG:
+def vgg13(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 13-layer model (configuration "B")
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
     """
-    return _vgg("B", False, **kwargs)
+    model = _vgg("B", False, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["vgg13"])
+    return model
 
 
 def vgg13_bn(**kwargs: Any) -> VGG:
@@ -198,12 +200,18 @@ def vgg13_bn(**kwargs: Any) -> VGG:
     return _vgg("B", True, **kwargs)
 
 
-def vgg16(**kwargs: Any) -> VGG:
+def vgg16(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 16-layer model (configuration "D")
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
     """
-    return _vgg("D", False, **kwargs)
+    model = _vgg("D", False, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["vgg16"])
+    return model
 
 
 def vgg16_bn(**kwargs: Any) -> VGG:
@@ -214,12 +222,18 @@ def vgg16_bn(**kwargs: Any) -> VGG:
     return _vgg("D", True, **kwargs)
 
 
-def vgg19(**kwargs: Any) -> VGG:
+def vgg19(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 19-layer model (configuration "E")
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
     """
-    return _vgg("E", False, **kwargs)
+    model = _vgg("E", False, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["vgg19"])
+    return model
 
 
 def vgg19_bn(**kwargs: Any) -> VGG:
