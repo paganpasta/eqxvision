@@ -13,9 +13,10 @@ pip install eqxvision
 *requires:* `python>=3.7`
 
 ## Usage
-???+ Example
-    Importing and doing a forward pass is as simple as
-    ```python
+
+Picking a model and doing a forward pass is as simple as ...
+
+```python
     import jax
     import jax.random as jr
     import equinox as eqx
@@ -31,14 +32,14 @@ pip install eqxvision
     
     images = jr.uniform(jr.PRNGKey(0), shape=(1,3,224,224))
     output = forward(net, images, jr.PRNGKey(0))
-    ```
+```
 
 ## What's New?
 - `[Experimental]`Now supports loading PyTorch weights from `torchvision` for models **without** BatchNorm
 
     !!! note
         Due to slight differences in the implementation of underlying operations,
-        the output can differ for pretrained versions of the network.
+        differences in the output values can be expected from `torchvision` models.
        
 ## Tips
 - Better to use `@equinox.jit_filter` instead of `@jax.jit`
@@ -51,7 +52,15 @@ pip install eqxvision
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-Please make sure to update tests as appropriate.
+### Development Process
+If you plan to modify the code or documentation, please follow the steps below:
+
+1. Fork the repository and create your branch from `dev`.
+2. If you have modified the code (new feature or bug-fix), please add unit tests.
+3. If you have changed APIs, update the documentation. Make sure the documentation builds. `mkdocs serve`
+4. Ensure the test suite passes. `pytest`
+5. Make sure your code passes the formatting checks. Automatically checked with a `pre-commit` hook. 
+
 
 ## Acknowledgements
 - [Equinox](https://github.com/patrick-kidger/equinox)
