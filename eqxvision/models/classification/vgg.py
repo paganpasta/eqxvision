@@ -160,7 +160,8 @@ def vgg11(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 11-layer model (configuration "A") from
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
-        **Arguments:**
+
+    **Arguments:**
 
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
     """
@@ -182,6 +183,7 @@ def vgg13(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 13-layer model (configuration "B")
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
+
     **Arguments:**
 
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
@@ -204,6 +206,7 @@ def vgg16(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 16-layer model (configuration "D")
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
+
     **Arguments:**
 
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
@@ -226,6 +229,7 @@ def vgg19(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 19-layer model (configuration "E")
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
+
     **Arguments:**
 
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
