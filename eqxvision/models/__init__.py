@@ -12,6 +12,7 @@ from .classification.resnet import (
     wide_resnet50_2,
     wide_resnet101_2,
 )
+from .classification.squeezenet import SqueezeNet, squeezenet1_0, squeezenet1_1
 from .classification.vgg import (
     VGG,
     vgg11,

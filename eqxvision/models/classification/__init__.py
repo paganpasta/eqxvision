@@ -1,1 +1,1 @@
-from . import alexnet, googlenet, resnet, vgg, vit
+from . import alexnet, googlenet, resnet, squeezenet, vgg, vit

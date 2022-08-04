@@ -89,6 +89,7 @@ nav:
             - 'api/models/classification/alexnet.md'
             - 'api/models/classification/googlenet.md'
             - 'api/models/classification/resnets.md'
+            - 'api/models/classification/squeeze.md'
             - 'api/models/classification/vit.md'
             - 'api/models/classification/vgg.md'
         - Vision Layers:

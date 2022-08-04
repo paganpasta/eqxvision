@@ -13,40 +13,38 @@ pip install eqxvision
 *requires:* `python>=3.7`
 
 ## Usage
-
-```python title="forward.py"
-import jax
-import jax.random as jr
-import equinox as eqx
-from eqxvision.models import alexnet
-
-@eqx.filter_jit
-def forward(net, images, key):
-    keys = jax.random.split(key, images.shape[0])
-    output = jax.vmap(net, axis_name=('batch'))(images, key=keys)
-    ...
+???+ Example
+    Importing and doing a forward pass is as simple as
+    ```python
+    import jax
+    import jax.random as jr
+    import equinox as eqx
+    from eqxvision.models import alexnet
     
-net = alexnet(num_classes=1000)
-
-images = jr.uniform(jr.PRNGKey(0), shape=(1,3,224,224))
-output = forward(net, images, jr.PRNGKey(0))
-```
-
-```python title="set_inference.py"
-import equinox as eqx
-from eqxvision.models import alexnet
-
-net = alexnet(num_classes=1000)
-net = eqx.tree_inference(net, True)
-```
+    @eqx.filter_jit
+    def forward(net, images, key):
+        keys = jax.random.split(key, images.shape[0])
+        output = jax.vmap(net, axis_name=('batch'))(images, key=keys)
+        ...
+        
+    net = alexnet(num_classes=1000)
+    
+    images = jr.uniform(jr.PRNGKey(0), shape=(1,3,224,224))
+    output = forward(net, images, jr.PRNGKey(0))
+    ```
 
 ## What's New?
 - `[Experimental]`Now supports loading PyTorch weights from `torchvision` for models **without** BatchNorm
 
+    !!! note
+        Due to slight differences in the implementation of underlying operations,
+        the output can differ for pretrained versions of the network.
+       
 ## Tips
 - Better to use `@equinox.jit_filter` instead of `@jax.jit`
-- Advisable to use `jax.vmap` with `axis_name='batch'` for all models
+- Advisable to use `jax.{v,p}map` with `axis_name='batch'` for all models
 - Don't forget to switch to `inference` mode for evaluations
+- Wrap with `eqx.filter(net, eqx.is_array)` for `Optax` initialisation.
 
 
 
