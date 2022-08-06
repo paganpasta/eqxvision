@@ -7,6 +7,7 @@ from .classification.densenet import (
     densenet201,
 )
 from .classification.googlenet import GoogLeNet, googlenet
+from .classification.mobilenetv2 import mobilenet_v2, MobileNetV2
 from .classification.resnet import (
     ResNet,
     resnet18,

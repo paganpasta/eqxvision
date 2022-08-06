@@ -1,4 +1,4 @@
-# Drop Path
+# Drop-Path
 
 ::: eqxvision.layers.DropPath
     selection:

@@ -21,8 +21,8 @@ class SqueezeExcitation(eqx.Module):
         self,
         input_channels: int,
         squeeze_channels: int,
-        activation: Callable[..., eqx.Module] = jnn.relu,
-        scale_activation: Callable[..., eqx.Module] = jnn.sigmoid,
+        activation: Callable = jnn.relu,
+        scale_activation: Callable = jnn.sigmoid,
         *,
         key: "jax.random.PRNGKey" = None
     ) -> None:

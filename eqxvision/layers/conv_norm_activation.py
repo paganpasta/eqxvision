@@ -7,7 +7,10 @@ import jax.nn as jnn
 
 
 class ConvNormActivation(nn.Sequential):
-    """A simple port of `torchvision.ops.misc.ConvNormActivation`"""
+    """A simple port of `torchvision.ops.misc.ConvNormActivation`.
+
+    Packs `convolution` -> `normalisation` -> `activation` into one easy to use module.
+    """
 
     out_channels: int
 

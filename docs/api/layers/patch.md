@@ -1,4 +1,4 @@
-# Patch Embed
+# Patch-Embed
 
 ::: eqxvision.layers.PatchEmbed
     selection:

@@ -1,4 +1,4 @@
-# ConvNormActivation
+# Conv-Norm-Activation
 
 ::: eqxvision.layers.ConvNormActivation
     selection:

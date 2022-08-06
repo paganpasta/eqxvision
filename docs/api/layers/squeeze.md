@@ -1,4 +1,4 @@
-# SqueezeExcitation
+# Squeeze-Excitation
 
 ::: eqxvision.layers.SqueezeExcitation
     selection:
