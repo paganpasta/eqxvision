@@ -58,7 +58,7 @@ If you plan to modify the code or documentation, please follow the steps below:
 1. Fork the repository and create your branch from `dev`.
 2. If you have modified the code (new feature or bug-fix), please add unit tests.
 3. If you have changed APIs, update the documentation. Make sure the documentation builds. `mkdocs serve`
-4. Ensure the test suite passes. `pytest`
+4. Ensure the test suite passes. `pytest tests -vvv`
 5. Make sure your code passes the formatting checks. Automatically checked with a `pre-commit` hook. 
 
 

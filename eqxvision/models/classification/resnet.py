@@ -196,23 +196,23 @@ class ResNet(eqx.Module):
     ):
         """**Arguments:**
 
-        - `block`: `Bottleneck` or `BasicBlock` for constructing the network.
-        - `layers`: A list containing number of `blocks` at different levels.
+        - `block`: `Bottleneck` or `BasicBlock` for constructing the network
+        - `layers`: A list containing number of `blocks` at different levels
         - `num_classes`: Number of classes in the classification task.
-                        Also controls the final output shape `(num_classes,)`. Defaults to `1000`.
-        - `zero_init_residual`: **Ignored**.
-        - `groups`: Number of groups to form along the feature depth. Defaults to `1`.
+                        Also controls the final output shape `(num_classes,)`. Defaults to `1000`
+        - `zero_init_residual`: **Ignored**
+        - `groups`: Number of groups to form along the feature depth. Defaults to `1`
         - `width_per_group`: Increases width of `block` by a factor of `width_per_group/64`.
-        Defaults to `64`.
-        - `replace_stride_with_dilation`: Replacing `2x2` strides with dilated convolution. Defaults to None.
-        - `norm_layer`: Normalisation to be applied on the inputs. Defaults to `equinox.BatchNorm`.
+        Defaults to `64`
+        - `replace_stride_with_dilation`: Replacing `2x2` strides with dilated convolution. Defaults to None
+        - `norm_layer`: Normalisation to be applied on the inputs. Defaults to `equinox.BatchNorm`
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
 
         ??? Failure "Exceptions:"
 
-            - `NotImplementedError`: If a `norm_layer` other than `equinox.experimental.BatchNorm` is used.
-            - `ValueError`: If `replace_stride_with_convolution` is not `None` or a `3-tuple`.
+            - `NotImplementedError`: If a `norm_layer` other than `equinox.experimental.BatchNorm` is used
+            - `ValueError`: If `replace_stride_with_convolution` is not `None` or a `3-tuple`
 
         """
         super(ResNet, self).__init__()
@@ -336,8 +336,8 @@ class ResNet(eqx.Module):
     def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
-        - `x`: The input. Should be a JAX array with `3` channels.
-        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`.
+        - `x`: The input. Should be a JAX array with `3` channels
+        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         if key is None:
             raise RuntimeError("The model requires a PRNGKey.")

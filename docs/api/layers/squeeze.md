@@ -1,7 +1,8 @@
-# Drop-Path
+# Squeeze-Excitation
 
-::: eqxvision.layers.DropPath
+::: eqxvision.layers.SqueezeExcitation
     selection:
         members:
             - __init__
             - __call__
+

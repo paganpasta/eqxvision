@@ -2,7 +2,7 @@ import logging
 import os
 import warnings
 from pathlib import Path
-from typing import NewType
+from typing import NewType, Optional
 
 import equinox as eqx
 import jax.numpy as jnp
@@ -23,6 +23,9 @@ MODEL_URLS = {
     "densenet201": "https://download.pytorch.org/models/densenet201-c1103571.pth",
     "densenet161": "https://download.pytorch.org/models/densenet161-8d451a50.pth",
     "googlenet": "https://download.pytorch.org/models/googlenet-1378be20.pth",
+    "mobilenet_v2": "https://download.pytorch.org/models/mobilenet_v2-b0353104.pth",
+    "mobilenet_v3_large": "https://download.pytorch.org/models/mobilenet_v3_large-8738ca79.pth",
+    "mobilenet_v3_small": "https://download.pytorch.org/models/mobilenet_v3_small-047dcff4.pth",
     "resnet18": "https://download.pytorch.org/models/resnet18-5c106cde.pth",
     "resnet34": "https://download.pytorch.org/models/resnet34-333f7ec4.pth",
     "resnet50": "https://download.pytorch.org/models/resnet50-19c8e357.pth",
@@ -109,3 +112,19 @@ def load_torch_weights(
             new_leaves.append(leaf)
 
     return jtu.tree_unflatten(tree_def, new_leaves)
+
+
+def _make_divisible(v: float, divisor: int, min_value: Optional[int] = None) -> int:
+    """
+    This function is taken from the original tf repo.
+    It ensures that all layers have a channel number that is divisible by 8
+    It can be seen here:
+    https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/mobilenet.py
+    """
+    if min_value is None:
+        min_value = divisor
+    new_v = max(min_value, int(v + divisor / 2) // divisor * divisor)
+    # Make sure that round down does not go down by more than 10%.
+    if new_v < 0.9 * v:
+        new_v += divisor
+    return new_v

@@ -1,4 +1,4 @@
-# Mlp Projection
+# Mlp-Projection
 
 ::: eqxvision.layers.MlpProjection
     selection:

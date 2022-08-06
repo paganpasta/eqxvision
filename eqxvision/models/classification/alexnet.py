@@ -28,8 +28,8 @@ class AlexNet(eqx.Module):
         """**Arguments:**
 
         - `num_classes`: Number of classes in the classification task.
-                        Also controls the final output shape `(num_classes,)`. Defaults to `1000`.
-        - `dropout`: Parameter used for the `equinox.nn.Dropout` layers. Defaults to `0.5`.
+                        Also controls the final output shape `(num_classes,)`. Defaults to `1000`
+        - `dropout`: Parameter used for the `equinox.nn.Dropout` layers. Defaults to `0.5`
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
             initialisation. (Keyword only argument.)
 
@@ -72,8 +72,8 @@ class AlexNet(eqx.Module):
     def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
-        - `x`: The input. Should be a JAX array with `3` channels.
-        - `key`: Required parameter.
+        - `x`: The input. Should be a JAX array with `3` channels
+        - `key`: Required parameter
         """
         if key is None:
             raise RuntimeError("The model requires a PRNGKey.")
@@ -95,7 +95,7 @@ def alexnet(pretrained: bool = False, **kwargs: Any) -> AlexNet:
     The required minimum input size of the model is 63x63.
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
     """
     model = AlexNet(**kwargs)
     if pretrained:

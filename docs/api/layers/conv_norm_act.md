@@ -1,7 +1,8 @@
-# Drop-Path
+# Conv-Norm-Activation
 
-::: eqxvision.layers.DropPath
+::: eqxvision.layers.ConvNormActivation
     selection:
         members:
             - __init__
             - __call__
+
