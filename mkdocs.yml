@@ -87,13 +87,13 @@ nav:
     - Full API:
         - Classification models:
             - 'api/models/classification/alexnet.md'
+            - 'api/models/classification/densenet.md'
             - 'api/models/classification/googlenet.md'
             - 'api/models/classification/resnets.md'
             - 'api/models/classification/squeeze.md'
             - 'api/models/classification/vit.md'
             - 'api/models/classification/vgg.md'
         - Vision Layers:
-            - 'api/layers/activation.md'
             - 'api/layers/drop_path.md'
             - 'api/layers/mlp.md'
             - 'api/layers/patch.md'

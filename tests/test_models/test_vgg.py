@@ -10,12 +10,6 @@ from eqxvision import utils
 model_list = [
     models.vgg11,
     models.vgg11_bn,
-    models.vgg13,
-    models.vgg13_bn,
-    models.vgg16,
-    models.vgg16_bn,
-    models.vgg19,
-    models.vgg19_bn,
 ]
 
 

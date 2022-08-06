@@ -6,10 +6,7 @@ import pytest
 import eqxvision.models as models
 
 
-model_list = [
-    models.squeezenet1_0,
-    models.squeezenet1_1,
-]
+model_list = [models.squeezenet1_0]
 
 
 class TestSqueezeNet:
