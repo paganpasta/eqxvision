@@ -28,11 +28,11 @@ class MlpProjection(eqx.Module):
     ):
         """**Arguments:**
 
-        - in_features: The expected dimension of the input.
-        - hidden_features: Dimensionality of the hidden layer.
-        - out_features: The dimension of the output feature.
-        - act_layer: Activation function to be applied to the intermediate layers.
-        - drop: The probability associated with `Dropout`.
+        - in_features: The expected dimension of the input
+        - hidden_features: Dimensionality of the hidden layer
+        - out_features: The dimension of the output feature
+        - act_layer: Activation function to be applied to the intermediate layers
+        - drop: The probability associated with `Dropout`
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
         """
@@ -50,8 +50,8 @@ class MlpProjection(eqx.Module):
     def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
-        - `x`: The input `JAX` array.
-        - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
+        - `x`: The input `JAX` array
+        - `key`: Utilised by few layers in the network such as `Dropout` or `DropPath`
         """
         keys = jrandom.split(key, 2)
         x = self.fc1(x)

@@ -69,10 +69,10 @@ class SqueezeNet(eqx.Module):
     ) -> None:
         """**Arguments:**
 
-        - `version`: Specifies the version of the network. Defaults to `1_0`.
+        - `version`: Specifies the version of the network. Defaults to `1_0`
         - `num_classes`: Number of classes in the classification task.
-                        Also controls the final output shape `(num_classes,)`. Defaults to `1000`.
-        - `dropout`: The probability parameter for `equinox.nn.Dropout`.
+                        Also controls the final output shape `(num_classes,)`. Defaults to `1000`
+        - `dropout`: The probability parameter for `equinox.nn.Dropout`
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
             initialisation. (Keyword only argument.)
         """
@@ -131,8 +131,8 @@ class SqueezeNet(eqx.Module):
     def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
-        - `x`: The input. Should be a JAX array with `3` channels.
-        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`.
+        - `x`: The input. Should be a JAX array with `3` channels
+        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         x = self.features(x)
         x = self.classifier(x, key=key)
@@ -155,7 +155,7 @@ def squeezenet1_0(pretrained: bool = False, **kwargs: Any) -> SqueezeNet:
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
     """
     return _squeezenet("1_0", pretrained, **kwargs)
 
@@ -169,6 +169,6 @@ def squeezenet1_1(pretrained: bool = False, **kwargs: Any) -> SqueezeNet:
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
     """
     return _squeezenet("1_1", pretrained, **kwargs)

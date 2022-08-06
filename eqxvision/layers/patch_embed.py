@@ -34,11 +34,11 @@ class PatchEmbed(eqx.Module):
         **Arguments:**
 
         - `img_size`: The size of the input image. Defaults to `(224, 224)`
-        - `patch_size`: Size of the patch to construct from the input image. Defaults to `(16, 16)`.
-        - `in_chans`: Number of input channels. Defaults to `3`.
-        - `embed_dim`: The dimension of the resulting embedding of the patch. Defaults to `768`.
-        - `norm_layer`: The normalisation to be applied on an input. Defaults to None.
-        - `flatten`: If enabled, the `2d` patches are flattened to `1d`.
+        - `patch_size`: Size of the patch to construct from the input image. Defaults to `(16, 16)`
+        - `in_chans`: Number of input channels. Defaults to `3`
+        - `embed_dim`: The dimension of the resulting embedding of the patch. Defaults to `768`
+        - `norm_layer`: The normalisation to be applied on an input. Defaults to None
+        - `flatten`: If enabled, the `2d` patches are flattened to `1d`
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
             initialisation. (Keyword only argument.)
         """
@@ -68,7 +68,7 @@ class PatchEmbed(eqx.Module):
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array of shape`(in_chans, img_size[0], img_size[1])`.
-        - `key`: Ignored.
+        - `key`: Ignored
         """
         C, H, W = x.shape
         if H != self.img_size[0] or W != self.img_size[1]:

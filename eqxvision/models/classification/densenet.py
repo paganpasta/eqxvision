@@ -132,7 +132,7 @@ class _Transition(eqx.Module):
 
 
 class DenseNet(eqx.Module):
-    """A simple port of `torchvision.models.densenet`."""
+    """A simple port of `torchvision.models.densenet`"""
 
     features: nn.Sequential
     classifier: nn.Linear
@@ -158,7 +158,7 @@ class DenseNet(eqx.Module):
               (i.e. bn_size * k features in the bottleneck layer)
         -   `drop_rate`: Dropout rate after each dense layer
         - `num_classes`: Number of classes in the classification task.
-                            Also controls the final output shape `(num_classes,)`. Defaults to `1000`.
+                            Also controls the final output shape `(num_classes,)`. Defaults to `1000`
         """
         super().__init__()
         if key is None:
@@ -219,8 +219,8 @@ class DenseNet(eqx.Module):
     def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
-        - `x`: The input. Should be a JAX array with `3` channels.
-        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`.
+        - `x`: The input. Should be a JAX array with `3` channels
+        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         out = self.features(x, key=key)
         out = jnp.ravel(out)
