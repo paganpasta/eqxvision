@@ -49,11 +49,11 @@ class GoogLeNet(eqx.Module):
         **Arguments:**
 
         - `num_classes`: Number of classes in the classification task.
-                        Also controls the final output shape `(num_classes,)`. Defaults to `1000`.
-        - `aux_logits`: If `True`, two auxiliary branches are added to the network. Defaults to `True`.
-        - `blocks`: Blocks for constructing the network.
-        - `dropout`: Dropout applied on the `main` branch. Defaults to `0.2`.
-        - `dropout_aux`: Dropout applied on the `aux` branches. Defaults to `0.7`.
+                        Also controls the final output shape `(num_classes,)`. Defaults to `1000`
+        - `aux_logits`: If `True`, two auxiliary branches are added to the network. Defaults to `True`
+        - `blocks`: Blocks for constructing the network
+        - `dropout`: Dropout applied on the `main` branch. Defaults to `0.2`
+        - `dropout_aux`: Dropout applied on the `aux` branches. Defaults to `0.7`
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
             initialisation. (Keyword only argument.)
 
@@ -116,8 +116,8 @@ class GoogLeNet(eqx.Module):
     ) -> Union[Array, Optional[Array], Optional[Array]]:
         """**Arguments:**
 
-        - `x`: The input. Should be a JAX array with `3` channels.
-        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`.
+        - `x`: The input. Should be a JAX array with `3` channels
+        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         if key is None:
             raise RuntimeError("The model requires a PRNGKey.")
