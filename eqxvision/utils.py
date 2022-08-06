@@ -18,6 +18,10 @@ _TEMP_DIR = "/tmp/.eqx"
 _Url = NewType("_Url", str)
 MODEL_URLS = {
     "alexnet": "https://download.pytorch.org/models/alexnet-owt-7be5be79.pth",
+    "densenet121": "https://download.pytorch.org/models/densenet121-a639ec97.pth",
+    "densenet169": "https://download.pytorch.org/models/densenet169-b2777c0a.pth",
+    "densenet201": "https://download.pytorch.org/models/densenet201-c1103571.pth",
+    "densenet161": "https://download.pytorch.org/models/densenet161-8d451a50.pth",
     "googlenet": "https://download.pytorch.org/models/googlenet-1378be20.pth",
     "resnet18": "https://download.pytorch.org/models/resnet18-5c106cde.pth",
     "resnet34": "https://download.pytorch.org/models/resnet34-333f7ec4.pth",
@@ -26,8 +30,8 @@ MODEL_URLS = {
     "resnet152": "https://download.pytorch.org/models/resnet152-b121ed2d.pth",
     "resnext50_32x4d": "https://download.pytorch.org/models/resnext50_32x4d-7cdf4587.pth",
     "resnext101_32x8d": "https://download.pytorch.org/models/resnext101_32x8d-8ba56ff5.pth",
-    "wide_resnet50_2": "https://download.pytorch.org/models/wide_resnet50_2-95faca4d.pth",
-    "wide_resnet101_2": "https://download.pytorch.org/models/wide_resnet101_2-32ee1156.pth",
+    "squeezenet1_0": "https://download.pytorch.org/models/squeezenet1_0-b66bff10.pth",
+    "squeezenet1_1": "https://download.pytorch.org/models/squeezenet1_1-b8a52dc0.pth",
     "vgg11": "https://download.pytorch.org/models/vgg11-8a719046.pth",
     "vgg13": "https://download.pytorch.org/models/vgg13-19584684.pth",
     "vgg16": "https://download.pytorch.org/models/vgg16-397923af.pth",
@@ -36,8 +40,8 @@ MODEL_URLS = {
     "vgg13_bn": "https://download.pytorch.org/models/vgg13_bn-abd245e5.pth",
     "vgg16_bn": "https://download.pytorch.org/models/vgg16_bn-6c64b313.pth",
     "vgg19_bn": "https://download.pytorch.org/models/vgg19_bn-c79401a0.pth",
-    "squeezenet1_0": "https://download.pytorch.org/models/squeezenet1_0-b66bff10.pth",
-    "squeezenet1_1": "https://download.pytorch.org/models/squeezenet1_1-b8a52dc0.pth",
+    "wide_resnet50_2": "https://download.pytorch.org/models/wide_resnet50_2-95faca4d.pth",
+    "wide_resnet101_2": "https://download.pytorch.org/models/wide_resnet101_2-32ee1156.pth",
 }
 
 

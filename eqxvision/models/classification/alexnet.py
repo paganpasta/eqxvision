@@ -8,12 +8,11 @@ import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
 
-from ...layers import Activation
 from ...utils import load_torch_weights, MODEL_URLS
 
 
 class AlexNet(eqx.Module):
-    """A simple port of torchvision.models.alexnet"""
+    """A simple port of `torchvision.models.alexnet`"""
 
     features: eqx.Module
     avgpool: eqx.Module
@@ -43,17 +42,17 @@ class AlexNet(eqx.Module):
         self.features = nn.Sequential(
             [
                 nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2, key=keys[0]),
-                Activation(jnn.relu),
+                nn.Lambda(jnn.relu),
                 nn.MaxPool2d(kernel_size=3, stride=2),
                 nn.Conv2d(64, 192, kernel_size=5, padding=2, key=keys[1]),
-                Activation(jnn.relu),
+                nn.Lambda(jnn.relu),
                 nn.MaxPool2d(kernel_size=3, stride=2),
                 nn.Conv2d(192, 384, kernel_size=3, padding=1, key=keys[2]),
-                Activation(jnn.relu),
+                nn.Lambda(jnn.relu),
                 nn.Conv2d(384, 256, kernel_size=3, padding=1, key=keys[3]),
-                Activation(jnn.relu),
+                nn.Lambda(jnn.relu),
                 nn.Conv2d(256, 256, kernel_size=3, padding=1, key=keys[4]),
-                Activation(jnn.relu),
+                nn.Lambda(jnn.relu),
                 nn.MaxPool2d(kernel_size=3, stride=2),
             ]
         )
@@ -62,10 +61,10 @@ class AlexNet(eqx.Module):
             [
                 nn.Dropout(p=dropout),
                 nn.Linear(256 * 6 * 6, 4096, key=keys[5]),
-                Activation(jnn.relu),
+                nn.Lambda(jnn.relu),
                 nn.Dropout(p=dropout),
                 nn.Linear(4096, 4096, key=keys[6]),
-                Activation(jnn.relu),
+                nn.Lambda(jnn.relu),
                 nn.Linear(4096, num_classes, key=keys[7]),
             ]
         )

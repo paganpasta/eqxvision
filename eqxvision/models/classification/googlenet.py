@@ -10,7 +10,7 @@ from equinox.custom_types import Array
 
 
 class GoogLeNet(eqx.Module):
-    """A simple port of torchvision.models.GoogLeNet"""
+    """A simple port of `torchvision.models.GoogLeNet`"""
 
     aux_logits: bool
     conv1: eqx.Module

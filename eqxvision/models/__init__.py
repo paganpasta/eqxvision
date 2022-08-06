@@ -1,4 +1,11 @@
 from .classification.alexnet import AlexNet, alexnet
+from .classification.densenet import (
+    DenseNet,
+    densenet121,
+    densenet161,
+    densenet169,
+    densenet201,
+)
 from .classification.googlenet import GoogLeNet, googlenet
 from .classification.resnet import (
     ResNet,

@@ -1,35 +1,9 @@
 import equinox as eqx
 import jax
 import jax.nn as jnn
-import jax.numpy as jnp
 import jax.random as jrandom
 
 import eqxvision.layers as layers
-
-
-def test_activation(getkey):
-    c_counter = 0
-
-    @eqx.filter_jit
-    def forward(net, xs, keys):
-        nonlocal c_counter
-        c_counter += 1
-        return jax.vmap(net)(xs, key=keys)
-
-    chain = eqx.nn.Sequential(
-        [
-            eqx.nn.Identity(),
-            layers.Activation(jnn.relu),
-        ]
-    )
-    x = jnp.array([[-1, -2, -3], [1, 2, 3]])
-    keys = jrandom.split(getkey(), 2)
-    output = forward(chain, x, keys)
-    assert output.shape == (2, 3)
-    assert (output >= 0).all()
-
-    forward(chain, x, keys)
-    assert c_counter == 1
 
 
 def test_patch_embed(getkey):

@@ -9,7 +9,6 @@ import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
 
-from ...layers import Activation
 from ...utils import load_torch_weights, MODEL_URLS
 
 
@@ -100,7 +99,7 @@ class VGG(eqx.Module):
                 nn.Linear(512 * 7 * 7, 4096, key=keys[1]),
                 nn.Dropout(p=dropout),
                 nn.Linear(4096, 4096, key=keys[2]),
-                Activation(jnn.relu),
+                nn.Lambda(jnn.relu),
                 nn.Dropout(p=dropout),
                 nn.Linear(4096, num_classes, key=keys[3]),
             ]
@@ -142,10 +141,10 @@ def _make_layers(
                 layers += [
                     conv2d,
                     eqex.BatchNorm(v, axis_name="batch"),
-                    Activation(jnn.relu),
+                    nn.Lambda(jnn.relu),
                 ]
             else:
-                layers += [conv2d, Activation(jnn.relu)]
+                layers += [conv2d, nn.Lambda(jnn.relu)]
             in_channels = v
             count += 1
     return nn.Sequential(layers)
