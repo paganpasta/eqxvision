@@ -90,6 +90,7 @@ nav:
             - 'api/models/classification/densenet.md'
             - 'api/models/classification/googlenet.md'
             - 'api/models/classification/mobilenetv2.md'
+            - 'api/models/classification/mobilenetv3.md'
             - 'api/models/classification/resnets.md'
             - 'api/models/classification/squeeze.md'
             - 'api/models/classification/vit.md'

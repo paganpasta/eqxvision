@@ -8,6 +8,11 @@ from .classification.densenet import (
 )
 from .classification.googlenet import GoogLeNet, googlenet
 from .classification.mobilenetv2 import mobilenet_v2, MobileNetV2
+from .classification.mobilenetv3 import (
+    mobilenet_v3_large,
+    mobilenet_v3_small,
+    MobileNetV3,
+)
 from .classification.resnet import (
     ResNet,
     resnet18,

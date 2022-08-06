@@ -24,6 +24,8 @@ MODEL_URLS = {
     "densenet161": "https://download.pytorch.org/models/densenet161-8d451a50.pth",
     "googlenet": "https://download.pytorch.org/models/googlenet-1378be20.pth",
     "mobilenet_v2": "https://download.pytorch.org/models/mobilenet_v2-b0353104.pth",
+    "mobilenet_v3_large": "https://download.pytorch.org/models/mobilenet_v3_large-8738ca79.pth",
+    "mobilenet_v3_small": "https://download.pytorch.org/models/mobilenet_v3_small-047dcff4.pth",
     "resnet18": "https://download.pytorch.org/models/resnet18-5c106cde.pth",
     "resnet34": "https://download.pytorch.org/models/resnet34-333f7ec4.pth",
     "resnet50": "https://download.pytorch.org/models/resnet50-19c8e357.pth",
