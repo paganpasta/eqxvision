@@ -38,7 +38,7 @@ class GoogLeNet(eqx.Module):
     def __init__(
         self,
         num_classes: int = 1000,
-        aux_logits: bool = True,
+        aux_logits: bool = False,
         blocks: Optional[List[Callable[..., eqx.Module]]] = None,
         dropout: float = 0.2,
         dropout_aux: float = 0.7,
@@ -50,7 +50,7 @@ class GoogLeNet(eqx.Module):
 
         - `num_classes`: Number of classes in the classification task.
                         Also controls the final output shape `(num_classes,)`. Defaults to `1000`
-        - `aux_logits`: If `True`, two auxiliary branches are added to the network. Defaults to `True`
+        - `aux_logits`: If `True`, two auxiliary branches are added to the network. Defaults to `False`
         - `blocks`: Blocks for constructing the network
         - `dropout`: Dropout applied on the `main` branch. Defaults to `0.2`
         - `dropout_aux`: Dropout applied on the `aux` branches. Defaults to `0.7`
