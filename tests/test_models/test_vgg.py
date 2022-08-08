@@ -38,9 +38,6 @@ class TestVGG:
         model = models.vgg11(pretrained=False)
         new_model = utils.load_torch_weights(model=model, url=utils.MODEL_URLS["vgg11"])
 
-        new_model = eqx.tree_inference(new_model, True)
-        assert model != new_model
-
         pt_outputs = net_preds["vgg11"]
         new_model = eqx.tree_inference(new_model, True)
         keys = jax.random.split(getkey(), 1)
