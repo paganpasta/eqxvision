@@ -19,6 +19,7 @@
 
 
 !!! Info "VGGs"
-    The difference arises due to `Adaptive average pooling`, resulting
-    in large deviation from `torchvision` classification performance. 
-    The pre-trained models can still be used as feature extractors.
+    There's a big gap in performance of pre-trained networks here.
+    The features generated are `close` with a tolerance of `1e-1`. 
+    `[PENDING]` Evaluation after fine-tuning the networks to assess the quality
+    of features extracted for usability.
