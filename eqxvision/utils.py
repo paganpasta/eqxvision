@@ -100,9 +100,19 @@ def load_torch_weights(
         [
             jnp.asarray(weight.detach().numpy())
             for name, weight in weights.items()
-            if "bn.running" not in name and "bn.num" not in name
+            if "running" not in name and "num_batches" not in name
         ]
     )
+
+    bn_s = []
+    for name, weight in weights.items():
+        if "running_mean" in name:
+            bn_s.append(False)
+            bn_s.append(jnp.asarray(weight.detach().numpy()))
+        elif "running_var" in name:
+            bn_s.append(jnp.asarray(weight.detach().numpy()))
+    bn_iterator = iter(bn_s)
+
     leaves, tree_def = jtu.tree_flatten(model)
 
     new_leaves = []
@@ -115,7 +125,25 @@ def load_torch_weights(
         else:
             new_leaves.append(leaf)
 
-    return jtu.tree_unflatten(tree_def, new_leaves)
+    model = jtu.tree_unflatten(tree_def, new_leaves)
+
+    def set_experimental(iter_bn, x):
+        def set_values(y):
+            if isinstance(y, eqx.experimental.StateIndex):
+                current_val = next(iter_bn)
+                if isinstance(current_val, bool):
+                    eqx.experimental.set_state(y, jnp.asarray(False))
+                else:
+                    running_mean, running_var = current_val, next(iter_bn)
+                    eqx.experimental.set_state(y, (running_mean, running_var))
+            return y
+
+        return jtu.tree_map(
+            set_values, x, is_leaf=lambda _: isinstance(_, eqx.experimental.StateIndex)
+        )
+
+    model = jtu.tree_map(set_experimental, bn_iterator, model)
+    return model
 
 
 def _make_divisible(v: float, divisor: int, min_value: Optional[int] = None) -> int:
