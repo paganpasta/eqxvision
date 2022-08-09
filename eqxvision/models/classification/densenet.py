@@ -9,6 +9,8 @@ import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
 
+from ...utils import load_torch_weights, MODEL_URLS
+
 
 class _DenseLayer(eqx.Module):
     norm1: eqxex.BatchNorm
@@ -238,35 +240,67 @@ def _densenet(
     return model
 
 
-def densenet121(**kwargs: Any) -> DenseNet:
+def densenet121(pretrained=False, **kwargs: Any) -> DenseNet:
     r"""Densenet-121 model from
     `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_.
     The required minimum input size of the model is 29x29.
 
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
+
     """
-    return _densenet(32, (6, 12, 24, 16), 64, **kwargs)
+    model = _densenet(32, (6, 12, 24, 16), 64, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["densenet121"])
+    return model
 
 
-def densenet161(**kwargs: Any) -> DenseNet:
+def densenet161(pretrained=False, **kwargs: Any) -> DenseNet:
     r"""Densenet-161 model from
     `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_.
     The required minimum input size of the model is 29x29.
 
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
+
     """
-    return _densenet(48, (6, 12, 36, 24), 96, **kwargs)
+    model = _densenet(48, (6, 12, 36, 24), 96, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["densenet161"])
+    return model
 
 
-def densenet169(**kwargs: Any) -> DenseNet:
+def densenet169(pretrained=False, **kwargs: Any) -> DenseNet:
     r"""Densenet-169 model from
     `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_.
     The required minimum input size of the model is 29x29.
+
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
     """
-    return _densenet(32, (6, 12, 32, 32), 64, **kwargs)
+    model = _densenet(32, (6, 12, 32, 32), 64, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["densenet169"])
+    return model
 
 
-def densenet201(**kwargs: Any) -> DenseNet:
+def densenet201(pretrained=False, **kwargs: Any) -> DenseNet:
     r"""Densenet-201 model from
     `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_.
     The required minimum input size of the model is 29x29.
+
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
     """
-    return _densenet(32, (6, 12, 48, 32), 64, **kwargs)
+    model = _densenet(32, (6, 12, 48, 32), 64, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["densenet201"])
+    return model

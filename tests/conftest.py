@@ -39,11 +39,32 @@ def net_preds():
     ckpt = torch.load("./tests/static/alexnet.pred.pth")
     gt_dicts["alexnet"] = ckpt["output"].detach().numpy()
 
+    ckpt = torch.load("./tests/static/densenet121.pred.pth")
+    gt_dicts["densenet121"] = ckpt["output"].detach().numpy()
+
+    ckpt = torch.load("./tests/static/googlenet.pred.pth")
+    gt_dicts["googlenet"] = ckpt["output"].detach().numpy()
+
+    ckpt = torch.load("./tests/static/mobilenet_v2.pred.pth")
+    gt_dicts["mobilenet_v2"] = ckpt["output"].detach().numpy()
+
+    ckpt = torch.load("./tests/static/mobilenet_v3_small.pred.pth")
+    gt_dicts["mobilenet_v3_small"] = ckpt["output"].detach().numpy()
+
+    ckpt = torch.load("./tests/static/resnet18.pred.pth")
+    gt_dicts["resnet18"] = ckpt["output"].detach().numpy()
+
+    ckpt = torch.load("./tests/static/shufflenet_v2_x0_5.pred.pth")
+    gt_dicts["shufflenetv2_x0.5"] = ckpt["output"].detach().numpy()
+
     ckpt = torch.load("./tests/static/squeezenet1_0.pred.pth")
     gt_dicts["squeezenet1_0"] = ckpt["output"].detach().numpy()
 
     ckpt = torch.load("./tests/static/vgg11.pred.pth")
     gt_dicts["vgg11"] = ckpt["output"].detach().numpy()
+
+    ckpt = torch.load("./tests/static/vgg11_bn.pred.pth")
+    gt_dicts["vgg11_bn"] = ckpt["output"].detach().numpy()
 
     print("Initialised!")
     return gt_dicts

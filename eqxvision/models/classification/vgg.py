@@ -170,12 +170,19 @@ def vgg11(pretrained=False, **kwargs: Any) -> VGG:
     return model
 
 
-def vgg11_bn(**kwargs: Any) -> VGG:
+def vgg11_bn(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 11-layer model (configuration "A") with batch normalization
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
+
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
     """
-    return _vgg("A", True, **kwargs)
+    model = _vgg("A", True, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["vgg11_bn"])
+    return model
 
 
 def vgg13(pretrained=False, **kwargs: Any) -> VGG:
@@ -193,12 +200,19 @@ def vgg13(pretrained=False, **kwargs: Any) -> VGG:
     return model
 
 
-def vgg13_bn(**kwargs: Any) -> VGG:
+def vgg13_bn(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 13-layer model (configuration "B") with batch normalization
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
+
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
     """
-    return _vgg("B", True, **kwargs)
+    model = _vgg("B", True, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["vgg13_bn"])
+    return model
 
 
 def vgg16(pretrained=False, **kwargs: Any) -> VGG:
@@ -216,12 +230,19 @@ def vgg16(pretrained=False, **kwargs: Any) -> VGG:
     return model
 
 
-def vgg16_bn(**kwargs: Any) -> VGG:
+def vgg16_bn(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 16-layer model (configuration "D") with batch normalization
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
+
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
     """
-    return _vgg("D", True, **kwargs)
+    model = _vgg("D", True, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["vgg16_bn"])
+    return model
 
 
 def vgg19(pretrained=False, **kwargs: Any) -> VGG:
@@ -239,9 +260,16 @@ def vgg19(pretrained=False, **kwargs: Any) -> VGG:
     return model
 
 
-def vgg19_bn(**kwargs: Any) -> VGG:
+def vgg19_bn(pretrained=False, **kwargs: Any) -> VGG:
     r"""VGG 19-layer model (configuration 'E') with batch normalization
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
     The required minimum input size of the model is 32x32.
+
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
     """
-    return _vgg("E", True, **kwargs)
+    model = _vgg("E", True, **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["vgg19_bn"])
+    return model
