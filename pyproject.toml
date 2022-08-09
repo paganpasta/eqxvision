@@ -19,7 +19,7 @@ dependencies=[
     'jax',
     'jaxlib',
     "torch >=1.7.1",
-    "torchvision >=0.10.0"
+    "torchvision >=0.8.0"
 ]
 
 [project.urls]
@@ -32,7 +32,8 @@ test = [
     "bluepy",
     "pytest",
     "torch >=1.7.1",
-    "torchvision >=0.10.0"
+    "torchvision >=0.8.0",
+    "optax"
 ]
 
 docs=[

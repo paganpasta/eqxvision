@@ -36,9 +36,8 @@ pip install eqxvision
 ## What's New?
 - `[Experimental]`Now supports loading PyTorch weights from `torchvision` for models **without** BatchNorm
 
-    !!! note
-        Due to slight differences in the implementation of underlying operations,
-        the output can differ for pretrained versions of the network.
+    Checkout the comparison table [here](./comparison.md).
+
        
 ## Tips
 - Better to use `@equinox.jit_filter` instead of `@jax.jit`

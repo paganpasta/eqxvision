@@ -10,7 +10,7 @@ import jax.random as jrandom
 from equinox.custom_types import Array
 
 from ...layers import ConvNormActivation
-from ...utils import _make_divisible
+from ...utils import _make_divisible, load_torch_weights, MODEL_URLS
 
 
 class InvertedResidual(eqx.Module):
@@ -228,10 +228,17 @@ class MobileNetV2(eqx.Module):
         return x
 
 
-def mobilenet_v2(**kwargs: Any) -> MobileNetV2:
+def mobilenet_v2(pretrained=False, **kwargs: Any) -> MobileNetV2:
     """
     Constructs a MobileNetV2 architecture from
     `"MobileNetV2: Inverted Residuals and Linear Bottlenecks" <https://arxiv.org/abs/1801.04381>`_.
+
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
     """
     model = MobileNetV2(**kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["mobilenet_v2"])
     return model

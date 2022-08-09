@@ -9,6 +9,8 @@ import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
 
+from ...utils import load_torch_weights, MODEL_URLS
+
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1, key=None):
     """3x3 convolution with padding"""
@@ -364,67 +366,115 @@ def _resnet(block, layers, **kwargs):
     return model
 
 
-def resnet18(**kwargs) -> ResNet:
+def resnet18(pretrained=False, **kwargs) -> ResNet:
     r"""ResNet-18 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
     """
-    return _resnet(ResNetBasicBlock, [2, 2, 2, 2], **kwargs)
+    model = _resnet(ResNetBasicBlock, [2, 2, 2, 2], **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["resnet18"])
+    return model
 
 
-def resnet34(**kwargs) -> ResNet:
+def resnet34(pretrained=False, **kwargs) -> ResNet:
     r"""ResNet-34 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
     """
-    return _resnet(ResNetBasicBlock, [3, 4, 6, 3], **kwargs)
+    model = _resnet(ResNetBasicBlock, [3, 4, 6, 3], **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["resnet34"])
+    return model
 
 
-def resnet50(**kwargs) -> ResNet:
+def resnet50(pretrained=False, **kwargs) -> ResNet:
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
     """
-    return _resnet(ResNetBottleneck, [3, 4, 6, 3], **kwargs)
+    model = _resnet(ResNetBottleneck, [3, 4, 6, 3], **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["resnet50"])
+    return model
 
 
-def resnet101(**kwargs) -> ResNet:
+def resnet101(pretrained=False, **kwargs) -> ResNet:
     r"""ResNet-101 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
     """
-    return _resnet(ResNetBottleneck, [3, 4, 23, 3], **kwargs)
+    model = _resnet(ResNetBottleneck, [3, 4, 23, 3], **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["resnet101"])
+    return model
 
 
-def resnet152(**kwargs) -> ResNet:
+def resnet152(pretrained=False, **kwargs) -> ResNet:
     r"""ResNet-152 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
     """
-    return _resnet(ResNetBottleneck, [3, 8, 36, 3], **kwargs)
+    model = _resnet(ResNetBottleneck, [3, 8, 36, 3], **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["resnet152"])
+    return model
 
 
-def resnext50_32x4d(**kwargs) -> ResNet:
+def resnext50_32x4d(pretrained=False, **kwargs) -> ResNet:
     r"""ResNeXt-50 32x4d model from
     `"Aggregated Residual Transformation for Deep Neural Networks" <https://arxiv.org/pdf/1611.05431.pdf>`_
+
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
 
     """
     kwargs["groups"] = 32
     kwargs["width_per_group"] = 4
-    return _resnet(ResNetBottleneck, [3, 4, 6, 3], **kwargs)
+    model = _resnet(ResNetBottleneck, [3, 4, 6, 3], **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["resnext50_32x4d"])
+    return model
 
 
-def resnext101_32x8d(**kwargs) -> ResNet:
+def resnext101_32x8d(pretrained=False, **kwargs) -> ResNet:
     r"""ResNeXt-101 32x8d model from
     `"Aggregated Residual Transformation for Deep Neural Networks" <https://arxiv.org/pdf/1611.05431.pdf>`_
+
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
 
     """
     kwargs["groups"] = 32
     kwargs["width_per_group"] = 8
-    return _resnet(ResNetBottleneck, [3, 4, 23, 3], **kwargs)
+    model = _resnet(ResNetBottleneck, [3, 4, 23, 3], **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["resnext101_32x8d"])
+    return model
 
 
-def wide_resnet50_2(**kwargs) -> ResNet:
+def wide_resnet50_2(pretrained=False, **kwargs) -> ResNet:
     r"""Wide ResNet-50-2 model from
     `"Wide Residual Networks" <https://arxiv.org/pdf/1605.07146.pdf>`_
     The model is the same as ResNet except for the bottleneck number of channels
@@ -432,12 +482,19 @@ def wide_resnet50_2(**kwargs) -> ResNet:
     convolutions is the same, e.g. last block in ResNet-50 has 2048-512-2048
     channels, and in Wide ResNet-50-2 has 2048-1024-2048.
 
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
     """
     kwargs["width_per_group"] = 64 * 2
-    return _resnet(ResNetBottleneck, [3, 4, 6, 3], **kwargs)
+    model = _resnet(ResNetBottleneck, [3, 4, 6, 3], **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["wide_resnet50_2"])
+    return model
 
 
-def wide_resnet101_2(**kwargs) -> ResNet:
+def wide_resnet101_2(pretrained=False, **kwargs) -> ResNet:
     r"""Wide ResNet-101-2 model from
     `"Wide Residual Networks" <https://arxiv.org/pdf/1605.07146.pdf>`_
     The model is the same as ResNet except for the bottleneck number of channels
@@ -445,6 +502,13 @@ def wide_resnet101_2(**kwargs) -> ResNet:
     convolutions is the same, e.g. last block in ResNet-50 has 2048-512-2048
     channels, and in Wide ResNet-50-2 has 2048-1024-2048.
 
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
     """
     kwargs["width_per_group"] = 64 * 2
-    return _resnet(ResNetBottleneck, [3, 4, 23, 3], **kwargs)
+    model = _resnet(ResNetBottleneck, [3, 4, 23, 3], **kwargs)
+    if pretrained:
+        model = load_torch_weights(model, url=MODEL_URLS["wide_resnet101_2"])
+    return model

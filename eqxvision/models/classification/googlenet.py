@@ -1,3 +1,4 @@
+import warnings
 from typing import Any, Callable, List, Optional, Union
 
 import equinox as eqx
@@ -7,6 +8,8 @@ import jax.nn as jnn
 import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
+
+from ...utils import load_torch_weights, MODEL_URLS
 
 
 class GoogLeNet(eqx.Module):
@@ -307,9 +310,26 @@ class BasicConv2d(eqx.Module):
         return jnn.relu(x)
 
 
-def googlenet(**kwargs: Any) -> GoogLeNet:
+def googlenet(pretrained=False, **kwargs: Any) -> GoogLeNet:
     r"""GoogLeNet (Inception v1) model architecture from
     `"Going Deeper with Convolutions" <http://arxiv.org/abs/1409.4842>`_.
     The required minimum input size of the model is 15x15.
+
+    **Arguments:**
+
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+
     """
-    return GoogLeNet(**kwargs)
+    if pretrained:
+        use_aux = kwargs.get("aux_logits", False)
+        model = GoogLeNet(aux_logits=True, **kwargs)
+        model = load_torch_weights(model, url=MODEL_URLS["googlenet"])
+        if not use_aux:
+            model = eqx.tree_at(lambda m: m.aux_logits, model, replace=(False))
+        else:
+            warnings.warn(
+                "Loaded pretrained weights for GoogLeNet. But, aux-branch weights are un-trained."
+            )
+    else:
+        model = GoogLeNet(**kwargs)
+    return model

@@ -5,10 +5,9 @@ import eqxvision.models as models
 
 
 class TestGoogLeNet:
-    random_image = jax.random.uniform(key=jax.random.PRNGKey(0), shape=(1, 3, 224, 224))
     answer = (1, 1000)
 
-    def test_output_shape(self, getkey):
+    def test_output_shape(self, demo_image, getkey):
         @eqx.filter_jit
         def forward(net, x, key):
             keys = jax.random.split(key, x.shape[0])
@@ -16,5 +15,5 @@ class TestGoogLeNet:
             return ans
 
         model = models.googlenet(num_classes=1000, aux_logits=False)
-        output = forward(model, self.random_image, getkey())
+        output = forward(model, demo_image, getkey())
         assert output.shape == self.answer
