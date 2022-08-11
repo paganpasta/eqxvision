@@ -96,6 +96,8 @@ plugins:
 
 nav:
     - 'index.md'
+    - Getting Started:
+          - 'getting_started/vit_attention.ipynb'
     - Evaluation:
         - 'comparison.md'
     - Full API:
