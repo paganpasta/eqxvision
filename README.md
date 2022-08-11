@@ -35,18 +35,16 @@ Picking a model and doing a forward pass is as simple as ...
 ```
 
 ## What's New?
-- `[Experimental]`Now supports loading PyTorch weights from `torchvision` for models **without** BatchNorm
+- Pretrained on all ported models are available!
 
     !!! note
-        Due to slight differences in the implementation of underlying operations,
-        differences in the output values can be expected from `torchvision` models.
+        Only `DINO` pretrained weights are available for `ViTs`.
        
 ## Tips
 - Better to use `@equinox.jit_filter` instead of `@jax.jit`
 - Advisable to use `jax.{v,p}map` with `axis_name='batch'` for all models
 - Don't forget to switch to `inference` mode for evaluations
 - Wrap with `eqx.filter(net, eqx.is_array)` for `Optax` initialisation.
-
 
 
 ## Contributing

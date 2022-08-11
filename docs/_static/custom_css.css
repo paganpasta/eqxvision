@@ -160,14 +160,3 @@ h5.doc-heading, h6.heading {
     border-radius: 2pt;
     padding: 0pt 5pt 2pt 5pt;
 }
-@keyframes heart {
-  0%, 40%, 80%, 100% {
-    transform: scale(1);
-  }
-  20%, 60% {
-    transform: scale(1.15);
-  }
-}
-.heart {
-  animation: heart 1000ms infinite;
-}

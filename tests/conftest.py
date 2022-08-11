@@ -60,6 +60,9 @@ def net_preds():
     ckpt = torch.load("./tests/static/squeezenet1_0.pred.pth")
     gt_dicts["squeezenet1_0"] = ckpt["output"].detach().numpy()
 
+    ckpt = torch.load("./tests/static/vit_small_p16_dino.pred.pth")
+    gt_dicts["vit_small_patch16_dino"] = ckpt["output"].detach().numpy()
+
     ckpt = torch.load("./tests/static/vgg11.pred.pth")
     gt_dicts["vgg11"] = ckpt["output"].detach().numpy()
 
