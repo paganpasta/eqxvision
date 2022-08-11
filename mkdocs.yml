@@ -97,7 +97,8 @@ plugins:
 nav:
     - 'index.md'
     - Getting Started:
-          - 'getting_started/vit_attention.ipynb'
+          - 'getting_started/Transfer Learning.ipynb'
+          - 'getting_started/Self-Attention Maps.ipynb'
     - Evaluation:
         - 'comparison.md'
     - Full API:
