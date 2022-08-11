@@ -34,9 +34,13 @@ pip install eqxvision
     ```
 
 ## What's New?
-- `[Experimental]`Now supports loading PyTorch weights from `torchvision` for models **without** BatchNorm
 
-    Checkout the comparison table [here](./comparison.md).
+- Pretrained on all ported models is available! :rocket:
+
+    !!! note
+        Only `DINO` pretrained weights are available for `ViTs`.
+
+  Checkout the comparison table [here](./comparison.md).
 
        
 ## Tips

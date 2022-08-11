@@ -9,6 +9,7 @@ import jax.random as jrandom
 from equinox.custom_types import Array
 
 from ...layers import DropPath, MlpProjection, PatchEmbed
+from ...utils import load_torch_weights, MODEL_URLS
 
 
 class VitAttention(eqx.Module):
@@ -28,7 +29,7 @@ class VitAttention(eqx.Module):
         attn_drop: float = 0.0,
         proj_drop: float = 0.0,
         *,
-        key: "jax.random.PRNGKey" = None
+        key: "jax.random.PRNGKey" = None,
     ):
         """**Arguments:**
 
@@ -69,7 +70,7 @@ class VitAttention(eqx.Module):
         attn = jnn.softmax(attn, axis=-1)
         attn = self.attn_drop(attn, key=keys[0])
 
-        x = jnp.reshape(jnp.transpose((attn @ v), axes=(0, 1, 3, 2)), (N, C))
+        x = jnp.reshape(jnp.transpose((attn @ v), axes=(0, 2, 1, 3)), (N, C))
         x = jax.vmap(self.proj)(x)
         x = self.proj_drop(x, key=keys[1])
         return x, attn
@@ -95,7 +96,7 @@ class VitBlock(eqx.Module):
         act_layer=jnn.gelu,
         norm_layer=nn.LayerNorm,
         *,
-        key: "jax.random.PRNGKey"
+        key: "jax.random.PRNGKey",
     ):
         """**Arguments**
 
@@ -145,13 +146,14 @@ class VitBlock(eqx.Module):
         - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
         """
         keys = jrandom.split(key, 4)
-        y, attn = self.attn(self.norm1(x), key=keys[0])
+        y = jax.vmap(self.norm1)(x)
+        y, attn = self.attn(y, key=keys[0])
         if return_attention:
             return attn
         x = x + self.drop_path(y, key=keys[1])
-        x = self.norm2(x)
-        x = jax.vmap(self.mlp)(x, key=jrandom.split(keys[2], x.shape[0]))
-        x = x + self.drop_path(x, key=keys[3])
+        y = jax.vmap(self.norm2)(x)
+        y = jax.vmap(self.mlp)(y, key=jrandom.split(keys[2], x.shape[0]))
+        x = x + self.drop_path(y, key=keys[3])
         return x
 
 
@@ -159,9 +161,9 @@ class VisionTransformer(eqx.Module):
     """Vision Transformer ported from https://github.com/facebookresearch/dino/blob/main/vision_transformer.py"""
 
     num_features: int
-    patch_embed: PatchEmbed
     cls_token: jnp.ndarray
     pos_embed: jnp.ndarray
+    patch_embed: PatchEmbed
     pos_drop: nn.Dropout
     blocks: Sequence[VitBlock]
     norm: eqx.Module
@@ -178,32 +180,33 @@ class VisionTransformer(eqx.Module):
         depth: int = 12,
         num_heads: int = 12,
         mlp_ratio: float = 4.0,
-        qkv_bias: bool = False,
+        qkv_bias: bool = True,
         qk_scale=None,
         drop_rate=0.0,
         attn_drop_rate=0.0,
         drop_path_rate=0.0,
         norm_layer=nn.LayerNorm,
         *,
-        key: "jax.random.PRNGKey" = None
+        key: "jax.random.PRNGKey" = None,
     ):
         """**Arguments:**
 
         - `img_size`: The size of the input image. Defaults to `(224, 224)`
-        - `patch_size`: Size of the patch to construct from the input image. Defaults to `(16, 16)`.
-        - `in_chans`: Number of input channels. Defaults to `3`.
+        - `patch_size`: Size of the patch to construct from the input image. Defaults to `(16, 16)`
+        - `in_chans`: Number of input channels. Defaults to `3`
         - `num_classes`: Number of classes in the classification task.
-                         Also controls the final output shape `(num_classes,)`.
-        - `embed_dim`: The dimension of the resulting embedding of the patch. Defaults to `768`.
-        - `depth`: Number of `VitBlocks` in the network.
-        - `num_heads`: The number of equal parts to split the input along the `dim`.
-        - `mlp_ratio`: For computing hidden dimension of the `mlp`.
-        - `qkv_bias`: To add `bias` within the `qkv` computation.
-        - `qk_scale`: For scaling the `query` `value` computation.
-        - `drop_rate`: Dropout rate used within the `MlpProjection`.
-        - `attn_drop_rate`: Dropout rate used within the attention modules.
-        - `drop_path_rate`: Dropout rate used within `VitBlock`s.
-        - `norm_layer`: Normalisation applied to the intermediate outputs. Defaults to `equinox.nn.LayerNorm`.
+                         Also controls the final output shape `(num_classes,)`. If `num_classes=0`,
+                         then the final layer is replaced with `nn.Identity`
+        - `embed_dim`: The dimension of the resulting embedding of the patch. Defaults to `768`
+        - `depth`: Number of `VitBlocks` in the network
+        - `num_heads`: The number of equal parts to split the input along the `dim`
+        - `mlp_ratio`: For computing hidden dimension of the `mlp`
+        - `qkv_bias`: To add `bias` within the `qkv` computation
+        - `qk_scale`: For scaling the `query` `value` computation
+        - `drop_rate`: Dropout rate used within the `MlpProjection`
+        - `attn_drop_rate`: Dropout rate used within the attention modules
+        - `drop_path_rate`: Dropout rate used within `VitBlock`s
+        - `norm_layer`: Normalisation applied to the intermediate outputs. Defaults to `equinox.nn.LayerNorm`
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
 
@@ -248,7 +251,11 @@ class VisionTransformer(eqx.Module):
         ]
         self.norm = norm_layer(embed_dim)
         # Classifier head
-        self.fc = nn.Linear(embed_dim, num_classes, key=keys[-1])
+        self.fc = (
+            nn.Identity()
+            if num_classes == 0
+            else nn.Linear(embed_dim, num_classes, key=keys[-1])
+        )
         # ToDo: Initialization scheme of the weights
 
     def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
@@ -262,7 +269,7 @@ class VisionTransformer(eqx.Module):
         x = jnp.concatenate([self.cls_token, x], axis=0) + self.pos_embed
         for key_, blk in zip(keys, self.blocks):
             x = blk(x, key=key_)
-        x = self.norm(x)
+        x = jax.vmap(self.norm)(x)
         return self.fc(x[0])
 
     def get_last_self_attention(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
@@ -293,15 +300,15 @@ def vit_tiny(
     mlp_ratio=4,
     *,
     key: Optional["jax.random.PRNGKey"] = None,
-    **kwargs
+    **kwargs,
 ):
     """**Arguments:**
 
-    - `patch_size`: Size of the patch to construct from the input image.
-    - `embed_dim`: The dimension of the resulting embedding of the patch.
-    - `depth`: Number of `VitBlocks` in the network.
-    - `num_heads`: The number of equal parts to split the input along the `dim`.
-    - `mlp_ratio`: For computing hidden dimension of the `mlp`.
+    - `patch_size`: Size of the patch to construct from the input image
+    - `embed_dim`: The dimension of the resulting embedding of the patch
+    - `depth`: Number of `VitBlocks` in the network
+    - `num_heads`: The number of equal parts to split the input along the `dim`
+    - `mlp_ratio`: For computing hidden dimension of the `mlp`
     - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
     - `kwargs`: Parameters passed on to the `VisionTransformer`
@@ -313,7 +320,7 @@ def vit_tiny(
         num_heads=num_heads,
         mlp_ratio=mlp_ratio,
         key=key,
-        **kwargs
+        **kwargs,
     )
     return model
 
@@ -324,17 +331,19 @@ def vit_small(
     depth=12,
     num_heads=6,
     mlp_ratio=4,
+    pretrained=False,
     *,
     key: Optional["jax.random.PRNGKey"] = None,
-    **kwargs
+    **kwargs,
 ):
     """**Arguments:**
 
-    - `patch_size`: Size of the patch to construct from the input image.
-    - `embed_dim`: The dimension of the resulting embedding of the patch.
-    - `depth`: Number of `VitBlocks` in the network.
-    - `num_heads`: The number of equal parts to split the input along the `dim`.
-    - `mlp_ratio`: For computing hidden dimension of the `mlp`.
+    - `patch_size`: Size of the patch to construct from the input image
+    - `embed_dim`: The dimension of the resulting embedding of the patch
+    - `depth`: Number of `VitBlocks` in the network
+    - `num_heads`: The number of equal parts to split the input along the `dim`
+    - `mlp_ratio`: For computing hidden dimension of the `mlp`
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
     - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
     - `kwargs`: Parameters passed on to the `VisionTransformer`
@@ -346,8 +355,17 @@ def vit_small(
         num_heads=num_heads,
         mlp_ratio=mlp_ratio,
         key=key,
-        **kwargs
+        **kwargs,
     )
+    if pretrained:
+        if not isinstance(model.fc, nn.Identity):
+            raise ValueError(
+                "Currently ViT only support DINO weights which require"
+                " no classification layer. Try again with num_classes=0."
+            )
+
+        model_name = f"vit_small_patch{patch_size}_224_dino"
+        model = load_torch_weights(model, url=MODEL_URLS[model_name])
     return model
 
 
@@ -357,17 +375,19 @@ def vit_base(
     depth=12,
     num_heads=12,
     mlp_ratio=4,
+    pretrained=False,
     *,
     key: Optional["jax.random.PRNGKey"] = None,
-    **kwargs
+    **kwargs,
 ):
     """**Arguments:**
 
-    - `patch_size`: Size of the patch to construct from the input image.
-    - `embed_dim`: The dimension of the resulting embedding of the patch.
-    - `depth`: Number of `VitBlocks` in the network.
-    - `num_heads`: The number of equal parts to split the input along the `dim`.
-    - `mlp_ratio`: For computing hidden dimension of the `mlp`.
+    - `patch_size`: Size of the patch to construct from the input image
+    - `embed_dim`: The dimension of the resulting embedding of the patch
+    - `depth`: Number of `VitBlocks` in the network
+    - `num_heads`: The number of equal parts to split the input along the `dim`
+    - `mlp_ratio`: For computing hidden dimension of the `mlp`
+    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
     - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
     - `kwargs`: Parameters passed on to the `VisionTransformer`
@@ -379,6 +399,15 @@ def vit_base(
         num_heads=num_heads,
         mlp_ratio=mlp_ratio,
         key=key,
-        **kwargs
+        **kwargs,
     )
+    if pretrained:
+        if not isinstance(model.fc, nn.Identity):
+            raise ValueError(
+                "Currently ViT only support DINO weights which require"
+                " no classification layer. Try again with num_classes=0."
+            )
+
+        model_name = f"vit_base_patch{patch_size}_224_dino"
+        model = load_torch_weights(model, url=MODEL_URLS[model_name])
     return model
