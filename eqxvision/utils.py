@@ -39,6 +39,14 @@ MODEL_URLS = {
     "shufflenetv2_x2.0": None,
     "squeezenet1_0": "https://download.pytorch.org/models/squeezenet1_0-b66bff10.pth",
     "squeezenet1_1": "https://download.pytorch.org/models/squeezenet1_1-b8a52dc0.pth",
+    "vit_small_patch16_224_dino": "https://dl.fbaipublicfiles.com/dino/"
+    "dino_deitsmall16_pretrain/dino_deitsmall16_pretrain.pth",
+    "vit_small_patch8_224_dino": "https://dl.fbaipublicfiles.com/dino/"
+    "dino_deitsmall8_pretrain/dino_deitsmall8_pretrain.pth",
+    "vit_base_patch16_224_dino": "https://dl.fbaipublicfiles.com/dino/"
+    "dino_vitbase16_pretrain/dino_vitbase16_pretrain.pth",
+    "vit_base_patch8_224_dino": "https://dl.fbaipublicfiles.com/dino/"
+    "dino_vitbase8_pretrain/dino_vitbase8_pretrain.pth",
     "vgg11": "https://download.pytorch.org/models/vgg11-8a719046.pth",
     "vgg13": "https://download.pytorch.org/models/vgg13-19584684.pth",
     "vgg16": "https://download.pytorch.org/models/vgg16-397923af.pth",
