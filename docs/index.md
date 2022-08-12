@@ -44,7 +44,7 @@ pip install eqxvision
 
 ## Get Started!
 
-Checkout any of the easy to follow tutorials. 
+Start with any one of these easy to follow [tutorials](getting_started/Transfer_Learning.ipynb). 
        
 ## Tips
 - Better to use `@equinox.jit_filter` instead of `@jax.jit`
