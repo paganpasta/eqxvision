@@ -1,4 +1,11 @@
 from .classification.alexnet import AlexNet, alexnet
+from .classification.convnext import (
+    ConvNeXt,
+    convnext_base,
+    convnext_large,
+    convnext_small,
+    convnext_tiny,
+)
 from .classification.densenet import (
     DenseNet,
     densenet121,

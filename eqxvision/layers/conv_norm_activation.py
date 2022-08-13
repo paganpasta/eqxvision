@@ -25,7 +25,7 @@ class ConvNormActivation(nn.Sequential):
         norm_layer: Optional[Callable] = eqxex.BatchNorm,
         activation_layer: Optional[Callable] = jnn.relu,
         dilation: int = 1,
-        bias: Optional[bool] = None,
+        use_bias: Optional[bool] = None,
         *,
         key: "jax.random.PRNGKey" = None
     ) -> None:
@@ -52,8 +52,8 @@ class ConvNormActivation(nn.Sequential):
 
         if padding is None:
             padding = (kernel_size - 1) // 2 * dilation
-        if bias is None:
-            bias = norm_layer is None
+        if use_bias is None:
+            use_bias = norm_layer is None
         layers = [
             nn.Conv2d(
                 in_channels,
@@ -63,12 +63,15 @@ class ConvNormActivation(nn.Sequential):
                 padding,
                 dilation=dilation,
                 groups=groups,
-                use_bias=bias,
+                use_bias=use_bias,
                 key=key,
             )
         ]
         if norm_layer is not None:
-            layers.append(norm_layer(out_channels, axis_name="batch"))
+            if norm_layer == eqxex.BatchNorm:
+                layers.append(norm_layer(out_channels, axis_name="batch"))
+            else:
+                layers.append(norm_layer(out_channels))
         if activation_layer is not None:
             layers.append(nn.Lambda(activation_layer))
         super().__init__(layers)

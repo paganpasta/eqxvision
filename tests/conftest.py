@@ -39,6 +39,9 @@ def net_preds():
     ckpt = torch.load("./tests/static/alexnet.pred.pth")
     gt_dicts["alexnet"] = ckpt["output"].detach().numpy()
 
+    ckpt = torch.load("./tests/static/convnext_tiny.pred.pth")
+    gt_dicts["convnext_tiny"] = ckpt.detach().numpy()
+
     ckpt = torch.load("./tests/static/densenet121.pred.pth")
     gt_dicts["densenet121"] = ckpt["output"].detach().numpy()
 

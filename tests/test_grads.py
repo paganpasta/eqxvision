@@ -10,6 +10,7 @@ import eqxvision.models as models
 
 model_list = [
     models.alexnet,
+    models.convnext_tiny,
     models.densenet121,
     models.googlenet,
     models.mobilenet_v2,

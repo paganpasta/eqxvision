@@ -104,6 +104,7 @@ nav:
     - Full API:
         - Classification models:
             - 'api/models/classification/alexnet.md'
+            - 'api/models/classification/convnext.md'
             - 'api/models/classification/densenet.md'
             - 'api/models/classification/googlenet.md'
             - 'api/models/classification/mobilenetv2.md'
@@ -111,11 +112,12 @@ nav:
             - 'api/models/classification/resnets.md'
             - 'api/models/classification/shufflenetv2.md'
             - 'api/models/classification/squeeze.md'
-            - 'api/models/classification/vit.md'
             - 'api/models/classification/vgg.md'
+            - 'api/models/classification/vit.md'
         - Vision Layers:
             - 'api/layers/conv_norm_act.md'
             - 'api/layers/drop_path.md'
+            - 'api/layers/extensions_2d.md'
             - 'api/layers/mlp.md'
             - 'api/layers/patch.md'
             - 'api/layers/squeeze.md'
