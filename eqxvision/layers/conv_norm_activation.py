@@ -1,3 +1,4 @@
+from functools import partial
 from typing import Callable, Optional
 
 import equinox.experimental as eqxex
@@ -68,7 +69,12 @@ class ConvNormActivation(nn.Sequential):
             )
         ]
         if norm_layer is not None:
-            if norm_layer == eqxex.BatchNorm:
+            is_bn = (
+                norm_layer.func == eqxex.BatchNorm
+                if isinstance(norm_layer, partial)
+                else norm_layer == eqxex.BatchNorm
+            )
+            if is_bn:
                 layers.append(norm_layer(out_channels, axis_name="batch"))
             else:
                 layers.append(norm_layer(out_channels))
