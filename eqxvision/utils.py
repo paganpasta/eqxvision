@@ -18,6 +18,10 @@ _TEMP_DIR = "/tmp/.eqx"
 _Url = NewType("_Url", str)
 MODEL_URLS = {
     "alexnet": "https://download.pytorch.org/models/alexnet-owt-7be5be79.pth",
+    "convnext_tiny": "https://download.pytorch.org/models/convnext_tiny-983f1562.pth",
+    "convnext_small": "https://download.pytorch.org/models/convnext_small-0c510722.pth",
+    "convnext_base": "https://download.pytorch.org/models/convnext_base-6075fbad.pth",
+    "convnext_large": "https://download.pytorch.org/models/convnext_large-ea097f82.pth",
     "densenet121": "https://download.pytorch.org/models/densenet121-a639ec97.pth",
     "densenet169": "https://download.pytorch.org/models/densenet169-b2777c0a.pth",
     "densenet201": "https://download.pytorch.org/models/densenet201-c1103571.pth",

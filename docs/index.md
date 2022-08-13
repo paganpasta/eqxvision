@@ -42,6 +42,9 @@ pip install eqxvision
 
   Checkout the comparison table [here](./comparison.md).
 
+## Get Started!
+
+Start with any one of these easy to follow [tutorials](getting_started/Transfer_Learning.ipynb). 
        
 ## Tips
 - Better to use `@equinox.jit_filter` instead of `@jax.jit`

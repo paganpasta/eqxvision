@@ -39,6 +39,12 @@ Picking a model and doing a forward pass is as simple as ...
 
     !!! note
         Only `DINO` pretrained weights are available for `ViTs`.
+
+
+## Get Started!
+
+Start with any one of these easy to follow [tutorials](https://eqxvision.readthedocs.io/en/latest/getting_started/Transfer_Learning.ipynb). 
+       
        
 ## Tips
 - Better to use `@equinox.jit_filter` instead of `@jax.jit`
