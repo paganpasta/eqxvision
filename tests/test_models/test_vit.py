@@ -1,5 +1,6 @@
 import equinox as eqx
 import jax
+import jax.random as jr
 import pytest
 
 import eqxvision.models as models
@@ -98,3 +99,10 @@ class TestVit:
 
         output = forward(net, random_input, keys)
         assert output.shape == answer
+
+    def test_vit_pretrained(self, demo_image, getkey):
+        net = models.vit_small(num_classes=0, pretrained=True)
+        keys = jr.split(getkey(), 1)
+        output = jax.vmap(net)(demo_image, key=keys)
+
+        assert output.shape == (1, 384)

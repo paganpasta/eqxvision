@@ -1,5 +1,6 @@
 from . import (
     alexnet,
+    convnext,
     densenet,
     googlenet,
     mobilenetv2,
