@@ -43,7 +43,7 @@ Picking a model and doing a forward pass is as simple as ...
 
 ## Get Started!
 
-Start with any one of these easy to follow [tutorials](https://eqxvision.readthedocs.io/en/latest/getting_started/Transfer_Learning.ipynb). 
+Start with any one of these easy to follow [tutorials](https://eqxvision.readthedocs.io/en/latest/getting_started/Transfer_Learning/). 
        
        
 ## Tips
