@@ -1,4 +1,4 @@
-# VGGs
+# VGG
 
 ::: eqxvision.models.VGG
     selection:

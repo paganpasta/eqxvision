@@ -1,4 +1,4 @@
-# Vision Transformers
+# Vision Transformer
 
 ---
 

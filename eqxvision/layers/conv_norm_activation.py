@@ -50,6 +50,8 @@ class ConvNormActivation(nn.Sequential):
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
             initialisation. (Keyword only argument.)
         """
+        if key is None:
+            key = jax.random.PRNGKey(0)
 
         if padding is None:
             padding = (kernel_size - 1) // 2 * dilation
