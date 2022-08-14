@@ -7,15 +7,17 @@
 
     -   For `Vgg` and `Googlenet`, there's a big gap in performance of 
         pre-trained networks. The difference arises after the `adaptive-pooling`,
-        which implies the networks can still be used as feature extractors (see results [here](./getting_started/Transfer_Learning.ipynb).
+        which implies the networks can still be used as feature extractors 
+        (see results [here](./getting_started/Transfer_Learning.ipynb)).
 
-    -   As `Mobilenet-v3` uses `maxpool` with `ceil` and a number of adaptive-pooling` layers,
-        the pretrained models are provided with no guarantees.
+    -   As `Mobilenet-v3` uses `maxpool` with `ceil` and a number of adaptive-pooling` layers, 
+        which is not fully supported (yet). The pretrained models are provided with no guarantees.
 
 
 | Method             | Torchvision | Eqxvision  |
 |--------------------|-------------|------------|
 | Alexnet            | 56.518      | 56.522     |
+| Convnext_tiny      | 82.132      | 82.120     |
 | Densenet121        | 74.432      | 74.434     |
 | Googlenet          | 69.774      | 61.046     |
 | Mobilenet_v2       | 71.878      | 71.856     |
