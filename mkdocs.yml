@@ -106,6 +106,8 @@ nav:
             - 'api/models/classification/alexnet.md'
             - 'api/models/classification/convnext.md'
             - 'api/models/classification/densenet.md'
+            - 'api/models/classification/efficientnet.md'
+            - 'api/models/classification/efficientnet_v2.md'
             - 'api/models/classification/googlenet.md'
             - 'api/models/classification/mobilenetv2.md'
             - 'api/models/classification/mobilenetv3.md'

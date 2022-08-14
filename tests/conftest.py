@@ -45,6 +45,12 @@ def net_preds():
     ckpt = torch.load("./tests/static/densenet121.pred.pth")
     gt_dicts["densenet121"] = ckpt["output"].detach().numpy()
 
+    ckpt = torch.load("./tests/static/efficientnet_b0.pred.pth")
+    gt_dicts["efficientnet_b0"] = ckpt.detach().numpy()
+
+    ckpt = torch.load("./tests/static/efficientnet_v2_s.pred.pth")
+    gt_dicts["efficientnet_v2_s"] = ckpt.detach().numpy()
+
     ckpt = torch.load("./tests/static/googlenet.pred.pth")
     gt_dicts["googlenet"] = ckpt["output"].detach().numpy()
 

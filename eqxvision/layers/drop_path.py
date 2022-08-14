@@ -14,14 +14,21 @@ class DropPath(eqx.Module):
     inference: bool
     mode: str
 
-    def __init__(self, p: float = 0.0, inference: bool = False, mode="atomic"):
+    def __init__(self, p: float = 0.0, inference: bool = False, mode="global"):
         """**Arguments:**
 
         - `p`: The probability to drop a sample entirely during forward pass
         - `inference`: Defaults to `False`. If `True`, then the input is returned unchanged
         This may be toggled with `equinox.tree_inference`
-        - `mode`: Can be set to `atomic` or `per_channel`. When `atomic`, the whole input is dropped or kept.
-                If `per_channel`, then the decision on each channel is computed independently. Defaults to `atomic`
+        - `mode`: Can be set to `global` or `local`. If `global`, the whole input is dropped or retained.
+                If `local`, then the decision on each input unit is computed independently. Defaults to `global`
+
+        !!! note
+
+            For `mode = local`, an input `(channels, dim_0, dim_1, ...)` is reshaped and transposed to
+            `(channels, dims).transpose()`. For each `dim x channels` element
+            the decision is made independently.
+
         """
         self.p = p
         self.inference = inference
@@ -42,7 +49,7 @@ class DropPath(eqx.Module):
             )
 
         keep_prob = 1 - self.p
-        if self.mode == "atomic":
+        if self.mode == "global":
             return x * jrandom.bernoulli(key, p=keep_prob)
         else:
             return x * jnp.expand_dims(

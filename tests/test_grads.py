@@ -12,6 +12,8 @@ model_list = [
     models.alexnet,
     models.convnext_tiny,
     models.densenet121,
+    models.efficientnet_b0,
+    models.efficientnet_v2_s,
     models.googlenet,
     models.mobilenet_v2,
     models.mobilenet_v3_small,
