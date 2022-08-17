@@ -13,7 +13,7 @@ from ...layers import ConvNormActivation
 from ...utils import _make_divisible, load_torch_weights, MODEL_URLS
 
 
-class InvertedResidual(eqx.Module):
+class _InvertedResidual(eqx.Module):
     stride: int
     use_res_connect: int
     conv: nn.Sequential
@@ -100,8 +100,8 @@ class MobileNetV2(eqx.Module):
         width_mult: float = 1.0,
         inverted_residual_setting: Optional[List[List[int]]] = None,
         round_nearest: int = 8,
-        block: Optional[Callable[..., eqx.Module]] = None,
-        norm_layer: Optional[Callable[..., eqx.Module]] = None,
+        block: Optional["eqx.Module"] = None,
+        norm_layer: Optional["eqx.Module"] = None,
         dropout: float = 0.2,
         *,
         key: Optional["jax.random.PRNGKey"] = None,
@@ -128,7 +128,7 @@ class MobileNetV2(eqx.Module):
         keys = jrandom.split(key, 2)
 
         if block is None:
-            block = InvertedResidual
+            block = _InvertedResidual
 
         if norm_layer is None:
             norm_layer = eqxex.BatchNorm

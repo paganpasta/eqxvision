@@ -54,6 +54,15 @@ from .classification.shufflenetv2 import (
     ShuffleNetV2,
 )
 from .classification.squeezenet import SqueezeNet, squeezenet1_0, squeezenet1_1
+from .classification.swin import (
+    swin_b,
+    swin_s,
+    swin_t,
+    swin_v2_b,
+    swin_v2_s,
+    swin_v2_t,
+    SwinTransformer,
+)
 from .classification.vgg import (
     VGG,
     vgg11,
@@ -66,10 +75,10 @@ from .classification.vgg import (
     vgg19_bn,
 )
 from .classification.vit import (
+    _VitAttention,
+    _VitBlock,
     VisionTransformer,
     vit_base,
     vit_small,
     vit_tiny,
-    VitAttention,
-    VitBlock,
 )

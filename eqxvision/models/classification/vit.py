@@ -12,7 +12,7 @@ from ...layers import DropPath, MlpProjection, PatchEmbed
 from ...utils import load_torch_weights, MODEL_URLS
 
 
-class VitAttention(eqx.Module):
+class _VitAttention(eqx.Module):
     num_heads: int
     scale: float
     qkv: nn.Linear
@@ -76,9 +76,9 @@ class VitAttention(eqx.Module):
         return x, attn
 
 
-class VitBlock(eqx.Module):
+class _VitBlock(eqx.Module):
     norm1: eqx.Module
-    attn: VitAttention
+    attn: _VitAttention
     drop_path: DropPath
     norm2: eqx.Module
     mlp: MlpProjection
@@ -116,7 +116,7 @@ class VitBlock(eqx.Module):
         super().__init__()
         keys = jrandom.split(key, 2)
         self.norm1 = norm_layer(dim)
-        self.attn = VitAttention(
+        self.attn = _VitAttention(
             dim,
             num_heads=num_heads,
             qkv_bias=qkv_bias,
@@ -165,7 +165,7 @@ class VisionTransformer(eqx.Module):
     pos_embed: jnp.ndarray
     patch_embed: PatchEmbed
     pos_drop: nn.Dropout
-    blocks: Sequence[VitBlock]
+    blocks: Sequence[_VitBlock]
     norm: eqx.Module
     fc: nn.Linear
     inference: bool
@@ -187,7 +187,7 @@ class VisionTransformer(eqx.Module):
         drop_path_rate=0.0,
         norm_layer=nn.LayerNorm,
         *,
-        key: "jax.random.PRNGKey" = None,
+        key: Optional["jax.random.PRNGKey"] = None,
     ):
         """**Arguments:**
 
@@ -235,7 +235,7 @@ class VisionTransformer(eqx.Module):
         self.pos_drop = nn.Dropout(p=drop_rate)
         dpr = jnp.linspace(0, drop_path_rate, depth)
         self.blocks = [
-            VitBlock(
+            _VitBlock(
                 dim=embed_dim,
                 num_heads=num_heads,
                 mlp_ratio=mlp_ratio,
@@ -261,8 +261,8 @@ class VisionTransformer(eqx.Module):
     def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
-        - `x`: The input `JAX` array.
-        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`.
+        - `x`: The input `JAX` array
+        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         keys = jrandom.split(key, len(self.blocks))
         x = self.patch_embed(x)
@@ -275,8 +275,8 @@ class VisionTransformer(eqx.Module):
     def get_last_self_attention(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
-        - `x`: The input `JAX` array.
-        - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
+        - `x`: The input `JAX` array
+        - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`
         """
         if not self.inference:
             raise ValueError(

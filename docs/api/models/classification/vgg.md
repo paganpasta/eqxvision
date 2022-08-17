@@ -1,5 +1,6 @@
 # VGG
 
+
 ::: eqxvision.models.VGG
     selection:
         members:
