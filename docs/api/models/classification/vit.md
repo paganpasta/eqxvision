@@ -1,6 +1,5 @@
 # Vision Transformer
 
----
 
 ::: eqxvision.models.VisionTransformer
     selection:

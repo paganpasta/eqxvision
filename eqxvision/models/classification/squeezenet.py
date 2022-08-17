@@ -11,7 +11,7 @@ from equinox.custom_types import Array
 from ...utils import load_torch_weights, MODEL_URLS
 
 
-class Fire(eqx.Module):
+class _Fire(eqx.Module):
     inplanes: int
     squeeze: nn.Conv2d
     squeeze_activation: nn.Lambda
@@ -86,16 +86,16 @@ class SqueezeNet(eqx.Module):
                     nn.Conv2d(3, 96, kernel_size=7, stride=2, key=keys[0]),
                     nn.Lambda(jnn.relu),
                     nn.MaxPool2d(kernel_size=3, stride=2),
-                    Fire(96, 16, 64, 64, key=keys[1]),
-                    Fire(128, 16, 64, 64, key=keys[2]),
-                    Fire(128, 32, 128, 128, key=keys[3]),
+                    _Fire(96, 16, 64, 64, key=keys[1]),
+                    _Fire(128, 16, 64, 64, key=keys[2]),
+                    _Fire(128, 32, 128, 128, key=keys[3]),
                     nn.MaxPool2d(kernel_size=3, stride=2),
-                    Fire(256, 32, 128, 128, key=keys[4]),
-                    Fire(256, 48, 192, 192, key=keys[5]),
-                    Fire(384, 48, 192, 192, key=keys[6]),
-                    Fire(384, 64, 256, 256, key=keys[7]),
+                    _Fire(256, 32, 128, 128, key=keys[4]),
+                    _Fire(256, 48, 192, 192, key=keys[5]),
+                    _Fire(384, 48, 192, 192, key=keys[6]),
+                    _Fire(384, 64, 256, 256, key=keys[7]),
                     nn.MaxPool2d(kernel_size=3, stride=2),
-                    Fire(512, 64, 256, 256, key=keys[8]),
+                    _Fire(512, 64, 256, 256, key=keys[8]),
                 ]
             )
         elif version == "1_1":
@@ -104,16 +104,16 @@ class SqueezeNet(eqx.Module):
                     nn.Conv2d(3, 64, kernel_size=3, stride=2, key=keys[0]),
                     nn.Lambda(jnn.relu),
                     nn.MaxPool2d(kernel_size=3, stride=2),
-                    Fire(64, 16, 64, 64, key=keys[1]),
-                    Fire(128, 16, 64, 64, key=keys[2]),
+                    _Fire(64, 16, 64, 64, key=keys[1]),
+                    _Fire(128, 16, 64, 64, key=keys[2]),
                     nn.MaxPool2d(kernel_size=3, stride=2),
-                    Fire(128, 32, 128, 128, key=keys[3]),
-                    Fire(256, 32, 128, 128, key=keys[4]),
+                    _Fire(128, 32, 128, 128, key=keys[3]),
+                    _Fire(256, 32, 128, 128, key=keys[4]),
                     nn.MaxPool2d(kernel_size=3, stride=2),
-                    Fire(256, 48, 192, 192, key=keys[5]),
-                    Fire(384, 48, 192, 192, key=keys[6]),
-                    Fire(384, 64, 256, 256, key=keys[7]),
-                    Fire(512, 64, 256, 256, key=keys[8]),
+                    _Fire(256, 48, 192, 192, key=keys[5]),
+                    _Fire(384, 48, 192, 192, key=keys[6]),
+                    _Fire(384, 64, 256, 256, key=keys[7]),
+                    _Fire(512, 64, 256, 256, key=keys[8]),
                 ]
             )
 

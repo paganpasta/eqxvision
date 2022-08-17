@@ -1,4 +1,5 @@
 # Eqxvision
+![PyPI](https://img.shields.io/pypi/v/eqxvision?style=flat-square) ![GitHub Release Date](https://img.shields.io/github/release-date/paganpasta/eqxvision?style=flat-square) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/paganpasta/eqxvision?style=flat-square) ![GitHub issues](https://img.shields.io/github/issues/paganpasta/eqxvision?style=flat-square) ![GitHub](https://img.shields.io/github/license/paganpasta/eqxvision?style=flat-square)
 
 Eqxvision is a package of popular computer vision model architectures built using [Equinox](https://docs.kidger.site/equinox/).
 

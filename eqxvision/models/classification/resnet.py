@@ -12,7 +12,7 @@ from equinox.custom_types import Array
 from ...utils import load_torch_weights, MODEL_URLS
 
 
-def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1, key=None):
+def _conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1, key=None):
     """3x3 convolution with padding"""
     return nn.Conv2d(
         in_planes,
@@ -27,14 +27,14 @@ def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1, key=None):
     )
 
 
-def conv1x1(in_planes, out_planes, stride=1, key=None):
+def _conv1x1(in_planes, out_planes, stride=1, key=None):
     """1x1 convolution"""
     return nn.Conv2d(
         in_planes, out_planes, kernel_size=1, stride=stride, use_bias=False, key=key
     )
 
 
-class ResNetBasicBlock(eqx.Module):
+class _ResNetBasicBlock(eqx.Module):
     expansion: int
     conv1: eqx.Module
     bn1: eqx.Module
@@ -56,7 +56,7 @@ class ResNetBasicBlock(eqx.Module):
         norm_layer=None,
         key=None,
     ):
-        super(ResNetBasicBlock, self).__init__()
+        super(_ResNetBasicBlock, self).__init__()
         if norm_layer is None:
             norm_layer = eqex.BatchNorm
         if groups != 1 or base_width != 64:
@@ -66,10 +66,10 @@ class ResNetBasicBlock(eqx.Module):
         # Both self.conv1 and self.downsample layers downsample the input when stride != 1
         keys = jrandom.split(key, 2)
         self.expansion = 1
-        self.conv1 = conv3x3(inplanes, planes, stride, key=keys[0])
+        self.conv1 = _conv3x3(inplanes, planes, stride, key=keys[0])
         self.bn1 = norm_layer(planes, axis_name="batch")
         self.relu = jnn.relu
-        self.conv2 = conv3x3(planes, planes, key=keys[1])
+        self.conv2 = _conv3x3(planes, planes, key=keys[1])
         self.bn2 = norm_layer(planes, axis_name="batch")
         if downsample:
             self.downsample = downsample
@@ -92,7 +92,7 @@ class ResNetBasicBlock(eqx.Module):
         return out
 
 
-class ResNetBottleneck(eqx.Module):
+class _ResNetBottleneck(eqx.Module):
     # Bottleneck in torchvision places the stride for downsampling at 3x3 convolution(self.conv2)
     # while original implementation places the stride at the first 1x1 convolution(self.conv1)
     # according to "Deep residual learning for image recognition"https://arxiv.org/abs/1512.03385.
@@ -121,18 +121,18 @@ class ResNetBottleneck(eqx.Module):
         norm_layer=None,
         key=None,
     ):
-        super(ResNetBottleneck, self).__init__()
+        super(_ResNetBottleneck, self).__init__()
         if norm_layer is None:
             norm_layer = eqex.BatchNorm
         self.expansion = 4
         keys = jrandom.split(key, 3)
         width = int(planes * (base_width / 64.0)) * groups
         # Both self.conv2 and self.downsample layers downsample the input when stride != 1
-        self.conv1 = conv1x1(inplanes, width, key=keys[0])
+        self.conv1 = _conv1x1(inplanes, width, key=keys[0])
         self.bn1 = norm_layer(width, axis_name="batch")
-        self.conv2 = conv3x3(width, width, stride, groups, dilation, key=keys[1])
+        self.conv2 = _conv3x3(width, width, stride, groups, dilation, key=keys[1])
         self.bn2 = norm_layer(width, axis_name="batch")
-        self.conv3 = conv1x1(width, planes * self.expansion, key=keys[2])
+        self.conv3 = _conv1x1(width, planes * self.expansion, key=keys[2])
         self.bn3 = norm_layer(planes * self.expansion, axis_name="batch")
         self.relu = jnn.relu
         if downsample:
@@ -162,7 +162,7 @@ class ResNetBottleneck(eqx.Module):
         return out
 
 
-EXPANSIONS = {ResNetBasicBlock: 1, ResNetBottleneck: 4}
+EXPANSIONS = {_ResNetBasicBlock: 1, _ResNetBottleneck: 4}
 
 
 class ResNet(eqx.Module):
@@ -185,10 +185,9 @@ class ResNet(eqx.Module):
 
     def __init__(
         self,
-        block: Type[Union[ResNetBasicBlock, ResNetBottleneck]],
+        block: Type[Union["_ResNetBasicBlock", "_ResNetBottleneck"]],
         layers: List[int],
         num_classes: int = 1000,
-        zero_init_residual=False,
         groups: int = 1,
         width_per_group: int = 64,
         replace_stride_with_dilation: List[bool] = None,
@@ -202,7 +201,6 @@ class ResNet(eqx.Module):
         - `layers`: A list containing number of `blocks` at different levels
         - `num_classes`: Number of classes in the classification task.
                         Also controls the final output shape `(num_classes,)`. Defaults to `1000`
-        - `zero_init_residual`: **Ignored**
         - `groups`: Number of groups to form along the feature depth. Defaults to `1`
         - `width_per_group`: Increases width of `block` by a factor of `width_per_group/64`.
         Defaults to `64`
@@ -284,7 +282,6 @@ class ResNet(eqx.Module):
         )
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * EXPANSIONS[block], num_classes, key=keys[5])
-        # TODO: Zero initialize BNs as per torchvision
 
     def _make_layer(
         self, block, planes, blocks, norm_layer, stride=1, dilate=False, key=None
@@ -298,7 +295,7 @@ class ResNet(eqx.Module):
         if stride != 1 or self.inplanes != planes * EXPANSIONS[block]:
             downsample = nn.Sequential(
                 [
-                    conv1x1(
+                    _conv1x1(
                         self.inplanes, planes * EXPANSIONS[block], stride, key=keys[0]
                     ),
                     norm_layer(planes * EXPANSIONS[block], axis_name="batch"),
@@ -374,7 +371,7 @@ def resnet18(pretrained=False, **kwargs) -> ResNet:
 
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
     """
-    model = _resnet(ResNetBasicBlock, [2, 2, 2, 2], **kwargs)
+    model = _resnet(_ResNetBasicBlock, [2, 2, 2, 2], **kwargs)
     if pretrained:
         model = load_torch_weights(model, url=MODEL_URLS["resnet18"])
     return model
@@ -389,7 +386,7 @@ def resnet34(pretrained=False, **kwargs) -> ResNet:
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
 
     """
-    model = _resnet(ResNetBasicBlock, [3, 4, 6, 3], **kwargs)
+    model = _resnet(_ResNetBasicBlock, [3, 4, 6, 3], **kwargs)
     if pretrained:
         model = load_torch_weights(model, url=MODEL_URLS["resnet34"])
     return model
@@ -404,7 +401,7 @@ def resnet50(pretrained=False, **kwargs) -> ResNet:
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
 
     """
-    model = _resnet(ResNetBottleneck, [3, 4, 6, 3], **kwargs)
+    model = _resnet(_ResNetBottleneck, [3, 4, 6, 3], **kwargs)
     if pretrained:
         model = load_torch_weights(model, url=MODEL_URLS["resnet50"])
     return model
@@ -419,7 +416,7 @@ def resnet101(pretrained=False, **kwargs) -> ResNet:
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
 
     """
-    model = _resnet(ResNetBottleneck, [3, 4, 23, 3], **kwargs)
+    model = _resnet(_ResNetBottleneck, [3, 4, 23, 3], **kwargs)
     if pretrained:
         model = load_torch_weights(model, url=MODEL_URLS["resnet101"])
     return model
@@ -434,7 +431,7 @@ def resnet152(pretrained=False, **kwargs) -> ResNet:
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
 
     """
-    model = _resnet(ResNetBottleneck, [3, 8, 36, 3], **kwargs)
+    model = _resnet(_ResNetBottleneck, [3, 8, 36, 3], **kwargs)
     if pretrained:
         model = load_torch_weights(model, url=MODEL_URLS["resnet152"])
     return model
@@ -451,7 +448,7 @@ def resnext50_32x4d(pretrained=False, **kwargs) -> ResNet:
     """
     kwargs["groups"] = 32
     kwargs["width_per_group"] = 4
-    model = _resnet(ResNetBottleneck, [3, 4, 6, 3], **kwargs)
+    model = _resnet(_ResNetBottleneck, [3, 4, 6, 3], **kwargs)
     if pretrained:
         model = load_torch_weights(model, url=MODEL_URLS["resnext50_32x4d"])
     return model
@@ -468,7 +465,7 @@ def resnext101_32x8d(pretrained=False, **kwargs) -> ResNet:
     """
     kwargs["groups"] = 32
     kwargs["width_per_group"] = 8
-    model = _resnet(ResNetBottleneck, [3, 4, 23, 3], **kwargs)
+    model = _resnet(_ResNetBottleneck, [3, 4, 23, 3], **kwargs)
     if pretrained:
         model = load_torch_weights(model, url=MODEL_URLS["resnext101_32x8d"])
     return model
@@ -488,7 +485,7 @@ def wide_resnet50_2(pretrained=False, **kwargs) -> ResNet:
 
     """
     kwargs["width_per_group"] = 64 * 2
-    model = _resnet(ResNetBottleneck, [3, 4, 6, 3], **kwargs)
+    model = _resnet(_ResNetBottleneck, [3, 4, 6, 3], **kwargs)
     if pretrained:
         model = load_torch_weights(model, url=MODEL_URLS["wide_resnet50_2"])
     return model
@@ -508,7 +505,7 @@ def wide_resnet101_2(pretrained=False, **kwargs) -> ResNet:
 
     """
     kwargs["width_per_group"] = 64 * 2
-    model = _resnet(ResNetBottleneck, [3, 4, 23, 3], **kwargs)
+    model = _resnet(_ResNetBottleneck, [3, 4, 23, 3], **kwargs)
     if pretrained:
         model = load_torch_weights(model, url=MODEL_URLS["wide_resnet101_2"])
     return model

@@ -9,6 +9,7 @@ from . import (
     resnet,
     shufflenetv2,
     squeezenet,
+    swin,
     vgg,
     vit,
 )

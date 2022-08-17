@@ -1,6 +1,5 @@
 # MobileNet-V2
 
----
 
 ::: eqxvision.models.MobileNetV2
     selection:

@@ -1,6 +1,5 @@
 # AlexNet
 
----
 
 ::: eqxvision.models.AlexNet
     selection:

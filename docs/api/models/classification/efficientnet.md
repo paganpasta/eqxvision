@@ -1,6 +1,5 @@
 # Efficientnet-V1
 
----
 
 ::: eqxvision.models.EfficientNet
     selection:

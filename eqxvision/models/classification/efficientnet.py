@@ -17,7 +17,7 @@ from ...utils import _make_divisible, load_torch_weights, MODEL_URLS
 
 
 @dataclass
-class _MBConvConfig:
+class _MBConvConfigData:
     expand_ratio: float
     kernel: int
     stride: int
@@ -33,7 +33,7 @@ class _MBConvConfig:
         return _make_divisible(channels * width_mult, 8, min_value)
 
 
-class MBConvConfig(_MBConvConfig):
+class _MBConvConfig(_MBConvConfigData):
     # Stores information listed at Table 1 of the EfficientNet paper & Table 4 of the EfficientNetV2 paper
     def __init__(
         self,
@@ -51,7 +51,7 @@ class MBConvConfig(_MBConvConfig):
         out_channels = self.adjust_channels(out_channels, width_mult)
         num_layers = self.adjust_depth(num_layers, depth_mult)
         if block is None:
-            block = MBConv
+            block = _MBConv
         super().__init__(
             expand_ratio,
             kernel,
@@ -67,7 +67,7 @@ class MBConvConfig(_MBConvConfig):
         return int(math.ceil(num_layers * depth_mult))
 
 
-class FusedMBConvConfig(_MBConvConfig):
+class _FusedMBConvConfig(_MBConvConfigData):
     # Stores information listed at Table 4 of the EfficientNetV2 paper
     def __init__(
         self,
@@ -80,7 +80,7 @@ class FusedMBConvConfig(_MBConvConfig):
         block: Optional[Callable[..., eqx.Module]] = None,
     ) -> None:
         if block is None:
-            block = FusedMBConv
+            block = _FusedMBConv
         super().__init__(
             expand_ratio,
             kernel,
@@ -92,7 +92,7 @@ class FusedMBConvConfig(_MBConvConfig):
         )
 
 
-class MBConv(eqx.Module):
+class _MBConv(eqx.Module):
     use_res_connect: bool
     block: nn.Sequential
     stochastic_depth: DropPath
@@ -100,7 +100,7 @@ class MBConv(eqx.Module):
 
     def __init__(
         self,
-        cnf: MBConvConfig,
+        cnf: _MBConvConfig,
         stochastic_depth_prob: float,
         norm_layer: Callable[..., eqx.Module],
         se_layer: Callable[..., eqx.Module] = SqueezeExcitation,
@@ -186,7 +186,7 @@ class MBConv(eqx.Module):
         return result
 
 
-class FusedMBConv(eqx.Module):
+class _FusedMBConv(eqx.Module):
     use_res_connect: bool
     block: nn.Sequential
     stochastic_depth: DropPath
@@ -194,7 +194,7 @@ class FusedMBConv(eqx.Module):
 
     def __init__(
         self,
-        cnf: FusedMBConvConfig,
+        cnf: _FusedMBConvConfig,
         stochastic_depth_prob: float,
         norm_layer: Callable[..., eqx.Module],
         *,
@@ -275,11 +275,13 @@ class EfficientNet(eqx.Module):
 
     def __init__(
         self,
-        inverted_residual_setting: Sequence[Union[MBConvConfig, FusedMBConvConfig]],
+        inverted_residual_setting: Sequence[
+            Union["_MBConvConfig", "_FusedMBConvConfig"]
+        ],
         dropout: float,
         stochastic_depth_prob: float = 0.2,
         num_classes: int = 1000,
-        norm_layer: Optional[Callable[..., eqx.Module]] = None,
+        norm_layer: Optional["eqx.Module"] = None,
         last_channel: Optional[int] = None,
         *,
         key: "jax.random.PRNGKey" = None,
@@ -303,7 +305,9 @@ class EfficientNet(eqx.Module):
             raise ValueError("The inverted_residual_setting should not be empty")
         elif not (
             isinstance(inverted_residual_setting, Sequence)
-            and all([isinstance(s, _MBConvConfig) for s in inverted_residual_setting])
+            and all(
+                [isinstance(s, _MBConvConfigData) for s in inverted_residual_setting]
+            )
         ):
             raise TypeError(
                 "The inverted_residual_setting should be List[MBConvConfig]"
@@ -401,7 +405,7 @@ class EfficientNet(eqx.Module):
 
 def _efficientnet(
     arch: str,
-    inverted_residual_setting: Sequence[Union[MBConvConfig, FusedMBConvConfig]],
+    inverted_residual_setting: Sequence[Union[_MBConvConfig, _FusedMBConvConfig]],
     dropout: float,
     last_channel: Optional[int],
     pretrained: bool,
@@ -421,11 +425,11 @@ def _efficientnet(
 def _efficientnet_conf(
     arch: str,
     **kwargs: Any,
-) -> Tuple[Sequence[Union[MBConvConfig, FusedMBConvConfig]], Optional[int]]:
-    inverted_residual_setting: Sequence[Union[MBConvConfig, FusedMBConvConfig]]
+) -> Tuple[Sequence[Union[_MBConvConfig, _FusedMBConvConfig]], Optional[int]]:
+    inverted_residual_setting: Sequence[Union[_MBConvConfig, _FusedMBConvConfig]]
     if arch.startswith("efficientnet_b"):
         bneck_conf = partial(
-            MBConvConfig,
+            _MBConvConfig,
             width_mult=kwargs.pop("width_mult"),
             depth_mult=kwargs.pop("depth_mult"),
         )
@@ -441,34 +445,34 @@ def _efficientnet_conf(
         last_channel = None
     elif arch.startswith("efficientnet_v2_s"):
         inverted_residual_setting = [
-            FusedMBConvConfig(1, 3, 1, 24, 24, 2),
-            FusedMBConvConfig(4, 3, 2, 24, 48, 4),
-            FusedMBConvConfig(4, 3, 2, 48, 64, 4),
-            MBConvConfig(4, 3, 2, 64, 128, 6),
-            MBConvConfig(6, 3, 1, 128, 160, 9),
-            MBConvConfig(6, 3, 2, 160, 256, 15),
+            _FusedMBConvConfig(1, 3, 1, 24, 24, 2),
+            _FusedMBConvConfig(4, 3, 2, 24, 48, 4),
+            _FusedMBConvConfig(4, 3, 2, 48, 64, 4),
+            _MBConvConfig(4, 3, 2, 64, 128, 6),
+            _MBConvConfig(6, 3, 1, 128, 160, 9),
+            _MBConvConfig(6, 3, 2, 160, 256, 15),
         ]
         last_channel = 1280
     elif arch.startswith("efficientnet_v2_m"):
         inverted_residual_setting = [
-            FusedMBConvConfig(1, 3, 1, 24, 24, 3),
-            FusedMBConvConfig(4, 3, 2, 24, 48, 5),
-            FusedMBConvConfig(4, 3, 2, 48, 80, 5),
-            MBConvConfig(4, 3, 2, 80, 160, 7),
-            MBConvConfig(6, 3, 1, 160, 176, 14),
-            MBConvConfig(6, 3, 2, 176, 304, 18),
-            MBConvConfig(6, 3, 1, 304, 512, 5),
+            _FusedMBConvConfig(1, 3, 1, 24, 24, 3),
+            _FusedMBConvConfig(4, 3, 2, 24, 48, 5),
+            _FusedMBConvConfig(4, 3, 2, 48, 80, 5),
+            _MBConvConfig(4, 3, 2, 80, 160, 7),
+            _MBConvConfig(6, 3, 1, 160, 176, 14),
+            _MBConvConfig(6, 3, 2, 176, 304, 18),
+            _MBConvConfig(6, 3, 1, 304, 512, 5),
         ]
         last_channel = 1280
     elif arch.startswith("efficientnet_v2_l"):
         inverted_residual_setting = [
-            FusedMBConvConfig(1, 3, 1, 32, 32, 4),
-            FusedMBConvConfig(4, 3, 2, 32, 64, 7),
-            FusedMBConvConfig(4, 3, 2, 64, 96, 7),
-            MBConvConfig(4, 3, 2, 96, 192, 10),
-            MBConvConfig(6, 3, 1, 192, 224, 19),
-            MBConvConfig(6, 3, 2, 224, 384, 25),
-            MBConvConfig(6, 3, 1, 384, 640, 7),
+            _FusedMBConvConfig(1, 3, 1, 32, 32, 4),
+            _FusedMBConvConfig(4, 3, 2, 32, 64, 7),
+            _FusedMBConvConfig(4, 3, 2, 64, 96, 7),
+            _MBConvConfig(4, 3, 2, 96, 192, 10),
+            _MBConvConfig(6, 3, 1, 192, 224, 19),
+            _MBConvConfig(6, 3, 2, 224, 384, 25),
+            _MBConvConfig(6, 3, 1, 384, 640, 7),
         ]
         last_channel = 1280
     else:

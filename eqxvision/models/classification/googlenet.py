@@ -42,7 +42,7 @@ class GoogLeNet(eqx.Module):
         self,
         num_classes: int = 1000,
         aux_logits: bool = False,
-        blocks: Optional[List[Callable[..., eqx.Module]]] = None,
+        blocks: Optional[List["eqx.Module"]] = None,
         dropout: float = 0.2,
         dropout_aux: float = 0.7,
         *,
@@ -63,7 +63,7 @@ class GoogLeNet(eqx.Module):
         """
         super().__init__()
         if blocks is None:
-            blocks = [BasicConv2d, Inception, InceptionAux]
+            blocks = [BasicConv2d, _Inception, InceptionAux]
         assert len(blocks) == 3
         conv_block = blocks[0]
         inception_block = blocks[1]
@@ -179,7 +179,7 @@ class GoogLeNet(eqx.Module):
             return x
 
 
-class Inception(eqx.Module):
+class _Inception(eqx.Module):
     branch1: eqx.Module
     branch2: nn.Sequential
     branch3: nn.Sequential

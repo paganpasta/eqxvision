@@ -7,7 +7,7 @@ from equinox.custom_types import Array
 
 
 class LayerNorm2d(eqx.nn.LayerNorm):
-    """Wraps `eqx.nn.LayerNorm` for an easy to apply 2d-variant."""
+    """Wraps `eqx.nn.LayerNorm` for an easy to apply channelwise-variant."""
 
     def __call__(
         self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None
@@ -29,7 +29,7 @@ class LayerNorm2d(eqx.nn.LayerNorm):
 
 
 class Linear2d(eqx.nn.Linear):
-    """Wraps `eqx.nn.Linear` for an easy to apply 2d-variant."""
+    """Wraps `eqx.nn.Linear` for an easy to apply channelwise-variant."""
 
     def __call__(
         self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None

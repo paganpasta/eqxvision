@@ -35,10 +35,7 @@ pip install eqxvision
 
 ## What's New?
 
-- Pretrained on all ported models is available! :rocket:
-
-    !!! note
-        Only `DINO` pretrained weights are available for `ViTs`.
+- All `torchvision` classification models are ported to eqxvision! :rocket:
 
   Checkout the comparison table [here](./comparison.md).
 

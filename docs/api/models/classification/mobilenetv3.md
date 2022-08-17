@@ -1,7 +1,5 @@
 # MobileNet-V3
 
----
-
 ::: eqxvision.models.MobileNetV3
     selection:
         members:

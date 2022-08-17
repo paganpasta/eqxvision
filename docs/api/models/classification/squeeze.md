@@ -1,6 +1,5 @@
 # SqueezeNet
 
----
 
 ::: eqxvision.models.SqueezeNet
     selection:

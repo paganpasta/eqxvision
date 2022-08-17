@@ -25,7 +25,7 @@ class PatchEmbed(eqx.Module):
         patch_size: Union[int, Tuple[int]] = 16,
         in_chans: int = 3,
         embed_dim: int = 768,
-        norm_layer: eqx.Module = None,
+        norm_layer: "eqx.Module" = None,
         flatten: bool = True,
         *,
         key: Optional["jax.random.PRNGKey"] = None,
