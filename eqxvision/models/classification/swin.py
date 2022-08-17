@@ -695,6 +695,8 @@ class SwinTransformer(eqx.Module):
             block = _SwinTransformerBlock
         if norm_layer is None:
             norm_layer = partial(LayerNorm2d, eps=1e-5)
+        if downsample_layer is None:
+            downsample_layer = _PatchMerging
 
         layers: List[eqx.Module] = []
         layers.append(
