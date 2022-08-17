@@ -187,7 +187,7 @@ class VisionTransformer(eqx.Module):
         drop_path_rate=0.0,
         norm_layer=nn.LayerNorm,
         *,
-        key: "jax.random.PRNGKey" = None,
+        key: Optional["jax.random.PRNGKey"] = None,
     ):
         """**Arguments:**
 
@@ -261,8 +261,8 @@ class VisionTransformer(eqx.Module):
     def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
-        - `x`: The input `JAX` array.
-        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`.
+        - `x`: The input `JAX` array
+        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         keys = jrandom.split(key, len(self.blocks))
         x = self.patch_embed(x)
@@ -275,8 +275,8 @@ class VisionTransformer(eqx.Module):
     def get_last_self_attention(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**
 
-        - `x`: The input `JAX` array.
-        - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
+        - `x`: The input `JAX` array
+        - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`
         """
         if not self.inference:
             raise ValueError(

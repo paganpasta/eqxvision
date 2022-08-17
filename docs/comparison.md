@@ -19,6 +19,8 @@
 | Alexnet            | 56.518      | 56.522     |
 | Convnext_tiny      | 82.132      | 82.120     |
 | Densenet121        | 74.432      | 74.434     |
+| Efficientnet-b0    | 77.686      | 77.684     |
+| Efficientnet-v2-s  | 81.314      | 77.684     |
 | Googlenet          | 69.774      | 61.046     |
 | Mobilenet_v2       | 71.878      | 71.856     |
 | Mobilenet_v3_small | 67.674      | :no_entry: |

@@ -114,6 +114,8 @@ nav:
             - 'api/models/classification/resnets.md'
             - 'api/models/classification/shufflenetv2.md'
             - 'api/models/classification/squeeze.md'
+            - 'api/models/classification/swin.md'
+            - 'api/models/classification/swin_v2.md'
             - 'api/models/classification/vgg.md'
             - 'api/models/classification/vit.md'
         - Vision Layers:

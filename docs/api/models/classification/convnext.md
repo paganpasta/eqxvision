@@ -1,6 +1,5 @@
 # ConvNeXt
 
----
 
 ::: eqxvision.models.ConvNeXt
     selection:

@@ -1,6 +1,5 @@
 # DenseNet
 
----
 
 ::: eqxvision.models.DenseNet
     selection:

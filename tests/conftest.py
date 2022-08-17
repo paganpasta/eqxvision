@@ -33,6 +33,21 @@ def demo_image():
 
 
 @pytest.fixture(scope="session")
+def demo_image_256():
+    img = Image.open("./tests/static/img.png")
+    img = img.convert("RGB")
+
+    transform = transforms.Compose(
+        [
+            transforms.Resize(256),
+            transforms.ToTensor(),
+            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+        ]
+    )
+    return jnp.asarray(transform(img).unsqueeze(0))
+
+
+@pytest.fixture(scope="session")
 def net_preds():
     gt_dicts = {}
 
@@ -69,11 +84,13 @@ def net_preds():
     ckpt = torch.load("./tests/static/squeezenet1_0.pred.pth")
     gt_dicts["squeezenet1_0"] = ckpt["output"].detach().numpy()
 
+    ckpt = torch.load("./tests/static/swin_t.pred.pth")
+    gt_dicts["swin_t"] = ckpt.detach().numpy()
+
     ckpt = torch.load("./tests/static/vgg11.pred.pth")
     gt_dicts["vgg11"] = ckpt["output"].detach().numpy()
 
     ckpt = torch.load("./tests/static/vgg11_bn.pred.pth")
     gt_dicts["vgg11_bn"] = ckpt["output"].detach().numpy()
 
-    print("Initialised!")
     return gt_dicts

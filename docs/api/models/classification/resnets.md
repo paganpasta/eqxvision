@@ -1,5 +1,6 @@
 # ResNet
 
+
 ::: eqxvision.models.ResNet
     selection:
         members:

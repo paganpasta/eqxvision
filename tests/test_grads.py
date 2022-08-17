@@ -20,6 +20,8 @@ model_list = [
     models.resnet18,
     models.shufflenet_v2_x0_5,
     models.squeezenet1_0,
+    models.swin_t,
+    models.swin_v2_t,
     models.vgg11,
     models.vgg11_bn,
     models.vit_tiny,
@@ -27,9 +29,6 @@ model_list = [
 
 
 class TestGrads:
-    random_image = jax.random.uniform(key=jax.random.PRNGKey(0), shape=(1, 3, 224, 224))
-    num_classes = 3
-
     @pytest.mark.parametrize("model_func", model_list)
     def test_classification(self, model_func, getkey):
         @eqx.filter_value_and_grad
@@ -46,11 +45,21 @@ class TestGrads:
             model = eqx.apply_updates(model, updates)
             return loss, model, opt_state
 
-        net = model_func(num_classes=self.num_classes)
+        num_classes = 3
+        net = model_func(num_classes=num_classes)
         optimizer = optax.adam(learning_rate=0.01)
         opt_state = optimizer.init(eqx.filter(net, eqx.is_array))
+
+        if model_func == models.swin_v2_t:
+            random_image = jax.random.uniform(
+                key=jax.random.PRNGKey(0), shape=(1, 3, 256, 256)
+            )
+        else:
+            random_image = jax.random.uniform(
+                key=jax.random.PRNGKey(0), shape=(1, 3, 224, 224)
+            )
         loss, net, _ = make_step(
-            net, self.random_image, jnp.asarray([1]), optimizer, opt_state
+            net, random_image, jnp.asarray([1]), optimizer, opt_state
         )
 
         assert not jnp.isnan(loss).any()

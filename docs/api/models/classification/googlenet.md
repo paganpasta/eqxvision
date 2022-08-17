@@ -1,6 +1,5 @@
 # GoogLeNet
 
----
 
 ::: eqxvision.models.GoogLeNet
     selection:
