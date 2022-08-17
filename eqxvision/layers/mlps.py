@@ -23,7 +23,7 @@ class MlpProjection(eqx.Module):
         in_features: int,
         hidden_features: int = None,
         out_features: int = None,
-        lin_layer: Union[Linear2d, nn.Linear] = nn.Linear,
+        lin_layer: Union["Linear2d", "nn.Linear"] = nn.Linear,
         act_layer: Callable = None,
         drop: Union[float, Tuple[float]] = 0.0,
         *,

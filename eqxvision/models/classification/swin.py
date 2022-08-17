@@ -43,7 +43,7 @@ def _get_relative_position_bias(
     return relative_position_bias
 
 
-class PatchMerging(eqx.Module):
+class _PatchMerging(eqx.Module):
     reduction: Linear2d
     norm: Callable
 
@@ -65,7 +65,7 @@ class PatchMerging(eqx.Module):
         return x
 
 
-class PatchMergingV2(eqx.Module):
+class _PatchMergingV2(eqx.Module):
     reduction: Linear2d
     norm: Callable
 
@@ -87,7 +87,7 @@ class PatchMergingV2(eqx.Module):
         return x
 
 
-def shifted_window_attention(
+def _shifted_window_attention(
     x: Array,
     qkv_weight: Array,
     proj_weight: Array,
@@ -255,7 +255,7 @@ def shifted_window_attention(
     return jnp.transpose(x, (2, 0, 1))
 
 
-class ShiftedWindowAttention(eqx.Module):
+class _ShiftedWindowAttention(eqx.Module):
 
     window_size: List[int]
     shift_size: List[int]
@@ -350,7 +350,7 @@ class ShiftedWindowAttention(eqx.Module):
         An array of shape `(H, W, C)`
         """
         relative_position_bias = self.get_relative_position_bias()
-        return shifted_window_attention(
+        return _shifted_window_attention(
             x,
             self.qkv.weight,
             self.proj.weight,
@@ -366,7 +366,7 @@ class ShiftedWindowAttention(eqx.Module):
         )
 
 
-class ShiftedWindowAttentionV2(eqx.Module):
+class _ShiftedWindowAttentionV2(eqx.Module):
 
     window_size: List[int]
     shift_size: List[int]
@@ -505,7 +505,7 @@ class ShiftedWindowAttentionV2(eqx.Module):
         An array of shape `(H, W, C)`
         """
         relative_position_bias = self.get_relative_position_bias()
-        return shifted_window_attention(
+        return _shifted_window_attention(
             x,
             self.qkv.weight,
             self.proj.weight,
@@ -522,7 +522,7 @@ class ShiftedWindowAttentionV2(eqx.Module):
         )
 
 
-class SwinTransformerBlock(eqx.Module):
+class _SwinTransformerBlock(eqx.Module):
     norm1: Callable
     attn: eqx.Module
     stochastic_depth: DropPath
@@ -540,7 +540,7 @@ class SwinTransformerBlock(eqx.Module):
         attention_dropout: float = 0.0,
         stochastic_depth_prob: float = 0.0,
         norm_layer: Callable[..., eqx.Module] = LayerNorm2d,
-        attn_layer: Callable[..., eqx.Module] = ShiftedWindowAttention,
+        attn_layer: Callable[..., eqx.Module] = _ShiftedWindowAttention,
         *,
         key: "jax.random.PRNGKey" = None,
     ):
@@ -578,7 +578,7 @@ class SwinTransformerBlock(eqx.Module):
         return x
 
 
-class SwinTransformerBlockV2(eqx.Module):
+class _SwinTransformerBlockV2(eqx.Module):
 
     norm1: Callable
     attn: eqx.Module
@@ -597,7 +597,7 @@ class SwinTransformerBlockV2(eqx.Module):
         attention_dropout: float = 0.0,
         stochastic_depth_prob: float = 0.0,
         norm_layer: Callable[..., eqx.Module] = LayerNorm2d,
-        attn_layer: Callable[..., eqx.Module] = ShiftedWindowAttentionV2,
+        attn_layer: Callable[..., eqx.Module] = _ShiftedWindowAttentionV2,
         *,
         key: "jax.random.PRNGKey" = None,
     ):
@@ -656,8 +656,8 @@ class SwinTransformer(eqx.Module):
         stochastic_depth_prob: float = 0.1,
         num_classes: int = 1000,
         norm_layer: Callable = None,
-        block: eqx.Module = None,
-        downsample_layer: eqx.Module = PatchMerging,
+        block: "eqx.Module" = None,
+        downsample_layer: "eqx.Module" = None,
         *,
         key: Optional["jax.random.PRNGKey"] = None,
     ):
@@ -675,8 +675,8 @@ class SwinTransformer(eqx.Module):
         - `num_classes`:  Number of classes in the classification task.
                          Also controls the final output shape `(num_classes,)`
         - `norm_layer`: Normalisation applied to the intermediate outputs. Defaults to `LayerNorm2d`
-        - `block`: The SwinTransformer-v1/v2 block to use. Defaults to `None`
-        - `downsample_layer`: Downsample layer (patch merging). Defaults to `PatchMerging` which is used in `v1`
+        - `block`: The SwinTransformer-v1/v2 block to use. Defaults to `_SwinTransformerBlock` which is used in `v1`
+        - `downsample_layer`: Downsample layer (patch merging). Defaults to `_PatchMerging` which is used in `v1`
         - `key`:  A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
 
@@ -692,7 +692,7 @@ class SwinTransformer(eqx.Module):
         keys = jr.split(key, 2)
 
         if block is None:
-            block = SwinTransformerBlock
+            block = _SwinTransformerBlock
         if norm_layer is None:
             norm_layer = partial(LayerNorm2d, eps=1e-5)
 
@@ -783,8 +783,8 @@ def _swin_transformer(
 ) -> SwinTransformer:
 
     warnings.warn(
-        "Currently, dynamic padding of the input is not supported! Please make sure that the input "
-        "is a multiple of window_size."
+        "Currently, dynamic padding of the input is not supported! "
+        + "Please make sure that the input is a multiple of window_size."
     )
 
     model = SwinTransformer(
@@ -887,8 +887,8 @@ def swin_v2_t(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
         num_heads=[3, 6, 12, 24],
         window_size=[8, 8],
         stochastic_depth_prob=0.2,
-        block=SwinTransformerBlockV2,
-        downsample_layer=PatchMergingV2,
+        block=_SwinTransformerBlockV2,
+        downsample_layer=_PatchMergingV2,
         pretrained=pretrained,
         **kwargs,
     )
@@ -912,9 +912,9 @@ def swin_v2_s(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
         num_heads=[3, 6, 12, 24],
         window_size=[8, 8],
         stochastic_depth_prob=0.3,
-        block=SwinTransformerBlockV2,
+        block=_SwinTransformerBlockV2,
         pretrained=pretrained,
-        downsample_layer=PatchMergingV2,
+        downsample_layer=_PatchMergingV2,
         **kwargs,
     )
 
@@ -937,8 +937,8 @@ def swin_v2_b(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
         num_heads=[4, 8, 16, 32],
         window_size=[8, 8],
         stochastic_depth_prob=0.5,
-        block=SwinTransformerBlockV2,
-        downsample_layer=PatchMergingV2,
+        block=_SwinTransformerBlockV2,
+        downsample_layer=_PatchMergingV2,
         pretrained=pretrained,
         **kwargs,
     )

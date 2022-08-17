@@ -21,8 +21,8 @@ class SqueezeExcitation(eqx.Module):
         self,
         input_channels: int,
         squeeze_channels: int,
-        activation: Callable = jnn.relu,
-        scale_activation: Callable = jnn.sigmoid,
+        activation: Callable = None,
+        scale_activation: Callable = None,
         *,
         key: "jax.random.PRNGKey" = None
     ) -> None:
@@ -36,6 +36,11 @@ class SqueezeExcitation(eqx.Module):
             initialisation. (Keyword only argument.)
         """
         super().__init__()
+        if activation is None:
+            activation = jnn.relu
+        if scale_activation is None:
+            scale_activation = jnn.sigmoid
+
         keys = jrandom.split(key, 2)
         self.avgpool = nn.AdaptiveAvgPool2d(1)
         self.fc1 = nn.Conv2d(input_channels, squeeze_channels, 1, key=keys[0])

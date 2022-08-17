@@ -26,8 +26,8 @@ class DropPath(eqx.Module):
         !!! note
 
             For `mode = local`, an input `(channels, dim_0, dim_1, ...)` is reshaped and transposed to
-            `(channels, dims).transpose()`. For each `dim x channels` element
-            the decision is made independently.
+            `(channels, dims).transpose()`. For each `dim x channels` element,
+            the decision to drop/keep is made independently.
 
         """
         self.p = p

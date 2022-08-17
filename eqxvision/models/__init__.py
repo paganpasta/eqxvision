@@ -75,10 +75,10 @@ from .classification.vgg import (
     vgg19_bn,
 )
 from .classification.vit import (
+    _VitAttention,
+    _VitBlock,
     VisionTransformer,
     vit_base,
     vit_small,
     vit_tiny,
-    VitAttention,
-    VitBlock,
 )

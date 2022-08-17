@@ -71,7 +71,7 @@ class CNBlock(eqx.Module):
         return result
 
 
-class CNBlockConfig:
+class _CNBlockConfig:
     # Stores information listed at Section 3 of the ConvNeXt paper
     def __init__(
         self,
@@ -101,12 +101,12 @@ class ConvNeXt(eqx.Module):
 
     def __init__(
         self,
-        block_setting: Sequence[CNBlockConfig],
+        block_setting: Sequence["_CNBlockConfig"],
         stochastic_depth_prob: float = 0.0,
         layer_scale: float = 1e-6,
         num_classes: int = 1000,
-        block: Optional[Callable[..., eqx.Module]] = None,
-        norm_layer: Optional[Callable[..., eqx.Module]] = None,
+        block: Optional["eqx.Module"] = None,
+        norm_layer: Optional["eqx.Module"] = None,
         *,
         key: "jax.random.PRNGKey" = None,
     ) -> None:
@@ -128,7 +128,7 @@ class ConvNeXt(eqx.Module):
             raise ValueError("The block_setting should not be empty")
         elif not (
             isinstance(block_setting, Sequence)
-            and all([isinstance(s, CNBlockConfig) for s in block_setting])
+            and all([isinstance(s, _CNBlockConfig) for s in block_setting])
         ):
             raise TypeError("The block_setting should be List[CNBlockConfig]")
 
@@ -225,7 +225,7 @@ class ConvNeXt(eqx.Module):
 
 def _convnext(
     arch: str,
-    block_setting: List[CNBlockConfig],
+    block_setting: List[_CNBlockConfig],
     stochastic_depth_prob: float,
     pretrained: bool,
     **kwargs: Any,
@@ -249,10 +249,10 @@ def convnext_tiny(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
     """
     block_setting = [
-        CNBlockConfig(96, 192, 3),
-        CNBlockConfig(192, 384, 3),
-        CNBlockConfig(384, 768, 9),
-        CNBlockConfig(768, None, 3),
+        _CNBlockConfig(96, 192, 3),
+        _CNBlockConfig(192, 384, 3),
+        _CNBlockConfig(384, 768, 9),
+        _CNBlockConfig(768, None, 3),
     ]
     stochastic_depth_prob = kwargs.pop("stochastic_depth_prob", 0.1)
     return _convnext(
@@ -273,10 +273,10 @@ def convnext_small(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
     """
     block_setting = [
-        CNBlockConfig(96, 192, 3),
-        CNBlockConfig(192, 384, 3),
-        CNBlockConfig(384, 768, 27),
-        CNBlockConfig(768, None, 3),
+        _CNBlockConfig(96, 192, 3),
+        _CNBlockConfig(192, 384, 3),
+        _CNBlockConfig(384, 768, 27),
+        _CNBlockConfig(768, None, 3),
     ]
     stochastic_depth_prob = kwargs.pop("stochastic_depth_prob", 0.4)
     return _convnext(
@@ -293,10 +293,10 @@ def convnext_base(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
     """
     block_setting = [
-        CNBlockConfig(128, 256, 3),
-        CNBlockConfig(256, 512, 3),
-        CNBlockConfig(512, 1024, 27),
-        CNBlockConfig(1024, None, 3),
+        _CNBlockConfig(128, 256, 3),
+        _CNBlockConfig(256, 512, 3),
+        _CNBlockConfig(512, 1024, 27),
+        _CNBlockConfig(1024, None, 3),
     ]
     stochastic_depth_prob = kwargs.pop("stochastic_depth_prob", 0.5)
     return _convnext(
@@ -313,10 +313,10 @@ def convnext_large(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
     - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
     """
     block_setting = [
-        CNBlockConfig(192, 384, 3),
-        CNBlockConfig(384, 768, 3),
-        CNBlockConfig(768, 1536, 27),
-        CNBlockConfig(1536, None, 3),
+        _CNBlockConfig(192, 384, 3),
+        _CNBlockConfig(384, 768, 3),
+        _CNBlockConfig(768, 1536, 27),
+        _CNBlockConfig(1536, None, 3),
     ]
     stochastic_depth_prob = kwargs.pop("stochastic_depth_prob", 0.5)
     return _convnext(
