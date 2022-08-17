@@ -1,6 +1,5 @@
 # ShuffleNet-V2
 
----
 
 ::: eqxvision.models.ShuffleNetV2
     selection:

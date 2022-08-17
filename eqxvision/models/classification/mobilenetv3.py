@@ -15,7 +15,7 @@ from ...layers import SqueezeExcitation as SElayer
 from ...utils import _make_divisible, load_torch_weights, MODEL_URLS
 
 
-class InvertedResidualConfig:
+class _InvertedResidualConfig:
     # Stores information listed at Tables 1 and 2 of the MobileNetV3 paper
     def __init__(
         self,
@@ -43,7 +43,7 @@ class InvertedResidualConfig:
         return _make_divisible(channels * width_mult, 8)
 
 
-class InvertedResidual(eqx.Module):
+class _InvertedResidual(eqx.Module):
     # Implemented as described at section 5 of MobileNetV3 paper
     use_res_connect: int
     block: nn.Sequential
@@ -51,7 +51,7 @@ class InvertedResidual(eqx.Module):
 
     def __init__(
         self,
-        cnf: InvertedResidualConfig,
+        cnf: _InvertedResidualConfig,
         norm_layer: Callable[..., eqx.Module],
         se_layer: Callable[..., eqx.Module] = partial(
             SElayer, scale_activation=jnn.hard_sigmoid
@@ -141,11 +141,11 @@ class MobileNetV3(eqx.Module):
 
     def __init__(
         self,
-        inverted_residual_setting: List[InvertedResidualConfig],
+        inverted_residual_setting: List["_InvertedResidualConfig"],
         last_channel: int,
         num_classes: int = 1000,
-        block: Optional[Callable[..., eqx.Module]] = None,
-        norm_layer: Optional[Callable[..., eqx.Module]] = None,
+        block: Optional["eqx.Module"] = None,
+        norm_layer: Optional["eqx.Module"] = None,
         dropout: float = 0.2,
         *,
         key: Optional["jax.random.PRNGKey"] = None,
@@ -173,7 +173,7 @@ class MobileNetV3(eqx.Module):
             isinstance(inverted_residual_setting, Sequence)
             and all(
                 [
-                    isinstance(s, InvertedResidualConfig)
+                    isinstance(s, _InvertedResidualConfig)
                     for s in inverted_residual_setting
                 ]
             )
@@ -183,7 +183,7 @@ class MobileNetV3(eqx.Module):
             )
 
         if block is None:
-            block = InvertedResidual
+            block = _InvertedResidual
 
         if norm_layer is None:
             norm_layer = partial(eqxex.BatchNorm, eps=0.001, momentum=0.01)
@@ -257,9 +257,9 @@ def _mobilenet_v3_conf(
     reduce_divider = 2 if reduced_tail else 1
     dilation = 2 if dilated else 1
 
-    bneck_conf = partial(InvertedResidualConfig, width_mult=width_mult)
+    bneck_conf = partial(_InvertedResidualConfig, width_mult=width_mult)
     adjust_channels = partial(
-        InvertedResidualConfig.adjust_channels, width_mult=width_mult
+        _InvertedResidualConfig.adjust_channels, width_mult=width_mult
     )
 
     if arch == "mobilenet_v3_large":
@@ -342,7 +342,7 @@ def _mobilenet_v3_conf(
 
 def _mobilenet_v3(
     arch: str,
-    inverted_residual_setting: List[InvertedResidualConfig],
+    inverted_residual_setting: List[_InvertedResidualConfig],
     last_channel: int,
     **kwargs: Any,
 ):

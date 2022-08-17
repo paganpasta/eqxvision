@@ -54,6 +54,12 @@ MODEL_URLS = {
     "shufflenetv2_x2.0": None,
     "squeezenet1_0": "https://download.pytorch.org/models/squeezenet1_0-b66bff10.pth",
     "squeezenet1_1": "https://download.pytorch.org/models/squeezenet1_1-b8a52dc0.pth",
+    "swin_t": "https://download.pytorch.org/models/swin_t-704ceda3.pth",
+    "swin_s": "https://download.pytorch.org/models/swin_s-5e29d889.pth",
+    "sim_b": "https://download.pytorch.org/models/swin_b-68c6b09e.pth",
+    "swin_v2_t": "https://download.pytorch.org/models/swin_v2_t-b137f0e2.pth",
+    "swin_v2_s": "https://download.pytorch.org/models/swin_v2_s-637d8ceb.pth",
+    "sim_v2_b": "https://download.pytorch.org/models/swin_v2_b-781e5279.pth",
     "vit_small_patch16_224_dino": "https://dl.fbaipublicfiles.com/dino/"
     "dino_deitsmall16_pretrain/dino_deitsmall16_pretrain.pth",
     "vit_small_patch8_224_dino": "https://dl.fbaipublicfiles.com/dino/"
@@ -121,7 +127,7 @@ def load_torch_weights(
     weights = torch.load(filepath, map_location="cpu")
     weights_iterator = iter(
         [
-            jnp.asarray(weight.detach().numpy())
+            (name, jnp.asarray(weight.detach().numpy()))
             for name, weight in weights.items()
             if "running" not in name and "num_batches" not in name
         ]
@@ -143,7 +149,7 @@ def load_torch_weights(
         if isinstance(leaf, jnp.ndarray) and not (
             leaf.size == 1 and isinstance(leaf.item(), bool)
         ):
-            new_weights = next(weights_iterator)
+            (weight_name, new_weights) = next(weights_iterator)
             new_leaves.append(jnp.reshape(new_weights, leaf.shape))
         else:
             new_leaves.append(leaf)

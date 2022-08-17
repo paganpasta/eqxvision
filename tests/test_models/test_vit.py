@@ -18,7 +18,7 @@ class TestVit:
 
         random_input = jax.random.uniform(key=getkey(), shape=(1, 8, 32))
         answer, answer_attn = (1, 8, 32), (1, 1, 4, 8, 8)
-        net = models.VitAttention(
+        net = models._VitAttention(
             32, num_heads=4, qkv_bias=True, attn_drop=0.2, proj_drop=0.2, key=getkey()
         )
         keys = jax.random.split(getkey(), random_input.shape[0])
@@ -44,7 +44,7 @@ class TestVit:
 
         random_input = jax.random.uniform(key=getkey(), shape=(1, 8, 32))
         answer, answer_attn = (1, 8, 32), (1, 1, 4, 8, 8)
-        net = models.VitBlock(32, num_heads=4, key=getkey())
+        net = models._VitBlock(32, num_heads=4, key=getkey())
         keys = jax.random.split(getkey(), random_input.shape[0])
 
         output = forward(net, random_input, keys)

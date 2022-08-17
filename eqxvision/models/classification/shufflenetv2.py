@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Optional
+from typing import Any, List, Optional
 
 import equinox as eqx
 import equinox.experimental as eqxex
@@ -12,7 +12,7 @@ from equinox.custom_types import Array
 from ...utils import load_torch_weights, MODEL_URLS
 
 
-def channel_shuffle(x: Array, groups: int) -> Array:
+def _channel_shuffle(x: Array, groups: int) -> Array:
     num_channels, height, width = x.shape
     channels_per_group = num_channels // groups
     x = jnp.reshape(x, (groups, channels_per_group, height, width))
@@ -21,7 +21,7 @@ def channel_shuffle(x: Array, groups: int) -> Array:
     return x
 
 
-class InvertedResidual(eqx.Module):
+class _InvertedResidual(eqx.Module):
     stride: int
     branch1: nn.Sequential
     branch2: nn.Sequential
@@ -130,7 +130,7 @@ class InvertedResidual(eqx.Module):
         else:
             out = jnp.concatenate((self.branch1(x), self.branch2(x)), axis=0)
 
-        out = channel_shuffle(out, 2)
+        out = _channel_shuffle(out, 2)
         return out
 
 
@@ -151,7 +151,7 @@ class ShuffleNetV2(eqx.Module):
         stages_repeats: List[int],
         stages_out_channels: List[int],
         num_classes: int = 1000,
-        inverted_residual: Callable[..., eqx.Module] = InvertedResidual,
+        inverted_residual: "eqx.Module" = _InvertedResidual,
         *,
         key: Optional["jax.random.PRNGKey"] = None,
     ) -> None:
