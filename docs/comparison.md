@@ -19,8 +19,8 @@
 | Alexnet            | 56.518      | 56.522     |
 | Convnext_tiny      | 82.132      | 82.120     |
 | Densenet121        | 74.432      | 74.434     |
-| Efficientnet-b0    | 77.686      | 77.684     |
-| Efficientnet-v2-s  | 81.314      | 77.684     |
+| Efficientnet_b0    | 77.686      | 77.684     |
+| Efficientnet_v2_s  | 81.314      | 81.312     |
 | Googlenet          | 69.774      | 61.046     |
 | Mobilenet_v2       | 71.878      | 71.856     |
 | Mobilenet_v3_small | 67.674      | :no_entry: |
@@ -28,5 +28,5 @@
 | Shufflenet_v2_x0_5 | 60.550      | 60.552     |
 | Squeezenet_1_0     | 58.102      | 57.052     |
 | Squeezenet_1_1     | 58.178      | 58.178     |
-| Vgg-11             | 69.024      | 27.190     |
-| Vgg-11_bn          | 70.376      | 57.726     |
+| Vgg_11             | 69.024      | 27.190     |
+| Vgg_11_bn          | 70.376      | 57.726     |
