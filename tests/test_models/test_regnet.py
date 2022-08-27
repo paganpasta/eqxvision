@@ -6,14 +6,14 @@ import pytest
 import eqxvision.models as models
 
 
-model_list = [("regnet_y_400mf", models.regnet_y_400mf)]
+model_list = [("regnet_x_400mf", models.regnet_x_400mf)]
 
 
 class TestRegNet:
     answer = (1, 1000)
 
     @pytest.mark.parametrize("model_func", model_list)
-    def test_resnets(self, model_func, demo_image, getkey):
+    def test_regnets(self, model_func, demo_image, getkey):
         @eqx.filter_jit
         def forward(net, x, key):
             keys = jax.random.split(key, x.shape[0])
@@ -37,4 +37,5 @@ class TestRegNet:
         model = eqx.tree_inference(model, True)
         eqx_outputs = forward(model, demo_image, keys)
         pt_outputs = net_preds[model_func[0]]
+
         assert jnp.isclose(eqx_outputs, pt_outputs, atol=1e-4).all()

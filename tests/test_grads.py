@@ -17,6 +17,7 @@ model_list = [
     models.googlenet,
     models.mobilenet_v2,
     models.mobilenet_v3_small,
+    models.regnet_x_400mf,
     models.resnet18,
     models.shufflenet_v2_x0_5,
     models.squeezenet1_0,
