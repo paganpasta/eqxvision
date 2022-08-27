@@ -15,5 +15,5 @@ class TestGoogLeNet:
             return ans
 
         model = models.googlenet(num_classes=1000, aux_logits=False)
-        output = forward(model, demo_image, getkey())
+        output = forward(model, demo_image(224), getkey())
         assert output.shape == self.answer

@@ -103,6 +103,6 @@ class TestVit:
     def test_vit_pretrained(self, demo_image, getkey):
         net = models.vit_small(num_classes=0, pretrained=True)
         keys = jr.split(getkey(), 1)
-        output = jax.vmap(net)(demo_image, key=keys)
+        output = jax.vmap(net)(demo_image(224), key=keys)
 
         assert output.shape == (1, 384)

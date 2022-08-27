@@ -20,9 +20,9 @@ class TestAlexNet:
             return jax.vmap(model)(x, key=keys)
 
         model = models.alexnet(num_classes=1000)
-        output = forward(model, demo_image, getkey())
+        output = forward(model, demo_image(224), getkey())
         assert output.shape == self.answer
-        forward(model, demo_image, getkey())
+        forward(model, demo_image(224), getkey())
         assert c_counter == 1
 
     def test_pretrained(self, getkey, demo_image, net_preds):
@@ -42,6 +42,6 @@ class TestAlexNet:
         pt_outputs = net_preds["alexnet"]
         new_model = eqx.tree_inference(new_model, True)
         keys = jax.random.split(getkey(), 1)
-        eqx_outputs = forward(new_model.features, demo_image, keys)
+        eqx_outputs = forward(new_model.features, demo_image(224), keys)
 
         assert jnp.isclose(pt_outputs, eqx_outputs, atol=1e-4).all()

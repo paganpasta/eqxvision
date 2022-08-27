@@ -21,7 +21,7 @@ class TestSqueezeNet:
             return ans
 
         model = model_func(num_classes=1000)
-        output = forward(model, demo_image, getkey())
+        output = forward(model, demo_image(224), getkey())
         assert output.shape == self.answer
 
     def test_pretrained(self, getkey, demo_image, net_preds):
@@ -37,6 +37,6 @@ class TestSqueezeNet:
         pt_outputs = net_preds["squeezenet1_0"]
         new_model = eqx.tree_inference(new_model, True)
         keys = jax.random.split(getkey(), 1)
-        eqx_outputs = forward(new_model, demo_image, keys)
+        eqx_outputs = forward(new_model, demo_image(224), keys)
 
         assert jnp.argmax(pt_outputs) == jnp.argmax(eqx_outputs)

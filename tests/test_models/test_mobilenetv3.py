@@ -20,5 +20,5 @@ class TestMobileNetv3:
             return ans
 
         model = model_func[1](num_classes=1000)
-        output = forward(model, demo_image, getkey())
+        output = forward(model, demo_image(224), getkey())
         assert output.shape == self.answer

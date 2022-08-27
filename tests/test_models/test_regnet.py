@@ -21,7 +21,7 @@ class TestRegNet:
             return ans
 
         model = model_func[1](num_classes=1000)
-        output = forward(model, demo_image, getkey())
+        output = forward(model, demo_image(224), getkey())
         assert output.shape == self.answer
 
     @pytest.mark.parametrize("model_func", model_list)
@@ -35,7 +35,7 @@ class TestRegNet:
 
         model = model_func[1](pretrained=True)
         model = eqx.tree_inference(model, True)
-        eqx_outputs = forward(model, demo_image, keys)
+        eqx_outputs = forward(model, demo_image(224), keys)
         pt_outputs = net_preds[model_func[0]]
 
         assert jnp.isclose(eqx_outputs, pt_outputs, atol=1e-4).all()
