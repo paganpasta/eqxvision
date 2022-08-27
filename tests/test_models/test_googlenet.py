@@ -8,6 +8,8 @@ class TestGoogLeNet:
     answer = (1, 1000)
 
     def test_output_shape(self, demo_image, getkey):
+        img = demo_image(224)
+
         @eqx.filter_jit
         def forward(net, x, key):
             keys = jax.random.split(key, x.shape[0])
@@ -15,5 +17,5 @@ class TestGoogLeNet:
             return ans
 
         model = models.googlenet(num_classes=1000, aux_logits=False)
-        output = forward(model, demo_image(224), getkey())
+        output = forward(model, img, getkey())
         assert output.shape == self.answer

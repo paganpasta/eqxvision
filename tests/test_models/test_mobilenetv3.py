@@ -13,6 +13,8 @@ class TestMobileNetv3:
 
     @pytest.mark.parametrize("model_func", model_list)
     def test_mobilenet(self, model_func, demo_image, getkey):
+        img = demo_image(224)
+
         @eqx.filter_jit
         def forward(net, x, key):
             keys = jax.random.split(key, x.shape[0])
@@ -20,5 +22,5 @@ class TestMobileNetv3:
             return ans
 
         model = model_func[1](num_classes=1000)
-        output = forward(model, demo_image(224), getkey())
+        output = forward(model, img, getkey())
         assert output.shape == self.answer

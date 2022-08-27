@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 import warnings
 from pathlib import Path
 from typing import NewType, Optional
@@ -121,6 +122,11 @@ def load_torch_weights(
     **Returns:**
         The model with weights loaded from the `PyTorch` checkpoint.
     """
+    if "torch" not in sys.modules:
+        raise RuntimeError(
+            " Torch package not found! Pretrained is only supported with the torch package."
+        )
+
     if filepath is None and url is None:
         raise ValueError("Both filepath and url cannot be empty!")
     elif filepath and url:
