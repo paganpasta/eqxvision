@@ -25,7 +25,7 @@ class TestRegNet:
         assert output.shape == self.answer
 
     @pytest.mark.parametrize("model_func", model_list)
-    def test_pretrained(self, getkey, model_func, demo_image):
+    def test_pretrained(self, getkey, model_func, demo_image, net_preds):
         keys = jax.random.split(getkey(), 1)
 
         @eqx.filter_jit
@@ -36,16 +36,5 @@ class TestRegNet:
         model = model_func[1](pretrained=True)
         model = eqx.tree_inference(model, True)
         eqx_outputs = forward(model, demo_image, keys)
-
-        import numpy
-        import torch
-        import torchvision
-
-        m = torchvision.models.regnet_y_400mf(
-            weights=torchvision.models.RegNet_Y_400MF_Weights.IMAGENET1K_V1
-        )
-        m.eval()
-        with torch.no_grad():
-            pt_outputs = m(torch.tensor(numpy.asarray(demo_image))).numpy()
-        # pt_outputs = net_preds[model_func[0]]
+        pt_outputs = net_preds[model_func[0]]
         assert jnp.isclose(eqx_outputs, pt_outputs, atol=1e-4).all()

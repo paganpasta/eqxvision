@@ -266,7 +266,7 @@ def convnext_tiny(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
 
 def convnext_small(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
     r"""ConvNeXt Small model architecture from the
-    `"A ConvNet for the 2020s" <https://arxiv.org/abs/2201.03545>`_ paper.
+    [A ConvNet for the 2020s](https://arxiv.org/abs/2201.03545) paper.
 
     **Arguments:**
 
@@ -286,7 +286,7 @@ def convnext_small(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
 
 def convnext_base(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
     r"""ConvNeXt Base model architecture from the
-    `"A ConvNet for the 2020s" <https://arxiv.org/abs/2201.03545>`_ paper.
+    [A ConvNet for the 2020s](https://arxiv.org/abs/2201.03545) paper.
 
     **Arguments:**
 
@@ -306,7 +306,7 @@ def convnext_base(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
 
 def convnext_large(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
     r"""ConvNeXt Large model architecture from the
-    `"A ConvNet for the 2020s" <https://arxiv.org/abs/2201.03545>`_ paper.
+    [A ConvNet for the 2020s](https://arxiv.org/abs/2201.03545) paper.
 
     **Arguments:**
 

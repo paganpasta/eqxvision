@@ -231,7 +231,7 @@ class MobileNetV2(eqx.Module):
 def mobilenet_v2(pretrained=False, **kwargs: Any) -> MobileNetV2:
     """
     Constructs a MobileNetV2 architecture from
-    `"MobileNetV2: Inverted Residuals and Linear Bottlenecks" <https://arxiv.org/abs/1801.04381>`_.
+    [MobileNetV2: Inverted Residuals and Linear Bottlenecks](https://arxiv.org/abs/1801.04381).
 
     **Arguments:**
 
