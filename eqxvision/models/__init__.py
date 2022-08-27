@@ -34,6 +34,7 @@ from .classification.mobilenetv3 import (
     mobilenet_v3_small,
     MobileNetV3,
 )
+from .classification.regnet import RegNet, regnet_y_400mf
 from .classification.resnet import (
     ResNet,
     resnet18,
