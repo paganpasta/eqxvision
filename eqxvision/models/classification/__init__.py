@@ -6,6 +6,7 @@ from . import (
     googlenet,
     mobilenetv2,
     mobilenetv3,
+    regnet,
     resnet,
     shufflenetv2,
     squeezenet,
