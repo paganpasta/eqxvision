@@ -35,7 +35,7 @@ pip install eqxvision
 
 ## What's New?
 
-- All `torchvision` classification models are ported to eqxvision! :rocket:
+- All `torchvision` classification models are now ported to eqxvision! :rocket:
 
   Checkout the comparison table [here](./comparison.md).
 
@@ -44,10 +44,10 @@ pip install eqxvision
 Start with any one of these easy to follow [tutorials](getting_started/Transfer_Learning.ipynb). 
        
 ## Tips
-- Better to use `@equinox.jit_filter` instead of `@jax.jit`
-- Advisable to use `jax.{v,p}map` with `axis_name='batch'` for all models
+- Use `@equinox.jit_filter` instead of `@jax.jit`
+- Use `jax.{v,p}map` with `axis_name='batch'` for all models
 - Don't forget to switch to `inference` mode for evaluations
-- Wrap with `eqx.filter(net, eqx.is_array)` for `Optax` initialisation.
+- Wrap the model for `Optax` initialisation with `eqx.filter(net, eqx.is_array)`.
 
 
 
