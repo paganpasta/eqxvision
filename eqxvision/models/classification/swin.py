@@ -806,7 +806,7 @@ def _swin_transformer(
 def swin_t(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_tiny architecture from
-    `Swin Transformer: Hierarchical Vision Transformer using Shifted Windows <https://arxiv.org/pdf/2103.14030>`_.
+    [Swin Transformer: Hierarchical Vision Transformer using Shifted Windows](https://arxiv.org/pdf/2103.14030).
 
     **Arguments:**
 
@@ -829,7 +829,7 @@ def swin_t(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
 def swin_s(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_small architecture from
-    `Swin Transformer: Hierarchical Vision Transformer using Shifted Windows <https://arxiv.org/pdf/2103.14030>`_.
+    [Swin Transformer: Hierarchical Vision Transformer using Shifted Windows](https://arxiv.org/pdf/2103.14030).
 
     **Arguments:**
 
@@ -851,7 +851,7 @@ def swin_s(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
 def swin_b(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_base architecture from
-    `Swin Transformer: Hierarchical Vision Transformer using Shifted Windows <https://arxiv.org/pdf/2103.14030>`_.
+    [Swin Transformer: Hierarchical Vision Transformer using Shifted Windows](https://arxiv.org/pdf/2103.14030).
 
     **Arguments:**
 
@@ -874,7 +874,7 @@ def swin_b(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
 def swin_v2_t(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_v2_tiny architecture from
-    `Swin Transformer V2: Scaling Up Capacity and Resolution <https://arxiv.org/pdf/2111.09883>`_.
+    [Swin Transformer V2: Scaling Up Capacity and Resolution](https://arxiv.org/pdf/2111.09883).
 
     **Arguments:**
 
@@ -899,7 +899,7 @@ def swin_v2_t(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
 def swin_v2_s(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_v2_small architecture from
-    `Swin Transformer V2: Scaling Up Capacity and Resolution <https://arxiv.org/pdf/2111.09883>`_.
+    [Swin Transformer V2: Scaling Up Capacity and Resolution](https://arxiv.org/pdf/2111.09883).
 
     **Arguments:**
 
@@ -924,7 +924,7 @@ def swin_v2_s(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
 def swin_v2_b(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_v2_base architecture from
-    `Swin Transformer V2: Scaling Up Capacity and Resolution <https://arxiv.org/pdf/2111.09883>`_.
+    [Swin Transformer V2: Scaling Up Capacity and Resolution](https://arxiv.org/pdf/2111.09883).
 
     **Arguments:**
 

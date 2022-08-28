@@ -260,8 +260,7 @@ def _shufflenetv2(*args: Any, **kwargs: Any) -> ShuffleNetV2:
 def shufflenet_v2_x0_5(pretrained=False, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 0.5x output channels, as described in
-    `"ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design"
-    <https://arxiv.org/abs/1807.11164>`_.
+    [ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design](https://arxiv.org/abs/1807.11164).
 
     **Arguments:**
 
@@ -277,8 +276,7 @@ def shufflenet_v2_x0_5(pretrained=False, **kwargs: Any) -> ShuffleNetV2:
 def shufflenet_v2_x1_0(pretrained=False, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 1.0x output channels, as described in
-    `"ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design"
-    <https://arxiv.org/abs/1807.11164>`_.
+    [ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design](https://arxiv.org/abs/1807.11164).
 
     **Arguments:**
 
@@ -294,8 +292,7 @@ def shufflenet_v2_x1_0(pretrained=False, **kwargs: Any) -> ShuffleNetV2:
 def shufflenet_v2_x1_5(pretrained=False, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 1.5x output channels, as described in
-    `"ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design"
-    <https://arxiv.org/abs/1807.11164>`_.
+    [ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design](https://arxiv.org/abs/1807.11164).
 
     **Arguments:**
 
@@ -311,8 +308,7 @@ def shufflenet_v2_x1_5(pretrained=False, **kwargs: Any) -> ShuffleNetV2:
 def shufflenet_v2_x2_0(pretrained=False, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 2.0x output channels, as described in
-    `"ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design"
-    <https://arxiv.org/abs/1807.11164>`_.
+    [ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design](https://arxiv.org/abs/1807.11164).
 
     **Arguments:**
 

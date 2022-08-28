@@ -205,7 +205,7 @@ class ResNet(eqx.Module):
         - `width_per_group`: Increases width of `block` by a factor of `width_per_group/64`.
         Defaults to `64`
         - `replace_stride_with_dilation`: Replacing `2x2` strides with dilated convolution. Defaults to None
-        - `norm_layer`: Normalisation to be applied on the inputs. Defaults to `equinox.BatchNorm`
+        - `norm_layer`: Normalisation to be applied on the inputs. Defaults to `BatchNorm`
         - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
 
@@ -394,7 +394,7 @@ def resnet34(pretrained=False, **kwargs) -> ResNet:
 
 def resnet50(pretrained=False, **kwargs) -> ResNet:
     r"""ResNet-50 model from
-    `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
+    [Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385.pdf)
 
     **Arguments:**
 
@@ -409,7 +409,7 @@ def resnet50(pretrained=False, **kwargs) -> ResNet:
 
 def resnet101(pretrained=False, **kwargs) -> ResNet:
     r"""ResNet-101 model from
-    `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
+    [Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385.pdf)
 
     **Arguments:**
 
@@ -424,7 +424,7 @@ def resnet101(pretrained=False, **kwargs) -> ResNet:
 
 def resnet152(pretrained=False, **kwargs) -> ResNet:
     r"""ResNet-152 model from
-    `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
+    [Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385.pdf)
 
     **Arguments:**
 
@@ -439,7 +439,7 @@ def resnet152(pretrained=False, **kwargs) -> ResNet:
 
 def resnext50_32x4d(pretrained=False, **kwargs) -> ResNet:
     r"""ResNeXt-50 32x4d model from
-    `"Aggregated Residual Transformation for Deep Neural Networks" <https://arxiv.org/pdf/1611.05431.pdf>`_
+    [Aggregated Residual Transformation for Deep Neural Networks](https://arxiv.org/pdf/1611.05431.pdf)
 
     **Arguments:**
 
@@ -456,7 +456,7 @@ def resnext50_32x4d(pretrained=False, **kwargs) -> ResNet:
 
 def resnext101_32x8d(pretrained=False, **kwargs) -> ResNet:
     r"""ResNeXt-101 32x8d model from
-    `"Aggregated Residual Transformation for Deep Neural Networks" <https://arxiv.org/pdf/1611.05431.pdf>`_
+    [Aggregated Residual Transformation for Deep Neural Networks](https://arxiv.org/pdf/1611.05431.pdf)
 
     **Arguments:**
 
@@ -473,7 +473,7 @@ def resnext101_32x8d(pretrained=False, **kwargs) -> ResNet:
 
 def wide_resnet50_2(pretrained=False, **kwargs) -> ResNet:
     r"""Wide ResNet-50-2 model from
-    `"Wide Residual Networks" <https://arxiv.org/pdf/1605.07146.pdf>`_
+    [Wide Residual Networks](https://arxiv.org/pdf/1605.07146.pdf)
     The model is the same as ResNet except for the bottleneck number of channels
     which is twice larger in every block. The number of channels in outer 1x1
     convolutions is the same, e.g. last block in ResNet-50 has 2048-512-2048
@@ -493,7 +493,7 @@ def wide_resnet50_2(pretrained=False, **kwargs) -> ResNet:
 
 def wide_resnet101_2(pretrained=False, **kwargs) -> ResNet:
     r"""Wide ResNet-101-2 model from
-    `"Wide Residual Networks" <https://arxiv.org/pdf/1605.07146.pdf>`_
+    [Wide Residual Networks](https://arxiv.org/pdf/1605.07146.pdf)
     The model is the same as ResNet except for the bottleneck number of channels
     which is twice larger in every block. The number of channels in outer 1x1
     convolutions is the same, e.g. last block in ResNet-50 has 2048-512-2048

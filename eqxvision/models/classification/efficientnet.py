@@ -482,8 +482,8 @@ def _efficientnet_conf(
 
 
 def efficientnet_b0(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
-    """EfficientNet B0 model architecture from the `EfficientNet: Rethinking Model Scaling for Convolutional
-    Neural Networks <https://arxiv.org/abs/1905.11946>`_ paper.
+    """EfficientNet B0 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
+    Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
@@ -503,8 +503,8 @@ def efficientnet_b0(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
 
 
 def efficientnet_b1(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
-    """EfficientNet B1 model architecture from the `EfficientNet: Rethinking Model Scaling for Convolutional
-    Neural Networks <https://arxiv.org/abs/1905.11946>`_ paper.
+    """EfficientNet B1 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
+    Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
@@ -525,8 +525,8 @@ def efficientnet_b1(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
 
 
 def efficientnet_b2(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
-    """EfficientNet B2 model architecture from the `EfficientNet: Rethinking Model Scaling for Convolutional
-    Neural Networks <https://arxiv.org/abs/1905.11946>`_ paper.
+    """EfficientNet B2 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
+    Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
@@ -547,8 +547,8 @@ def efficientnet_b2(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
 
 
 def efficientnet_b3(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
-    """EfficientNet B3 model architecture from the `EfficientNet: Rethinking Model Scaling for Convolutional
-    Neural Networks <https://arxiv.org/abs/1905.11946>`_ paper.
+    """EfficientNet B3 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
+    Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
@@ -568,8 +568,8 @@ def efficientnet_b3(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
 
 
 def efficientnet_b4(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
-    """EfficientNet B4 model architecture from the `EfficientNet: Rethinking Model Scaling for Convolutional
-    Neural Networks <https://arxiv.org/abs/1905.11946>`_ paper.
+    """EfficientNet B4 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
+    Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
@@ -589,8 +589,8 @@ def efficientnet_b4(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
 
 
 def efficientnet_b5(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
-    """EfficientNet B5 model architecture from the `EfficientNet: Rethinking Model Scaling for Convolutional
-    Neural Networks <https://arxiv.org/abs/1905.11946>`_ paper.
+    """EfficientNet B5 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
+    Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
@@ -611,8 +611,8 @@ def efficientnet_b5(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
 
 
 def efficientnet_b6(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
-    """EfficientNet B6 model architecture from the `EfficientNet: Rethinking Model Scaling for Convolutional
-    Neural Networks <https://arxiv.org/abs/1905.11946>`_ paper.
+    """EfficientNet B6 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
+    Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
@@ -633,8 +633,8 @@ def efficientnet_b6(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
 
 
 def efficientnet_b7(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
-    """EfficientNet B7 model architecture from the `EfficientNet: Rethinking Model Scaling for Convolutional
-    Neural Networks <https://arxiv.org/abs/1905.11946>`_ paper.
+    """EfficientNet B7 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
+    Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
@@ -657,7 +657,7 @@ def efficientnet_b7(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
 def efficientnet_v2_s(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
     """
     Constructs an EfficientNetV2-S architecture from
-    `EfficientNetV2: Smaller Models and Faster Training <https://arxiv.org/abs/2104.00298>`_.
+    [EfficientNetV2: Smaller Models and Faster Training](https://arxiv.org/abs/2104.00298).
 
     **Arguments:**
 
@@ -678,7 +678,7 @@ def efficientnet_v2_s(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
 def efficientnet_v2_m(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
     """
     Constructs an EfficientNetV2-M architecture from
-    `EfficientNetV2: Smaller Models and Faster Training <https://arxiv.org/abs/2104.00298>`_.
+    [EfficientNetV2: Smaller Models and Faster Training](https://arxiv.org/abs/2104.00298).
 
     **Arguments:**
 
@@ -699,7 +699,7 @@ def efficientnet_v2_m(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
 def efficientnet_v2_l(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
     """
     Constructs an EfficientNetV2-L architecture from
-    `EfficientNetV2: Smaller Models and Faster Training <https://arxiv.org/abs/2104.00298>`_.
+    [EfficientNetV2: Smaller Models and Faster Training](https://arxiv.org/abs/2104.00298).
 
     **Arguments:**
 

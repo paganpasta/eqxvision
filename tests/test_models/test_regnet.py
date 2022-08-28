@@ -6,14 +6,14 @@ import pytest
 import eqxvision.models as models
 
 
-model_list = [("densenet121", models.densenet121)]
+model_list = [("regnet_x_400mf", models.regnet_x_400mf)]
 
 
-class TestDenseNet:
+class TestRegNet:
     answer = (1, 1000)
 
     @pytest.mark.parametrize("model_func", model_list)
-    def test_densenets(self, model_func, demo_image, getkey):
+    def test_regnets(self, model_func, demo_image, getkey):
         img = demo_image(224)
 
         @eqx.filter_jit
@@ -38,7 +38,7 @@ class TestDenseNet:
 
         model = model_func[1](pretrained=True)
         model = eqx.tree_inference(model, True)
-        pt_outputs = net_preds[model_func[0]]
         eqx_outputs = forward(model, img, keys)
+        pt_outputs = net_preds[model_func[0]]
 
         assert jnp.isclose(eqx_outputs, pt_outputs, atol=1e-4).all()

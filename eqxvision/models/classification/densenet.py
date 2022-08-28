@@ -242,7 +242,7 @@ def _densenet(
 
 def densenet121(pretrained=False, **kwargs: Any) -> DenseNet:
     r"""Densenet-121 model from
-    `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_.
+    [Densely Connected Convolutional Networks](https://arxiv.org/pdf/1608.06993.pdf).
     The required minimum input size of the model is 29x29.
 
     **Arguments:**
@@ -259,7 +259,7 @@ def densenet121(pretrained=False, **kwargs: Any) -> DenseNet:
 
 def densenet161(pretrained=False, **kwargs: Any) -> DenseNet:
     r"""Densenet-161 model from
-    `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_.
+    [Densely Connected Convolutional Networks](https://arxiv.org/pdf/1608.06993.pdf).
     The required minimum input size of the model is 29x29.
 
     **Arguments:**
@@ -276,7 +276,7 @@ def densenet161(pretrained=False, **kwargs: Any) -> DenseNet:
 
 def densenet169(pretrained=False, **kwargs: Any) -> DenseNet:
     r"""Densenet-169 model from
-    `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_.
+    [Densely Connected Convolutional Networks](https://arxiv.org/pdf/1608.06993.pdf).
     The required minimum input size of the model is 29x29.
 
     **Arguments:**
@@ -292,7 +292,7 @@ def densenet169(pretrained=False, **kwargs: Any) -> DenseNet:
 
 def densenet201(pretrained=False, **kwargs: Any) -> DenseNet:
     r"""Densenet-201 model from
-    `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_.
+    [Densely Connected Convolutional Networks](https://arxiv.org/pdf/1608.06993.pdf).
     The required minimum input size of the model is 29x29.
 
     **Arguments:**

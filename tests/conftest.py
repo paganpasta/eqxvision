@@ -17,34 +17,28 @@ def getkey():
     return _getkey
 
 
-@pytest.fixture(scope="session")
-def demo_image():
-    img = Image.open("./tests/static/img.png")
-    img = img.convert("RGB")
+@pytest.fixture()
+def img_transform():
+    def _transform(img_size):
+        return transforms.Compose(
+            [
+                transforms.Resize(img_size),
+                transforms.ToTensor(),
+                transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+            ]
+        )
 
-    transform = transforms.Compose(
-        [
-            transforms.Resize(224),
-            transforms.ToTensor(),
-            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-        ]
-    )
-    return jnp.asarray(transform(img).unsqueeze(0))
+    return _transform
 
 
-@pytest.fixture(scope="session")
-def demo_image_256():
-    img = Image.open("./tests/static/img.png")
-    img = img.convert("RGB")
+@pytest.fixture()
+def demo_image(img_transform):
+    def _demo_image(img_size):
+        img = Image.open("./tests/static/img.png")
+        img = img.convert("RGB")
+        return jnp.asarray(img_transform(img_size)(img).unsqueeze(0))
 
-    transform = transforms.Compose(
-        [
-            transforms.Resize(256),
-            transforms.ToTensor(),
-            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-        ]
-    )
-    return jnp.asarray(transform(img).unsqueeze(0))
+    return _demo_image
 
 
 @pytest.fixture(scope="session")
@@ -74,6 +68,9 @@ def net_preds():
 
     ckpt = torch.load("./tests/static/mobilenet_v3_small.pred.pth")
     gt_dicts["mobilenet_v3_small"] = ckpt["output"].detach().numpy()
+
+    ckpt = torch.load("./tests/static/regnet_x_400mf.pred.pth")
+    gt_dicts["regnet_x_400mf"] = ckpt.detach().numpy()
 
     ckpt = torch.load("./tests/static/resnet18.pred.pth")
     gt_dicts["resnet18"] = ckpt["output"].detach().numpy()

@@ -25,6 +25,8 @@
 | Googlenet          | 69.774      | 61.046     |
 | Mobilenet_v2       | 71.878      | 71.856     |
 | Mobilenet_v3_small | 67.674      | :no_entry: |
+| Regnet_X_400MF     | 74.864      | 74.874     |
+| Regnet_Y_400MF     | 75.806      | 75.800     |
 | Resnet18           | 69.766      | 69.758     |
 | Shufflenet_v2_x0_5 | 60.550      | 60.552     |
 | Squeezenet_1_0     | 58.102      | 57.052     |

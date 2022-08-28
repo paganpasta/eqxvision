@@ -148,9 +148,8 @@ def _squeezenet(version: str, pretrained: bool, **kwargs: Any) -> SqueezeNet:
 
 
 def squeezenet1_0(pretrained: bool = False, **kwargs: Any) -> SqueezeNet:
-    r"""SqueezeNet model architecture from the `"SqueezeNet: AlexNet-level
-    accuracy with 50x fewer parameters and <0.5MB model size"
-    <https://arxiv.org/abs/1602.07360>`_ paper.
+    r"""SqueezeNet model architecture from the [SqueezeNet: AlexNet-level
+    accuracy with 50x fewer parameters and <0.5MB model size](https://arxiv.org/abs/1602.07360) paper.
     The required minimum input size of the model is 21x21.
 
     **Arguments:**
@@ -161,8 +160,8 @@ def squeezenet1_0(pretrained: bool = False, **kwargs: Any) -> SqueezeNet:
 
 
 def squeezenet1_1(pretrained: bool = False, **kwargs: Any) -> SqueezeNet:
-    r"""SqueezeNet 1.1 model from the `official SqueezeNet repo
-    <https://github.com/DeepScale/SqueezeNet/tree/master/SqueezeNet_v1.1>`_.
+    r"""SqueezeNet 1.1 model from the (official SqueezeNet repo)
+    [https://github.com/DeepScale/SqueezeNet/tree/master/SqueezeNet_v1.1].
     SqueezeNet 1.1 has 2.4x less computation and slightly fewer parameters
     than SqueezeNet 1.0, without sacrificing accuracy.
     The required minimum input size of the model is 17x17.

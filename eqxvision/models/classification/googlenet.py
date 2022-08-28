@@ -312,7 +312,7 @@ class BasicConv2d(eqx.Module):
 
 def googlenet(pretrained=False, **kwargs: Any) -> GoogLeNet:
     r"""GoogLeNet (Inception v1) model architecture from
-    `"Going Deeper with Convolutions" <http://arxiv.org/abs/1409.4842>`_.
+    [Going Deeper with Convolutions](http://arxiv.org/abs/1409.4842).
     The required minimum input size of the model is 15x15.
 
     **Arguments:**

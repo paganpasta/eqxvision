@@ -91,7 +91,7 @@ class AlexNet(eqx.Module):
 
 def alexnet(pretrained: bool = False, **kwargs: Any) -> AlexNet:
     r"""AlexNet model architecture from the
-    `"One weird trick..." <https://arxiv.org/abs/1404.5997>`_ paper.
+    [One weird trick...](https://arxiv.org/abs/1404.5997)` paper.
     The required minimum input size of the model is 63x63.
     **Arguments:**
 

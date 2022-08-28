@@ -353,7 +353,7 @@ def _mobilenet_v3(
 def mobilenet_v3_large(pretrained=False, **kwargs: Any) -> MobileNetV3:
     """
     Constructs a large MobileNetV3 architecture from
-    `"Searching for MobileNetV3" <https://arxiv.org/abs/1905.02244>`_.
+    [Searching for MobileNetV3](https://arxiv.org/abs/1905.02244).
 
     **Arguments:**
 
@@ -371,7 +371,7 @@ def mobilenet_v3_large(pretrained=False, **kwargs: Any) -> MobileNetV3:
 def mobilenet_v3_small(pretrained=False, **kwargs: Any) -> MobileNetV3:
     """
     Constructs a small MobileNetV3 architecture from
-    `"Searching for MobileNetV3" <https://arxiv.org/abs/1905.02244>`_.
+    [Searching for MobileNetV3](https://arxiv.org/abs/1905.02244).
 
     **Arguments:**
 

@@ -1,5 +1,8 @@
 # Eqxvision
-![PyPI](https://img.shields.io/pypi/v/eqxvision?style=flat-square) ![GitHub Release Date](https://img.shields.io/github/release-date/paganpasta/eqxvision?style=flat-square) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/paganpasta/eqxvision?style=flat-square) ![GitHub issues](https://img.shields.io/github/issues/paganpasta/eqxvision?style=flat-square) ![GitHub](https://img.shields.io/github/license/paganpasta/eqxvision?style=flat-square)
+[![PyPI](https://img.shields.io/pypi/v/eqxvision?style=flat-square)](https://pypi.org/project/eqxvision/) 
+[![Github](https://img.shields.io/badge/Documentation-link-yellowgreen)](https://eqxvision.readthedocs.io/en/latest/)
+[![GitHub Release Date](https://img.shields.io/github/release-date/paganpasta/eqxvision?style=flat-square)](https://github.com/paganpasta/eqxvision/releases) 
+[![GitHub](https://img.shields.io/github/license/paganpasta/eqxvision?style=flat-square)](https://github.com/paganpasta/eqxvision/blob/main/LICENSE.md)
 
 Eqxvision is a package of popular computer vision model architectures built using [Equinox](https://docs.kidger.site/equinox/).
 
@@ -12,6 +15,12 @@ pip install eqxvision
 ```
 
 *requires:* `python>=3.7`
+
+*optional:* `torch`, only if `pretrained` models are required. 
+
+## Documentation
+
+Available at [https://eqxvision.readthedocs.io/en/latest/](https://eqxvision.readthedocs.io/en/latest/).
 
 ## Usage
 
@@ -36,7 +45,7 @@ Picking a model and doing a forward pass is as simple as ...
 ```
 
 ## What's New?
-- Pretrained on all ported models are available!
+- All `torchvision` classification models are now ported to `eqxvision`!
 
     !!! note
         Only `DINO` pretrained weights are available for `ViTs`.
