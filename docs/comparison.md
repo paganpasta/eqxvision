@@ -9,7 +9,9 @@
         pre-trained networks. The difference arises after the `adaptive-pooling`,
         which implies the networks can still be used as feature extractors 
         (see results [here](./getting_started/Transfer_Learning.ipynb)).
-
+    
+    -    For `RegNets`, the pretrained weights correspond to torchvision's `IMAGENET1K_V2`.
+    
     -   `Mobilenet-v3` and `Swin_v2` pretrained are not supported at the moment. 
     
     -   `ViT` only support `DINO` pretrained weights at the moment.
