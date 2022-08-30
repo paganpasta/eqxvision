@@ -15,9 +15,9 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies=[
-    'equinox',
-    'jax',
-    'jaxlib',
+    "equinox >= 0.7.0",
+    "jax",
+    "jaxlib",
     "torch >=1.7.1",
     "torchvision >=0.8.0"
 ]
