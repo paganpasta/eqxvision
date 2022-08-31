@@ -4,7 +4,7 @@
 [![GitHub Release Date](https://img.shields.io/github/release-date/paganpasta/eqxvision?style=flat-square)](https://github.com/paganpasta/eqxvision/releases) 
 [![GitHub](https://img.shields.io/github/license/paganpasta/eqxvision?style=flat-square)](https://github.com/paganpasta/eqxvision/blob/main/LICENSE.md)
 
-Eqxvision is a package of popular computer vision model architectures built using [Equinox](https://docs.kidger.site/equinox/).
+Eqxvision is a package of popular computer vision model architectures for JAX, built using [Equinox](https://docs.kidger.site/equinox/).
 
 ## Installation
 
@@ -57,10 +57,10 @@ Start with any one of these easy to follow [tutorials](https://eqxvision.readthe
        
        
 ## Tips
-- Better to use `@equinox.jit_filter` instead of `@jax.jit`
-- Advisable to use `jax.{v,p}map` with `axis_name='batch'` for all models
-- Don't forget to switch to `inference` mode for evaluations
-- Wrap with `eqx.filter(net, eqx.is_array)` for `Optax` initialisation.
+- Better to use `@equinox.filter_jit` instead of `@jax.jit`.
+- Use `jax.{v,p}map` with `axis_name='batch'` when using models that use batch normalisation.
+- Don't forget to switch to `inference` mode for evaluations. (`model = eqx.tree_inference(model)`)
+- Initialise Optax optimisers as `optim.init(eqx.filter(net, eqx.is_array))`. ([See here.](https://docs.kidger.site/equinox/faq/#optax-is-throwing-an-error))
 
 
 ## Contributing
