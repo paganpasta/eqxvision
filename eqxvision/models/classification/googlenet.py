@@ -75,14 +75,14 @@ class GoogLeNet(eqx.Module):
 
         self.aux_logits = aux_logits
         self.conv1 = conv_block(3, 64, kernel_size=7, stride=2, padding=3, key=keys[0])
-        self.maxpool1 = nn.MaxPool2d(3, stride=2)
+        self.maxpool1 = nn.MaxPool2d(3, stride=2, use_ceil=True)
         self.conv2 = conv_block(64, 64, kernel_size=1, key=keys[1])
         self.conv3 = conv_block(64, 192, kernel_size=3, padding=1, key=keys[2])
-        self.maxpool2 = nn.MaxPool2d(3, stride=2)
+        self.maxpool2 = nn.MaxPool2d(3, stride=2, use_ceil=True)
 
         self.inception3a = inception_block(192, 64, 96, 128, 16, 32, 32, key=keys[3])
         self.inception3b = inception_block(256, 128, 128, 192, 32, 96, 64, key=keys[4])
-        self.maxpool3 = nn.MaxPool2d(3, stride=2)
+        self.maxpool3 = nn.MaxPool2d(3, stride=2, use_ceil=True)
 
         self.inception4a = inception_block(480, 192, 96, 208, 16, 48, 64, key=keys[5])
         self.inception4b = inception_block(512, 160, 112, 224, 24, 64, 64, key=keys[6])
@@ -91,7 +91,7 @@ class GoogLeNet(eqx.Module):
         self.inception4e = inception_block(
             528, 256, 160, 320, 32, 128, 128, key=keys[9]
         )
-        self.maxpool4 = nn.MaxPool2d(2, stride=2)
+        self.maxpool4 = nn.MaxPool2d(2, stride=2, use_ceil=True)
 
         self.inception5a = inception_block(
             832, 256, 160, 320, 32, 128, 128, key=keys[10]
@@ -221,7 +221,7 @@ class _Inception(eqx.Module):
 
         self.branch4 = nn.Sequential(
             [
-                nn.MaxPool2d(kernel_size=3, stride=1, padding=1),
+                nn.MaxPool2d(kernel_size=3, stride=1, padding=1, use_ceil=True),
                 conv_block(in_channels, pool_proj, kernel_size=1, key=keys[5]),
             ]
         )
