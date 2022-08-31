@@ -67,7 +67,7 @@ def net_preds():
     gt_dicts["mobilenet_v2"] = ckpt["output"].detach().numpy()
 
     ckpt = torch.load("./tests/static/mobilenet_v3_small.pred.pth")
-    gt_dicts["mobilenet_v3_small"] = ckpt["output"].detach().numpy()
+    gt_dicts["mobilenet_v3_small"] = ckpt.detach().numpy()
 
     ckpt = torch.load("./tests/static/regnet_x_400mf.pred.pth")
     gt_dicts["regnet_x_400mf"] = ckpt.detach().numpy()

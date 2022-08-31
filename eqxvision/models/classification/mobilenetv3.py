@@ -69,7 +69,7 @@ class _InvertedResidual(eqx.Module):
         )
 
         layers: List[eqx.Module] = []
-        activation_layer = jnn.hard_sigmoid if cnf.use_hs else jnn.relu
+        activation_layer = jnn.hard_swish if cnf.use_hs else jnn.relu
 
         # expand
         if cnf.expanded_channels != cnf.input_channels:
