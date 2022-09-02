@@ -16,8 +16,6 @@ classifiers = [
 ]
 dependencies=[
     "equinox >= 0.7.0",
-    "jax",
-    "jaxlib",
     "torch >=1.7.1",
     "torchvision >=0.8.0"
 ]
@@ -31,6 +29,7 @@ test = [
     "pre-commit",
     "bluepy",
     "pytest",
+    "equinox >= 0.7.0",
     "torch >=1.7.1",
     "torchvision >=0.8.0",
     "optax"
