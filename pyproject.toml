@@ -7,7 +7,7 @@ name = "eqxvision"
 authors = [{name = "Contributing Authors", email = "aditya.91.singh@gmail.com"}]
 dynamic = ["version", "description"]
 readme = "README.md"
-license = { file="LICENSE" }
+license = { file="LICENSE.md" }
 requires-python = ">=3.7"
 classifiers = [
     "License :: OSI Approved :: MIT License",
