@@ -1,6 +1,6 @@
 # Eqxvision
 [![PyPI](https://img.shields.io/pypi/v/eqxvision?style=flat-square)](https://pypi.org/project/eqxvision/) 
-[![Github](https://img.shields.io/badge/Documentation-link-yellowgreen)](https://eqxvision.readthedocs.io/en/latest/)
+[![Github](https://img.shields.io/badge/Documentation-link-yellowgreen?style=flat-square)](https://eqxvision.readthedocs.io/en/latest/)
 [![GitHub Release Date](https://img.shields.io/github/release-date/paganpasta/eqxvision?style=flat-square)](https://github.com/paganpasta/eqxvision/releases) 
 [![GitHub](https://img.shields.io/github/license/paganpasta/eqxvision?style=flat-square)](https://github.com/paganpasta/eqxvision/blob/main/LICENSE.md)
 
