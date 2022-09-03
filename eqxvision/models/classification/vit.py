@@ -298,6 +298,7 @@ def vit_tiny(
     depth=12,
     num_heads=3,
     mlp_ratio=4,
+    pretrained=False,
     *,
     key: Optional["jax.random.PRNGKey"] = None,
     **kwargs,
@@ -313,6 +314,8 @@ def vit_tiny(
         initialisation. (Keyword only argument.)
     - `kwargs`: Parameters passed on to the `VisionTransformer`
     """
+    if pretrained:
+        raise NotImplementedError("vit_tiny does not support pretrained mode.")
     model = VisionTransformer(
         patch_size=patch_size,
         embed_dim=embed_dim,

@@ -15,9 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies=[
-    'equinox',
-    'jax',
-    'jaxlib',
+    "equinox >= 0.7.0",
     "torch >=1.7.1",
     "torchvision >=0.8.0"
 ]
@@ -31,6 +29,7 @@ test = [
     "pre-commit",
     "bluepy",
     "pytest",
+    "equinox >= 0.7.0",
     "torch >=1.7.1",
     "torchvision >=0.8.0",
     "optax"

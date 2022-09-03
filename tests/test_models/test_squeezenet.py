@@ -43,4 +43,4 @@ class TestSqueezeNet:
         keys = jax.random.split(getkey(), 1)
         eqx_outputs = forward(new_model, img, keys)
 
-        assert jnp.argmax(pt_outputs) == jnp.argmax(eqx_outputs)
+        assert jnp.isclose(eqx_outputs, pt_outputs, atol=1e-4).all()

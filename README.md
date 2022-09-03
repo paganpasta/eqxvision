@@ -57,10 +57,10 @@ Start with any one of these easy to follow [tutorials](https://eqxvision.readthe
        
        
 ## Tips
-- Better to use `@equinox.jit_filter` instead of `@jax.jit`
-- Advisable to use `jax.{v,p}map` with `axis_name='batch'` for all models
-- Don't forget to switch to `inference` mode for evaluations
-- Wrap with `eqx.filter(net, eqx.is_array)` for `Optax` initialisation.
+- Better to use `@equinox.filter_jit` instead of `@jax.jit`.
+- Use `jax.{v,p}map` with `axis_name='batch'` when using models that use batch normalisation.
+- Don't forget to switch to `inference` mode for evaluations. (`model = eqx.tree_inference(model)`)
+- Initialise Optax optimisers as `optim.init(eqx.filter(net, eqx.is_array))`. ([See here.](https://docs.kidger.site/equinox/faq/#optax-is-throwing-an-error))
 
 
 ## Contributing
