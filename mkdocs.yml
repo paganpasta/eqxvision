@@ -120,6 +120,8 @@ nav:
             - 'api/models/classification/swin_v2.md'
             - 'api/models/classification/vgg.md'
             - 'api/models/classification/vit.md'
+        - Segmentation models:
+            - 'api/models/segmentation/fcn.md'
         - Vision Layers:
             - 'api/layers/conv_norm_act.md'
             - 'api/layers/drop_path.md'

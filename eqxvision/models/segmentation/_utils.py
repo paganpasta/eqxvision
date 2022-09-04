@@ -1,4 +1,4 @@
-from typing import Any, Optional, Tuple
+from typing import Any, Optional, Tuple, Union
 
 import equinox as eqx
 import jax
@@ -18,12 +18,32 @@ class _SimpleSegmentationModel(eqx.Module):
         classifier: "eqx.Module",
         aux_classifier: Optional["eqx.Module"] = None,
     ) -> None:
+        """
+
+        **Arguments:**
+
+        - `backbone`: the network used to compute the features for the model
+            The backbone returns `embedding_features(Ignored)`, `[output features of intermediate layers]`.
+        - `classifier`: module that takes last of the intermediate outputs from the
+            backbone and returns a dense prediction
+        - `aux_classifier`: If used, an auxiliary classifier similar to `classifier` for the auxiliary layer
+        """
         super().__init__()
         self.backbone = backbone
         self.classifier = classifier
         self.aux_classifier = aux_classifier
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Tuple[Any, Any]:
+    def __call__(
+        self, x: Array, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Union[Any, Array], Array]:
+        """**Arguments:**
+
+        - `x`: The input. Should be a JAX array with `3` channels
+        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
+
+        **Returns:**
+        A tuple with outputs from the intermediate layers.
+        """
         keys = jr.split(key, 3)
         _, xs = self.backbone(x, key=keys[0])
 

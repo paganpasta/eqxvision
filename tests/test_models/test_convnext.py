@@ -16,7 +16,7 @@ class TestConvNext:
             outputs = jax.vmap(net, axis_name="batch")(imgs, key=keys)
             return outputs
 
-        model = models.convnext_tiny(torchweights=CLASSIFICATION_URLS["alexnet"])
+        model = models.convnext_tiny(torch_weights=CLASSIFICATION_URLS["alexnet"])
         model = eqx.tree_inference(model, True)
         eqx_outputs = forward(model, img, keys)
         pt_outputs = net_preds["convnext_tiny"]

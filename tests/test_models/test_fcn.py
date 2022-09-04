@@ -3,8 +3,7 @@ import jax
 import jax.numpy as jnp
 import jax.random as jr
 
-from eqxvision.models import resnet50
-from eqxvision.models.segmentation import fcn
+from eqxvision.models import fcn, resnet50
 from eqxvision.utils import SEGMENTATION_URLS
 
 

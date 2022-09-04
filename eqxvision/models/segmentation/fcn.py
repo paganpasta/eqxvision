@@ -12,19 +12,7 @@ from ._utils import _SimpleSegmentationModel
 
 
 class FCN(_SimpleSegmentationModel):
-    """
-    Implements FCN model from
-    `"Fully Convolutional Networks for Semantic Segmentation"
-    (https://arxiv.org/abs/1411.4038).
-
-    **Arguments:**
-
-        `backbone`: the network used to compute the features for the model
-            The backbone returns `embedding_features(Ignored)`, `[output features of intermediate layers]`.
-        `classifier`: module that takes last of the intermediate outputs from the
-            backbone and returns a dense prediction
-        `aux_classifier`: If used, an auxiliary classifier similar to `classifier` for the auxiliary layer
-    """
+    """Ported from `torchvision.models.segmentation.fcn`"""
 
 
 class FCNHead(nn.Sequential):

@@ -104,7 +104,8 @@ class TestVit:
     def test_vit_pretrained(self, demo_image, getkey):
         img = demo_image(224)
         net = models.vit_small(
-            num_classes=0, torch_weights=CLASSIFICATION_URLS["vit_small"]
+            num_classes=0,
+            torch_weights=CLASSIFICATION_URLS["vit_small_patch16_224_dino"],
         )
         keys = jr.split(getkey(), 1)
         output = jax.vmap(net)(img, key=keys)

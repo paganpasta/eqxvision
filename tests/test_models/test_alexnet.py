@@ -15,7 +15,7 @@ class TestAlexNet:
             outputs = jax.vmap(net, axis_name="batch")(imgs, key=keys)
             return outputs
 
-        model = models.alexnet(torchweights=CLASSIFICATION_URLS["alexnet"])
+        model = models.alexnet(torch_weights=CLASSIFICATION_URLS["alexnet"])
 
         pt_outputs = net_preds["alexnet"]
         new_model = eqx.tree_inference(model, True)

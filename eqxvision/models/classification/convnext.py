@@ -240,7 +240,7 @@ def _convnext(
     return model
 
 
-def convnext_tiny(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
+def convnext_tiny(*, torch_weights: str = None, **kwargs: Any) -> ConvNeXt:
     r"""ConvNeXt Tiny model architecture from the
     `"A ConvNet for the 2020s" <https://arxiv.org/abs/2201.03545>`_ paper.
 
@@ -259,7 +259,7 @@ def convnext_tiny(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
         "convnext_tiny",
         block_setting=block_setting,
         stochastic_depth_prob=stochastic_depth_prob,
-        pretrained=pretrained,
+        torch_weights=torch_weights,
         **kwargs,
     )
 
