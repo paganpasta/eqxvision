@@ -8,7 +8,7 @@ import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
 
-from ...utils import load_torch_weights, MODEL_URLS
+from ...utils import load_torch_weights
 
 
 class AlexNet(eqx.Module):
@@ -89,15 +89,15 @@ class AlexNet(eqx.Module):
             yield attr, value
 
 
-def alexnet(pretrained: bool = False, **kwargs: Any) -> AlexNet:
+def alexnet(torch_weights: str = None, **kwargs: Any) -> AlexNet:
     r"""AlexNet model architecture from the
     [One weird trick...](https://arxiv.org/abs/1404.5997)` paper.
     The required minimum input size of the model is 63x63.
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     model = AlexNet(**kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["alexnet"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model

@@ -12,7 +12,7 @@ from equinox.custom_types import Array
 
 from ...layers import ConvNormActivation
 from ...layers import SqueezeExcitation as SElayer
-from ...utils import _make_divisible, load_torch_weights, MODEL_URLS
+from ...utils import _make_divisible, load_torch_weights
 
 
 class _InvertedResidualConfig:
@@ -350,37 +350,37 @@ def _mobilenet_v3(
     return model
 
 
-def mobilenet_v3_large(pretrained=False, **kwargs: Any) -> MobileNetV3:
+def mobilenet_v3_large(torch_weights: str = None, **kwargs: Any) -> MobileNetV3:
     """
     Constructs a large MobileNetV3 architecture from
     [Searching for MobileNetV3](https://arxiv.org/abs/1905.02244).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     arch = "mobilenet_v3_large"
     inverted_residual_setting, last_channel = _mobilenet_v3_conf(arch, **kwargs)
     model = _mobilenet_v3(arch, inverted_residual_setting, last_channel, **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["mobilenet_v3_large"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def mobilenet_v3_small(pretrained=False, **kwargs: Any) -> MobileNetV3:
+def mobilenet_v3_small(torch_weights: str = None, **kwargs: Any) -> MobileNetV3:
     """
     Constructs a small MobileNetV3 architecture from
     [Searching for MobileNetV3](https://arxiv.org/abs/1905.02244).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     arch = "mobilenet_v3_small"
     inverted_residual_setting, last_channel = _mobilenet_v3_conf(arch, **kwargs)
     model = _mobilenet_v3(arch, inverted_residual_setting, last_channel, **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["mobilenet_v3_small"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model

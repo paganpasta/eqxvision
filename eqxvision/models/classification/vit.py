@@ -9,7 +9,7 @@ import jax.random as jrandom
 from equinox.custom_types import Array
 
 from ...layers import DropPath, MlpProjection, PatchEmbed
-from ...utils import load_torch_weights, MODEL_URLS
+from ...utils import load_torch_weights
 
 
 class _VitAttention(eqx.Module):
@@ -293,12 +293,12 @@ class VisionTransformer(eqx.Module):
 
 
 def vit_tiny(
-    patch_size=16,
-    embed_dim=192,
-    depth=12,
-    num_heads=3,
-    mlp_ratio=4,
-    pretrained=False,
+    patch_size: str = 16,
+    embed_dim: str = 192,
+    depth: str = 12,
+    num_heads: str = 3,
+    mlp_ratio: str = 4,
+    torch_weights: str = None,
     *,
     key: Optional["jax.random.PRNGKey"] = None,
     **kwargs,
@@ -310,12 +310,11 @@ def vit_tiny(
     - `depth`: Number of `VitBlocks` in the network
     - `num_heads`: The number of equal parts to split the input along the `dim`
     - `mlp_ratio`: For computing hidden dimension of the `mlp`
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
     - `kwargs`: Parameters passed on to the `VisionTransformer`
     """
-    if pretrained:
-        raise NotImplementedError("vit_tiny does not support pretrained mode.")
     model = VisionTransformer(
         patch_size=patch_size,
         embed_dim=embed_dim,
@@ -325,16 +324,18 @@ def vit_tiny(
         key=key,
         **kwargs,
     )
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
 def vit_small(
-    patch_size=16,
-    embed_dim=384,
-    depth=12,
-    num_heads=6,
-    mlp_ratio=4,
-    pretrained=False,
+    patch_size: int = 16,
+    embed_dim: int = 384,
+    depth: int = 12,
+    num_heads: int = 6,
+    mlp_ratio: int = 4,
+    torch_weights: str = None,
     *,
     key: Optional["jax.random.PRNGKey"] = None,
     **kwargs,
@@ -346,7 +347,7 @@ def vit_small(
     - `depth`: Number of `VitBlocks` in the network
     - `num_heads`: The number of equal parts to split the input along the `dim`
     - `mlp_ratio`: For computing hidden dimension of the `mlp`
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
     - `kwargs`: Parameters passed on to the `VisionTransformer`
@@ -360,25 +361,19 @@ def vit_small(
         key=key,
         **kwargs,
     )
-    if pretrained:
-        if not isinstance(model.fc, nn.Identity):
-            raise ValueError(
-                "Currently ViT only support DINO weights which require"
-                " no classification layer. Try again with num_classes=0."
-            )
 
-        model_name = f"vit_small_patch{patch_size}_224_dino"
-        model = load_torch_weights(model, url=MODEL_URLS[model_name])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
 def vit_base(
-    patch_size=16,
-    embed_dim=768,
-    depth=12,
-    num_heads=12,
-    mlp_ratio=4,
-    pretrained=False,
+    patch_size: int = 16,
+    embed_dim: int = 768,
+    depth: int = 12,
+    num_heads: int = 12,
+    mlp_ratio: int = 4,
+    torch_weights: str = None,
     *,
     key: Optional["jax.random.PRNGKey"] = None,
     **kwargs,
@@ -390,7 +385,7 @@ def vit_base(
     - `depth`: Number of `VitBlocks` in the network
     - `num_heads`: The number of equal parts to split the input along the `dim`
     - `mlp_ratio`: For computing hidden dimension of the `mlp`
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
         initialisation. (Keyword only argument.)
     - `kwargs`: Parameters passed on to the `VisionTransformer`
@@ -404,13 +399,6 @@ def vit_base(
         key=key,
         **kwargs,
     )
-    if pretrained:
-        if not isinstance(model.fc, nn.Identity):
-            raise ValueError(
-                "Currently ViT only support DINO weights which require"
-                " no classification layer. Try again with num_classes=0."
-            )
-
-        model_name = f"vit_base_patch{patch_size}_224_dino"
-        model = load_torch_weights(model, url=MODEL_URLS[model_name])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model

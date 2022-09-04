@@ -31,6 +31,8 @@ Picking a model and doing a forward pass is as simple as ...
     import jax.random as jr
     import equinox as eqx
     from eqxvision.models import alexnet
+    from eqxvision.utils import CLASSIFICATION_URLS
+    
     
     @eqx.filter_jit
     def forward(net, images, key):
@@ -38,18 +40,17 @@ Picking a model and doing a forward pass is as simple as ...
         output = jax.vmap(net, axis_name=('batch'))(images, key=keys)
         ...
         
-    net = alexnet(num_classes=1000)
+    net = alexnet(torch_weights=CLASSIFICATION_URLS['alexnet'])
     
     images = jr.uniform(jr.PRNGKey(0), shape=(1,3,224,224))
     output = forward(net, images, jr.PRNGKey(0))
 ```
 
 ## What's New?
-- All `torchvision` classification models are now ported to `eqxvision`!
-
-    !!! note
-        Only `DINO` pretrained weights are available for `ViTs`.
-
+- Backward incompatible changes to `v0.2.0` for loading a `pretrained` model.
+- `FCN` added as the first segmentation model.
+- Almost all image classification models are ported from `torchvision`.
+- New tutorial for generating `adversarial examples` and others coming soon.
 
 ## Get Started!
 

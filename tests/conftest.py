@@ -45,6 +45,7 @@ def demo_image(img_transform):
 def net_preds():
     gt_dicts = {}
 
+    # classification models
     ckpt = torch.load("./tests/static/alexnet.pred.pth")
     gt_dicts["alexnet"] = ckpt["output"].detach().numpy()
 
@@ -89,5 +90,9 @@ def net_preds():
 
     ckpt = torch.load("./tests/static/vgg11_bn.pred.pth")
     gt_dicts["vgg11_bn"] = ckpt["output"].detach().numpy()
+
+    # segmentation models
+    ckpt = torch.load("./tests/static/fcn_resnet50.pth")
+    gt_dicts["fcn_resnet50"] = ckpt.detach().numpy()
 
     return gt_dicts

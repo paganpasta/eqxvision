@@ -9,7 +9,7 @@ import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
 
-from ...utils import load_torch_weights, MODEL_URLS
+from ...utils import load_torch_weights
 
 
 def _channel_shuffle(x: Array, groups: int) -> Array:
@@ -257,65 +257,65 @@ def _shufflenetv2(*args: Any, **kwargs: Any) -> ShuffleNetV2:
     return model
 
 
-def shufflenet_v2_x0_5(pretrained=False, **kwargs: Any) -> ShuffleNetV2:
+def shufflenet_v2_x0_5(torch_weights: str = None, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 0.5x output channels, as described in
     [ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design](https://arxiv.org/abs/1807.11164).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     model = _shufflenetv2([4, 8, 4], [24, 48, 96, 192, 1024], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["shufflenetv2_x0.5"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def shufflenet_v2_x1_0(pretrained=False, **kwargs: Any) -> ShuffleNetV2:
+def shufflenet_v2_x1_0(torch_weights: str = None, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 1.0x output channels, as described in
     [ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design](https://arxiv.org/abs/1807.11164).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     model = _shufflenetv2([4, 8, 4], [24, 116, 232, 464, 1024], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["shufflenetv2_x1.0"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def shufflenet_v2_x1_5(pretrained=False, **kwargs: Any) -> ShuffleNetV2:
+def shufflenet_v2_x1_5(torch_weights: str = None, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 1.5x output channels, as described in
     [ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design](https://arxiv.org/abs/1807.11164).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     model = _shufflenetv2([4, 8, 4], [24, 176, 352, 704, 1024], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["shufflenetv2_x1.5"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def shufflenet_v2_x2_0(pretrained=False, **kwargs: Any) -> ShuffleNetV2:
+def shufflenet_v2_x2_0(torch_weights: str = None, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 2.0x output channels, as described in
     [ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design](https://arxiv.org/abs/1807.11164).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     model = _shufflenetv2([4, 8, 4], [24, 244, 488, 976, 2048], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["shufflenetv2_x2.0"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model

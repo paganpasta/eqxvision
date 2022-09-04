@@ -3,23 +3,11 @@ import jax
 import jax.numpy as jnp
 
 import eqxvision.models as models
+from eqxvision.utils import CLASSIFICATION_URLS
 
 
 class TestSwinTransformer:
     answer = (1, 1000)
-
-    def test_swin_transformer(self, demo_image, getkey):
-        img = demo_image(224)
-
-        @eqx.filter_jit
-        def forward(net, x, key):
-            keys = jax.random.split(key, x.shape[0])
-            ans = jax.vmap(net, axis_name="batch")(x, key=keys)
-            return ans
-
-        model = models.swin_t()
-        output = forward(model, img, getkey())
-        assert output.shape == self.answer
 
     def test_swin_transformer_v2(self, demo_image, getkey):
         img = demo_image(256)
@@ -43,7 +31,7 @@ class TestSwinTransformer:
             outputs = jax.vmap(net, axis_name="batch")(imgs, key=keys)
             return outputs
 
-        model = models.swin_t(pretrained=True)
+        model = models.swin_t(torch_weights=CLASSIFICATION_URLS["swin_t"])
         model = eqx.tree_inference(model, True)
         eqx_outputs = forward(model, img, keys)
 
