@@ -15,29 +15,32 @@ pip install eqxvision
 ## Usage
 ???+ Example
     Importing and doing a forward pass is as simple as
-    ```python
-    import jax
-    import jax.random as jr
-    import equinox as eqx
-    from eqxvision.models import alexnet
-    
-    @eqx.filter_jit
-    def forward(net, images, key):
-        keys = jax.random.split(key, images.shape[0])
-        output = jax.vmap(net, axis_name=('batch'))(images, key=keys)
-        ...
+        ```python
+        import jax
+        import jax.random as jr
+        import equinox as eqx
+        from eqxvision.models import alexnet
+        from eqxvision.utils import CLASSIFICATION_URLS
         
-    net = alexnet(num_classes=1000)
-    
-    images = jr.uniform(jr.PRNGKey(0), shape=(1,3,224,224))
-    output = forward(net, images, jr.PRNGKey(0))
-    ```
+        
+        @eqx.filter_jit
+        def forward(net, images, key):
+            keys = jax.random.split(key, images.shape[0])
+            output = jax.vmap(net, axis_name=('batch'))(images, key=keys)
+            ...
+            
+        net = alexnet(torch_weights=CLASSIFICATION_URLS['alexnet'])
+        
+        images = jr.uniform(jr.PRNGKey(0), shape=(1,3,224,224))
+        output = forward(net, images, jr.PRNGKey(0))
+        ```
 
 ## What's New?
+- Backward incompatible changes to `v0.2.0` for loading a `pretrained` model.
+- `FCN` added as the first segmentation model.
+- Almost all image classification models are ported from `torchvision`.
+- New tutorial for generating [adversarial examples](getting_started/Adversarial_Attack.ipynb) and others coming soon.
 
-- All `torchvision` classification models are now ported to eqxvision! :rocket:
-
-  Checkout the comparison table [here](./comparison.md).
 
 ## Get Started!
 
