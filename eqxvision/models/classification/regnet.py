@@ -10,7 +10,7 @@ import jax.random as jr
 from equinox.custom_types import Array
 
 from ...layers import ConvNormActivation, SqueezeExcitation
-from ...utils import _make_divisible, load_torch_weights, MODEL_URLS
+from ...utils import _make_divisible, load_torch_weights
 
 
 class SimpleStemIN(ConvNormActivation):
@@ -433,7 +433,7 @@ class RegNet(eqx.Module):
 def _regnet(
     arch: str,
     block_params: BlockParams,
-    pretrained: bool,
+    torch_weights: str,
     **kwargs: Any,
 ) -> RegNet:
 
@@ -441,233 +441,236 @@ def _regnet(
         "norm_layer", partial(eqx.experimental.BatchNorm, eps=1e-05, momentum=0.1)
     )
     model = RegNet(block_params, norm_layer=norm_layer, **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS[arch])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def regnet_y_400mf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_y_400mf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """Constructs a RegNetY_400MF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=16, w_0=48, w_a=27.89, w_m=2.09, group_width=8, se_ratio=0.25
     )
     return _regnet(
-        arch="regnet_y_400mf", block_params=params, pretrained=pretrained, **kwargs
+        arch="regnet_y_400mf",
+        block_params=params,
+        torch_weights=torch_weights,
+        **kwargs,
     )
 
 
-def regnet_y_800mf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_y_800mf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetY_800MF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=14, w_0=56, w_a=38.84, w_m=2.4, group_width=16, se_ratio=0.25
     )
-    return _regnet("regnet_y_800mf", params, pretrained, **kwargs)
+    return _regnet("regnet_y_800mf", params, torch_weights, **kwargs)
 
 
-def regnet_y_1_6gf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_y_1_6gf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetY_1.6GF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=27, w_0=48, w_a=20.71, w_m=2.65, group_width=24, se_ratio=0.25
     )
-    return _regnet("regnet_y_1_6gf", params, pretrained, **kwargs)
+    return _regnet("regnet_y_1_6gf", params, torch_weights, **kwargs)
 
 
-def regnet_y_3_2gf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_y_3_2gf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetY_3.2GF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=21, w_0=80, w_a=42.63, w_m=2.66, group_width=24, se_ratio=0.25
     )
-    return _regnet("regnet_y_3_2gf", params, pretrained, **kwargs)
+    return _regnet("regnet_y_3_2gf", params, torch_weights, **kwargs)
 
 
-def regnet_y_8gf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_y_8gf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetY_8GF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=17, w_0=192, w_a=76.82, w_m=2.19, group_width=56, se_ratio=0.25
     )
-    return _regnet("regnet_y_8gf", params, pretrained, **kwargs)
+    return _regnet("regnet_y_8gf", params, torch_weights, **kwargs)
 
 
-def regnet_y_16gf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_y_16gf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetY_16GF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=18, w_0=200, w_a=106.23, w_m=2.48, group_width=112, se_ratio=0.25
     )
-    return _regnet("regnet_y_16gf", params, pretrained, **kwargs)
+    return _regnet("regnet_y_16gf", params, torch_weights, **kwargs)
 
 
-def regnet_y_32gf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_y_32gf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetY_32GF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=20, w_0=232, w_a=115.89, w_m=2.53, group_width=232, se_ratio=0.25
     )
-    return _regnet("regnet_y_32gf", params, pretrained, **kwargs)
+    return _regnet("regnet_y_32gf", params, torch_weights, **kwargs)
 
 
-def regnet_y_128gf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_y_128gf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetY_128GF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=27, w_0=456, w_a=160.83, w_m=2.52, group_width=264, se_ratio=0.25
     )
-    return _regnet("regnet_y_128gf", params, pretrained, **kwargs)
+    return _regnet("regnet_y_128gf", params, torch_weights, **kwargs)
 
 
-def regnet_x_400mf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_x_400mf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetX_400MF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=22, w_0=24, w_a=24.48, w_m=2.54, group_width=16
     )
-    return _regnet("regnet_x_400mf", params, pretrained, **kwargs)
+    return _regnet("regnet_x_400mf", params, torch_weights, **kwargs)
 
 
-def regnet_x_800mf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_x_800mf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetX_800MF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=16, w_0=56, w_a=35.73, w_m=2.28, group_width=16
     )
-    return _regnet("regnet_x_800mf", params, pretrained, **kwargs)
+    return _regnet("regnet_x_800mf", params, torch_weights, **kwargs)
 
 
-def regnet_x_1_6gf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_x_1_6gf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetX_1.6GF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=18, w_0=80, w_a=34.01, w_m=2.25, group_width=24
     )
-    return _regnet("regnet_x_1_6gf", params, pretrained, **kwargs)
+    return _regnet("regnet_x_1_6gf", params, torch_weights, **kwargs)
 
 
-def regnet_x_3_2gf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_x_3_2gf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetX_3.2GF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=25, w_0=88, w_a=26.31, w_m=2.25, group_width=48
     )
-    return _regnet("regnet_x_3_2gf", params, pretrained, **kwargs)
+    return _regnet("regnet_x_3_2gf", params, torch_weights, **kwargs)
 
 
-def regnet_x_8gf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_x_8gf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetX_8GF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=23, w_0=80, w_a=49.56, w_m=2.88, group_width=120
     )
-    return _regnet("regnet_x_8gf", params, pretrained, **kwargs)
+    return _regnet("regnet_x_8gf", params, torch_weights, **kwargs)
 
 
-def regnet_x_16gf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_x_16gf(torch_weights: str = None, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetX_16GF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
 
     params = BlockParams.from_init_params(
         depth=22, w_0=216, w_a=55.59, w_m=2.1, group_width=128
     )
-    return _regnet("regnet_x_16gf", params, pretrained, **kwargs)
+    return _regnet("regnet_x_16gf", params, torch_weights, **kwargs)
 
 
-def regnet_x_32gf(pretrained: bool = False, **kwargs: Any) -> RegNet:
+def regnet_x_32gf(torch_weights: bool = False, **kwargs: Any) -> RegNet:
     """
     Constructs a RegNetX_32GF architecture from
     [Designing Network Design Spaces](https://arxiv.org/abs/2003.13678).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     params = BlockParams.from_init_params(
         depth=23, w_0=320, w_a=69.86, w_m=2.0, group_width=168
     )
-    return _regnet("regnet_x_32gf", params, pretrained, **kwargs)
+    return _regnet("regnet_x_32gf", params, torch_weights, **kwargs)

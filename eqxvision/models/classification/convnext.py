@@ -10,7 +10,7 @@ import jax.random as jrandom
 from equinox.custom_types import Array
 
 from ...layers import ConvNormActivation, DropPath, LayerNorm2d, Linear2d
-from ...utils import load_torch_weights, MODEL_URLS
+from ...utils import CLASSIFICATION_URLS, load_torch_weights
 
 
 class CNBlock(eqx.Module):
@@ -227,16 +227,16 @@ def _convnext(
     arch: str,
     block_setting: List[_CNBlockConfig],
     stochastic_depth_prob: float,
-    pretrained: bool,
+    torch_weights: str,
     **kwargs: Any,
 ) -> ConvNeXt:
     model = ConvNeXt(
         block_setting, stochastic_depth_prob=stochastic_depth_prob, **kwargs
     )
-    if pretrained:
-        if arch not in MODEL_URLS:
+    if torch_weights:
+        if arch not in CLASSIFICATION_URLS:
             raise ValueError(f"No checkpoint is available for model type {arch}")
-        model = load_torch_weights(model, url=MODEL_URLS[arch])
+        model = load_torch_weights(model, torch_weights=CLASSIFICATION_URLS[arch])
     return model
 
 
@@ -246,7 +246,7 @@ def convnext_tiny(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     block_setting = [
         _CNBlockConfig(96, 192, 3),
@@ -264,13 +264,13 @@ def convnext_tiny(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
     )
 
 
-def convnext_small(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
+def convnext_small(*, torch_weights: str = None, **kwargs: Any) -> ConvNeXt:
     r"""ConvNeXt Small model architecture from the
     [A ConvNet for the 2020s](https://arxiv.org/abs/2201.03545) paper.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     block_setting = [
         _CNBlockConfig(96, 192, 3),
@@ -280,17 +280,17 @@ def convnext_small(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
     ]
     stochastic_depth_prob = kwargs.pop("stochastic_depth_prob", 0.4)
     return _convnext(
-        "convnext_small", block_setting, stochastic_depth_prob, pretrained, **kwargs
+        "convnext_small", block_setting, stochastic_depth_prob, torch_weights, **kwargs
     )
 
 
-def convnext_base(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
+def convnext_base(*, torch_weights: str = None, **kwargs: Any) -> ConvNeXt:
     r"""ConvNeXt Base model architecture from the
     [A ConvNet for the 2020s](https://arxiv.org/abs/2201.03545) paper.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     block_setting = [
         _CNBlockConfig(128, 256, 3),
@@ -300,17 +300,17 @@ def convnext_base(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
     ]
     stochastic_depth_prob = kwargs.pop("stochastic_depth_prob", 0.5)
     return _convnext(
-        "convnext_base", block_setting, stochastic_depth_prob, pretrained, **kwargs
+        "convnext_base", block_setting, stochastic_depth_prob, torch_weights, **kwargs
     )
 
 
-def convnext_large(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
+def convnext_large(*, torch_weights: str = None, **kwargs: Any) -> ConvNeXt:
     r"""ConvNeXt Large model architecture from the
     [A ConvNet for the 2020s](https://arxiv.org/abs/2201.03545) paper.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     block_setting = [
         _CNBlockConfig(192, 384, 3),
@@ -320,5 +320,5 @@ def convnext_large(*, pretrained: bool = False, **kwargs: Any) -> ConvNeXt:
     ]
     stochastic_depth_prob = kwargs.pop("stochastic_depth_prob", 0.5)
     return _convnext(
-        "convnext_large", block_setting, stochastic_depth_prob, pretrained, **kwargs
+        "convnext_large", block_setting, stochastic_depth_prob, torch_weights, **kwargs
     )

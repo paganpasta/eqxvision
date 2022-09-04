@@ -4,6 +4,7 @@ import jax.random as jr
 import pytest
 
 import eqxvision.models as models
+from eqxvision.utils import CLASSIFICATION_URLS
 
 
 class TestVit:
@@ -102,7 +103,9 @@ class TestVit:
 
     def test_vit_pretrained(self, demo_image, getkey):
         img = demo_image(224)
-        net = models.vit_small(num_classes=0, pretrained=True)
+        net = models.vit_small(
+            num_classes=0, torch_weights=CLASSIFICATION_URLS["vit_small"]
+        )
         keys = jr.split(getkey(), 1)
         output = jax.vmap(net)(img, key=keys)
 

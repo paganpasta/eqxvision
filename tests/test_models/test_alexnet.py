@@ -3,28 +3,10 @@ import jax
 import jax.numpy as jnp
 
 import eqxvision.models as models
+from eqxvision.utils import CLASSIFICATION_URLS
 
 
 class TestAlexNet:
-    answer = (1, 1000)
-
-    def test_output_shape(self, getkey, demo_image):
-        img = demo_image(224)
-        c_counter = 0
-
-        @eqx.filter_jit
-        def forward(model, x, key):
-            nonlocal c_counter
-            c_counter += 1
-            keys = jax.random.split(key, x.shape[0])
-            return jax.vmap(model)(x, key=keys)
-
-        model = models.alexnet(num_classes=1000)
-        output = forward(model, img, getkey())
-        assert output.shape == self.answer
-        forward(model, img, getkey())
-        assert c_counter == 1
-
     def test_pretrained(self, getkey, demo_image, net_preds):
         img = demo_image(224)
 
@@ -33,7 +15,7 @@ class TestAlexNet:
             outputs = jax.vmap(net, axis_name="batch")(imgs, key=keys)
             return outputs
 
-        model = models.alexnet(pretrained=True)
+        model = models.alexnet(torchweights=CLASSIFICATION_URLS["alexnet"])
 
         pt_outputs = net_preds["alexnet"]
         new_model = eqx.tree_inference(model, True)

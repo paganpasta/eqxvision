@@ -2,12 +2,12 @@ import logging
 import os
 import sys
 import warnings
-from pathlib import Path
-from typing import NewType, Optional
+from typing import Any, Callable, NewType, Optional
 
 import equinox as eqx
 import jax.numpy as jnp
 import jax.tree_util as jtu
+from equinox.custom_types import PyTree
 
 
 try:
@@ -17,7 +17,12 @@ except ImportError:
 
 _TEMP_DIR = "/tmp/.eqx"
 _Url = NewType("_Url", str)
-MODEL_URLS = {
+
+SEGMENTATION_URLS = {
+    "fcn_resnet50": "https://download.pytorch.org/models/fcn_resnet50_coco-1167a1af.pth"
+}
+
+CLASSIFICATION_URLS = {
     "alexnet": "https://download.pytorch.org/models/alexnet-owt-7be5be79.pth",
     "convnext_tiny": "https://download.pytorch.org/models/convnext_tiny-983f1562.pth",
     "convnext_small": "https://download.pytorch.org/models/convnext_small-0c510722.pth",
@@ -66,8 +71,6 @@ MODEL_URLS = {
     "resnext101_32x8d": "https://download.pytorch.org/models/resnext101_32x8d-8ba56ff5.pth",
     "shufflenetv2_x0.5": "https://download.pytorch.org/models/shufflenetv2_x0.5-f707e7126e.pth",
     "shufflenetv2_x1.0": "https://download.pytorch.org/models/shufflenetv2_x1-5666bf0f80.pth",
-    "shufflenetv2_x1.5": None,
-    "shufflenetv2_x2.0": None,
     "squeezenet1_0": "https://download.pytorch.org/models/squeezenet1_0-b66bff10.pth",
     "squeezenet1_1": "https://download.pytorch.org/models/squeezenet1_1-b8a52dc0.pth",
     "swin_t": "https://download.pytorch.org/models/swin_t-704ceda3.pth",
@@ -97,8 +100,25 @@ MODEL_URLS = {
 }
 
 
+def _make_divisible(v: float, divisor: int, min_value: Optional[int] = None) -> int:
+    """
+    This function is taken from the original tf repo.
+    It ensures that all layers have a channel number that is divisible by 8
+    It can be seen here:
+    https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/mobilenet.py
+    """
+    if min_value is None:
+        min_value = divisor
+    new_v = max(min_value, int(v + divisor / 2) // divisor * divisor)
+    # Make sure that round down does not go down by more than 10%.
+    if new_v < 0.9 * v:
+        new_v += divisor
+    return new_v
+
+
 def load_torch_weights(
-    model: eqx.Module, filepath: Path = None, url: "_Url" = None
+    model: eqx.Module,
+    torch_weights: str = None,
 ) -> eqx.Module:
     """Loads weights from a PyTorch serialised file.
 
@@ -114,10 +134,11 @@ def load_torch_weights(
 
     **Arguments:**
 
-    - model: An `eqx.Module` for which the `jnp.ndarray` leaves are
+    - `model`: An `eqx.Module` for which the `jnp.ndarray` leaves are
         replaced by corresponding `PyTorch` weights.
-    - filepath: `Path` to the downloaded `PyTorch` model file.
-    - url: `URL` for the `PyTorch` model file. The file is downloaded to `/tmp/.eqx/` folder.
+    - `weights`: A string either pointing to `PyTorch` weights on disk or the download `URL`.
+    - `filepath`: `Path` to the downloaded `PyTorch` model file.
+    - `url`: `URL` for the `PyTorch` model file. The file is downloaded to `/tmp/.eqx/` folder.
 
     **Returns:**
         The model with weights loaded from the `PyTorch` checkpoint.
@@ -127,35 +148,32 @@ def load_torch_weights(
             " Torch package not found! Pretrained is only supported with the torch package."
         )
 
-    if filepath is None and url is None:
-        raise ValueError("Both filepath and url cannot be empty!")
-    elif filepath and url:
-        warnings.warn(f"Overriding `url` with with filepath: {filepath}.")
-        url = None
-    if url:
+    if torch_weights is None:
+        raise ValueError("torch_weights parameter cannot be empty!")
+
+    if not os.path.exists(torch_weights):
         global _TEMP_DIR
-        filepath = os.path.join(_TEMP_DIR, os.path.basename(url))
+        filepath = os.path.join(_TEMP_DIR, os.path.basename(torch_weights))
         if os.path.exists(filepath):
             logging.info(
                 f"Downloaded file exists at f{filepath}. Using the cached file!"
             )
         else:
             os.makedirs(_TEMP_DIR, exist_ok=True)
-            torch.hub.download_url_to_file(url, filepath)
-    if not os.path.exists(filepath):
-        raise ValueError(f"filepath: {filepath} does not exist!")
-
-    weights = torch.load(filepath, map_location="cpu")
+            torch.hub.download_url_to_file(torch_weights, filepath)
+    else:
+        filepath = torch_weights
+    saved_weights = torch.load(filepath, map_location="cpu")
     weights_iterator = iter(
         [
             (name, jnp.asarray(weight.detach().numpy()))
-            for name, weight in weights.items()
+            for name, weight in saved_weights.items()
             if "running" not in name and "num_batches" not in name
         ]
     )
 
     bn_s = []
-    for name, weight in weights.items():
+    for name, weight in saved_weights.items():
         if "running_mean" in name:
             bn_s.append(False)
             bn_s.append(jnp.asarray(weight.detach().numpy()))
@@ -196,17 +214,63 @@ def load_torch_weights(
     return model
 
 
-def _make_divisible(v: float, divisor: int, min_value: Optional[int] = None) -> int:
+class AuxData:
+    """A simple container for aux data."""
+
+    def __init__(self):
+        self.data = None
+
+    def update(self, x: Any):
+        self.data = x
+
+
+def _make_intermediate_layer_wrapper():
+    aux = AuxData()
+
+    class IntermediateWrapper(eqx.Module):
+        layer: eqx.Module
+
+        def __call__(self, x, *, key=None):
+            out = self.layer(x, key=key)
+            aux.update(out)
+            return out
+
+    return aux, IntermediateWrapper
+
+
+def intermediate_layer_getter(
+    model: PyTree, get_target_layers: Callable
+) -> "eqx.Module":
+    """Wraps intermediate layers of a model for accessing intermediate activations. Based on a discussion
+    [here](https://github.com/patrick-kidger/equinox/issues/186).
+
+    **Arguments:**
+
+    - `model`: A PyTree representing the neural network model
+    - `get_target_layers`: A callable function which returns a sequence
+        of layers from the `model`.
+
+    **Returns:**
+    An `equinox.Module` which contains `model` with the layers of interest wrapped for storing intermediate outputs.
     """
-    This function is taken from the original tf repo.
-    It ensures that all layers have a channel number that is divisible by 8
-    It can be seen here:
-    https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/mobilenet.py
-    """
-    if min_value is None:
-        min_value = divisor
-    new_v = max(min_value, int(v + divisor / 2) // divisor * divisor)
-    # Make sure that round down does not go down by more than 10%.
-    if new_v < 0.9 * v:
-        new_v += divisor
-    return new_v
+    target_layers = get_target_layers(model)
+    auxs, wrappers = zip(
+        *[_make_intermediate_layer_wrapper() for _ in range(len(target_layers))]
+    )
+    model = eqx.tree_at(
+        where=get_target_layers,
+        pytree=model,
+        replace=[
+            wrapper(target_layer)
+            for (wrapper, target_layer) in zip(wrappers, target_layers)
+        ],
+    )
+
+    class IntermediateLayerGetter(eqx.Module):
+        model: eqx.Module
+
+        def __call__(self, x, *, key=None):
+            out = self.model(x, key=key)
+            return out, auxs
+
+    return IntermediateLayerGetter(model)

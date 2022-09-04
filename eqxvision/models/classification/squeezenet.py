@@ -8,7 +8,7 @@ import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
 
-from ...utils import load_torch_weights, MODEL_URLS
+from ...utils import load_torch_weights
 
 
 class _Fire(eqx.Module):
@@ -139,27 +139,26 @@ class SqueezeNet(eqx.Module):
         return jnp.ravel(x)
 
 
-def _squeezenet(version: str, pretrained: bool, **kwargs: Any) -> SqueezeNet:
+def _squeezenet(version: str, torch_weights: str, **kwargs: Any) -> SqueezeNet:
     model = SqueezeNet(version, **kwargs)
-    if pretrained:
-        arch = "squeezenet" + version
-        model = load_torch_weights(model, url=MODEL_URLS[arch])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def squeezenet1_0(pretrained: bool = False, **kwargs: Any) -> SqueezeNet:
+def squeezenet1_0(torch_weights: str = None, **kwargs: Any) -> SqueezeNet:
     r"""SqueezeNet model architecture from the [SqueezeNet: AlexNet-level
     accuracy with 50x fewer parameters and <0.5MB model size](https://arxiv.org/abs/1602.07360) paper.
     The required minimum input size of the model is 21x21.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
-    return _squeezenet("1_0", pretrained, **kwargs)
+    return _squeezenet("1_0", torch_weights, **kwargs)
 
 
-def squeezenet1_1(pretrained: bool = False, **kwargs: Any) -> SqueezeNet:
+def squeezenet1_1(torch_weights: str = None, **kwargs: Any) -> SqueezeNet:
     r"""SqueezeNet 1.1 model from the (official SqueezeNet repo)
     [https://github.com/DeepScale/SqueezeNet/tree/master/SqueezeNet_v1.1].
     SqueezeNet 1.1 has 2.4x less computation and slightly fewer parameters
@@ -168,6 +167,6 @@ def squeezenet1_1(pretrained: bool = False, **kwargs: Any) -> SqueezeNet:
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
-    return _squeezenet("1_1", pretrained, **kwargs)
+    return _squeezenet("1_1", torch_weights, **kwargs)
