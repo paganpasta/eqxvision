@@ -11,7 +11,7 @@ import jax.random as jr
 from equinox.custom_types import Array
 
 from ...layers import DropPath, LayerNorm2d, Linear2d, MlpProjection
-from ...utils import load_torch_weights, MODEL_URLS
+from ...utils import load_torch_weights
 
 
 def _func_dropout(x, p, key):
@@ -780,7 +780,7 @@ def _swin_transformer(
     num_heads: List[int],
     window_size: List[int],
     stochastic_depth_prob: float,
-    pretrained: bool,
+    torch_weights: str,
     **kwargs: Any,
 ) -> SwinTransformer:
 
@@ -798,19 +798,19 @@ def _swin_transformer(
         stochastic_depth_prob=stochastic_depth_prob,
         **kwargs,
     )
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS[arch])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def swin_t(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
+def swin_t(torch_weights: str = None, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_tiny architecture from
     [Swin Transformer: Hierarchical Vision Transformer using Shifted Windows](https://arxiv.org/pdf/2103.14030).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
 
     return _swin_transformer(
@@ -821,19 +821,19 @@ def swin_t(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
         num_heads=[3, 6, 12, 24],
         window_size=[7, 7],
         stochastic_depth_prob=0.2,
-        pretrained=pretrained,
+        torch_weights=torch_weights,
         **kwargs,
     )
 
 
-def swin_s(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
+def swin_s(torch_weights: str = None, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_small architecture from
     [Swin Transformer: Hierarchical Vision Transformer using Shifted Windows](https://arxiv.org/pdf/2103.14030).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     return _swin_transformer(
         arch="swin_s",
@@ -843,19 +843,19 @@ def swin_s(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
         num_heads=[3, 6, 12, 24],
         window_size=[7, 7],
         stochastic_depth_prob=0.3,
-        pretrained=pretrained,
+        torch_weights=torch_weights,
         **kwargs,
     )
 
 
-def swin_b(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
+def swin_b(torch_weights: str = None, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_base architecture from
     [Swin Transformer: Hierarchical Vision Transformer using Shifted Windows](https://arxiv.org/pdf/2103.14030).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
 
     return _swin_transformer(
@@ -866,19 +866,19 @@ def swin_b(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
         num_heads=[4, 8, 16, 32],
         window_size=[7, 7],
         stochastic_depth_prob=0.5,
-        pretrained=pretrained,
+        torch_weights=torch_weights,
         **kwargs,
     )
 
 
-def swin_v2_t(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
+def swin_v2_t(torch_weights: str = None, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_v2_tiny architecture from
     [Swin Transformer V2: Scaling Up Capacity and Resolution](https://arxiv.org/pdf/2111.09883).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
 
     return _swin_transformer(
@@ -891,19 +891,19 @@ def swin_v2_t(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
         stochastic_depth_prob=0.2,
         block=_SwinTransformerBlockV2,
         downsample_layer=_PatchMergingV2,
-        pretrained=pretrained,
+        torch_weights=torch_weights,
         **kwargs,
     )
 
 
-def swin_v2_s(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
+def swin_v2_s(torch_weights: str = None, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_v2_small architecture from
     [Swin Transformer V2: Scaling Up Capacity and Resolution](https://arxiv.org/pdf/2111.09883).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
 
     return _swin_transformer(
@@ -915,20 +915,20 @@ def swin_v2_s(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
         window_size=[8, 8],
         stochastic_depth_prob=0.3,
         block=_SwinTransformerBlockV2,
-        pretrained=pretrained,
+        torch_weights=torch_weights,
         downsample_layer=_PatchMergingV2,
         **kwargs,
     )
 
 
-def swin_v2_b(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
+def swin_v2_b(torch_weights: str = None, **kwargs: Any) -> SwinTransformer:
     """
     Constructs a swin_v2_base architecture from
     [Swin Transformer V2: Scaling Up Capacity and Resolution](https://arxiv.org/pdf/2111.09883).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
 
     return _swin_transformer(
@@ -941,6 +941,6 @@ def swin_v2_b(pretrained: bool = False, **kwargs: Any) -> SwinTransformer:
         stochastic_depth_prob=0.5,
         block=_SwinTransformerBlockV2,
         downsample_layer=_PatchMergingV2,
-        pretrained=pretrained,
+        torch_weights=torch_weights,
         **kwargs,
     )

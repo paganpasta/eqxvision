@@ -9,7 +9,7 @@ import jax.numpy as jnp
 import jax.random as jrandom
 from equinox.custom_types import Array
 
-from ...utils import load_torch_weights, MODEL_URLS
+from ...utils import load_torch_weights
 
 
 def _conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1, key=None):
@@ -363,115 +363,115 @@ def _resnet(block, layers, **kwargs):
     return model
 
 
-def resnet18(pretrained=False, **kwargs) -> ResNet:
+def resnet18(torch_weights=None, **kwargs) -> ResNet:
     r"""ResNet-18 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     model = _resnet(_ResNetBasicBlock, [2, 2, 2, 2], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["resnet18"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def resnet34(pretrained=False, **kwargs) -> ResNet:
+def resnet34(torch_weights=None, **kwargs) -> ResNet:
     r"""ResNet-34 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     model = _resnet(_ResNetBasicBlock, [3, 4, 6, 3], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["resnet34"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def resnet50(pretrained=False, **kwargs) -> ResNet:
+def resnet50(torch_weights=None, **kwargs) -> ResNet:
     r"""ResNet-50 model from
     [Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385.pdf)
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     model = _resnet(_ResNetBottleneck, [3, 4, 6, 3], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["resnet50"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def resnet101(pretrained=False, **kwargs) -> ResNet:
+def resnet101(torch_weights=None, **kwargs) -> ResNet:
     r"""ResNet-101 model from
     [Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385.pdf)
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     model = _resnet(_ResNetBottleneck, [3, 4, 23, 3], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["resnet101"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def resnet152(pretrained=False, **kwargs) -> ResNet:
+def resnet152(torch_weights=None, **kwargs) -> ResNet:
     r"""ResNet-152 model from
     [Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385.pdf)
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     model = _resnet(_ResNetBottleneck, [3, 8, 36, 3], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["resnet152"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def resnext50_32x4d(pretrained=False, **kwargs) -> ResNet:
+def resnext50_32x4d(torch_weights=None, **kwargs) -> ResNet:
     r"""ResNeXt-50 32x4d model from
     [Aggregated Residual Transformation for Deep Neural Networks](https://arxiv.org/pdf/1611.05431.pdf)
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     kwargs["groups"] = 32
     kwargs["width_per_group"] = 4
     model = _resnet(_ResNetBottleneck, [3, 4, 6, 3], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["resnext50_32x4d"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def resnext101_32x8d(pretrained=False, **kwargs) -> ResNet:
+def resnext101_32x8d(torch_weights=None, **kwargs) -> ResNet:
     r"""ResNeXt-101 32x8d model from
     [Aggregated Residual Transformation for Deep Neural Networks](https://arxiv.org/pdf/1611.05431.pdf)
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     kwargs["groups"] = 32
     kwargs["width_per_group"] = 8
     model = _resnet(_ResNetBottleneck, [3, 4, 23, 3], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["resnext101_32x8d"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def wide_resnet50_2(pretrained=False, **kwargs) -> ResNet:
+def wide_resnet50_2(torch_weights=None, **kwargs) -> ResNet:
     r"""Wide ResNet-50-2 model from
     [Wide Residual Networks](https://arxiv.org/pdf/1605.07146.pdf)
     The model is the same as ResNet except for the bottleneck number of channels
@@ -481,17 +481,17 @@ def wide_resnet50_2(pretrained=False, **kwargs) -> ResNet:
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     kwargs["width_per_group"] = 64 * 2
     model = _resnet(_ResNetBottleneck, [3, 4, 6, 3], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["wide_resnet50_2"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model
 
 
-def wide_resnet101_2(pretrained=False, **kwargs) -> ResNet:
+def wide_resnet101_2(torch_weights=None, **kwargs) -> ResNet:
     r"""Wide ResNet-101-2 model from
     [Wide Residual Networks](https://arxiv.org/pdf/1605.07146.pdf)
     The model is the same as ResNet except for the bottleneck number of channels
@@ -501,11 +501,11 @@ def wide_resnet101_2(pretrained=False, **kwargs) -> ResNet:
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint.
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
 
     """
     kwargs["width_per_group"] = 64 * 2
     model = _resnet(_ResNetBottleneck, [3, 4, 23, 3], **kwargs)
-    if pretrained:
-        model = load_torch_weights(model, url=MODEL_URLS["wide_resnet101_2"])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
     return model

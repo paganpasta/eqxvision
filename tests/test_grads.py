@@ -8,7 +8,7 @@ import pytest
 import eqxvision.models as models
 
 
-model_list = [
+clf_list = [
     models.alexnet,
     models.convnext_tiny,
     models.densenet121,
@@ -30,7 +30,7 @@ model_list = [
 
 
 class TestGrads:
-    @pytest.mark.parametrize("model_func", model_list)
+    @pytest.mark.parametrize("model_func", clf_list)
     def test_classification(self, model_func, getkey):
         @eqx.filter_value_and_grad
         def compute_loss(model, x, y):

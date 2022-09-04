@@ -13,7 +13,7 @@ import jax.random as jr
 from equinox.custom_types import Array
 
 from ...layers import ConvNormActivation, DropPath, SqueezeExcitation
-from ...utils import _make_divisible, load_torch_weights, MODEL_URLS
+from ...utils import _make_divisible, load_torch_weights
 
 
 @dataclass
@@ -408,16 +408,14 @@ def _efficientnet(
     inverted_residual_setting: Sequence[Union[_MBConvConfig, _FusedMBConvConfig]],
     dropout: float,
     last_channel: Optional[int],
-    pretrained: bool,
+    torch_weights: str,
     **kwargs: Any,
 ) -> EfficientNet:
     model = EfficientNet(
         inverted_residual_setting, dropout, last_channel=last_channel, **kwargs
     )
-    if pretrained:
-        if arch not in MODEL_URLS:
-            raise ValueError(f"No checkpoint is available for model type {arch}")
-        model = load_torch_weights(model, url=MODEL_URLS[arch])
+    if torch_weights:
+        model = load_torch_weights(model, torch_weights=torch_weights)
 
     return model
 
@@ -481,13 +479,13 @@ def _efficientnet_conf(
     return inverted_residual_setting, last_channel
 
 
-def efficientnet_b0(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
+def efficientnet_b0(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
     """EfficientNet B0 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
     Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     inverted_residual_setting, last_channel = _efficientnet_conf(
         "efficientnet_b0", width_mult=1.0, depth_mult=1.0
@@ -497,18 +495,18 @@ def efficientnet_b0(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
         inverted_residual_setting,
         0.2,
         last_channel,
-        pretrained,
+        torch_weights,
         **kwargs,
     )
 
 
-def efficientnet_b1(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
+def efficientnet_b1(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
     """EfficientNet B1 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
     Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
 
     inverted_residual_setting, last_channel = _efficientnet_conf(
@@ -519,18 +517,18 @@ def efficientnet_b1(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
         inverted_residual_setting,
         0.2,
         last_channel,
-        pretrained,
+        torch_weights,
         **kwargs,
     )
 
 
-def efficientnet_b2(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
+def efficientnet_b2(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
     """EfficientNet B2 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
     Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
 
     inverted_residual_setting, last_channel = _efficientnet_conf(
@@ -541,18 +539,18 @@ def efficientnet_b2(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
         inverted_residual_setting,
         0.3,
         last_channel,
-        pretrained,
+        torch_weights,
         **kwargs,
     )
 
 
-def efficientnet_b3(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
+def efficientnet_b3(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
     """EfficientNet B3 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
     Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     inverted_residual_setting, last_channel = _efficientnet_conf(
         "efficientnet_b3", width_mult=1.2, depth_mult=1.4
@@ -562,18 +560,18 @@ def efficientnet_b3(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
         inverted_residual_setting,
         0.3,
         last_channel,
-        pretrained,
+        torch_weights,
         **kwargs,
     )
 
 
-def efficientnet_b4(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
+def efficientnet_b4(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
     """EfficientNet B4 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
     Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     inverted_residual_setting, last_channel = _efficientnet_conf(
         "efficientnet_b4", width_mult=1.4, depth_mult=1.8
@@ -583,18 +581,18 @@ def efficientnet_b4(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
         inverted_residual_setting,
         0.4,
         last_channel,
-        pretrained,
+        torch_weights,
         **kwargs,
     )
 
 
-def efficientnet_b5(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
+def efficientnet_b5(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
     """EfficientNet B5 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
     Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     inverted_residual_setting, last_channel = _efficientnet_conf(
         "efficientnet_b5", width_mult=1.6, depth_mult=2.2
@@ -604,19 +602,19 @@ def efficientnet_b5(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
         inverted_residual_setting,
         0.4,
         last_channel,
-        pretrained,
+        torch_weights,
         norm_layer=partial(eqx.experimental.BatchNorm, eps=0.001, momentum=0.01),
         **kwargs,
     )
 
 
-def efficientnet_b6(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
+def efficientnet_b6(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
     """EfficientNet B6 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
     Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     inverted_residual_setting, last_channel = _efficientnet_conf(
         "efficientnet_b6", width_mult=1.8, depth_mult=2.6
@@ -626,19 +624,19 @@ def efficientnet_b6(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
         inverted_residual_setting,
         0.5,
         last_channel,
-        pretrained,
+        torch_weights,
         norm_layer=partial(eqx.experimental.BatchNorm, eps=0.001, momentum=0.01),
         **kwargs,
     )
 
 
-def efficientnet_b7(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
+def efficientnet_b7(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
     """EfficientNet B7 model architecture from the [EfficientNet: Rethinking Model Scaling for Convolutional
     Neural Networks](https://arxiv.org/abs/1905.11946) paper.
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     inverted_residual_setting, last_channel = _efficientnet_conf(
         "efficientnet_b7", width_mult=2.0, depth_mult=3.1
@@ -648,20 +646,20 @@ def efficientnet_b7(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
         inverted_residual_setting,
         0.5,
         last_channel,
-        pretrained,
+        torch_weights,
         norm_layer=partial(eqx.experimental.BatchNorm, eps=0.001, momentum=0.01),
         **kwargs,
     )
 
 
-def efficientnet_v2_s(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
+def efficientnet_v2_s(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
     """
     Constructs an EfficientNetV2-S architecture from
     [EfficientNetV2: Smaller Models and Faster Training](https://arxiv.org/abs/2104.00298).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     inverted_residual_setting, last_channel = _efficientnet_conf("efficientnet_v2_s")
     return _efficientnet(
@@ -669,20 +667,20 @@ def efficientnet_v2_s(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
         inverted_residual_setting,
         0.2,
         last_channel,
-        pretrained,
+        torch_weights,
         norm_layer=partial(eqx.experimental.BatchNorm, eps=1e-03),
         **kwargs,
     )
 
 
-def efficientnet_v2_m(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
+def efficientnet_v2_m(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
     """
     Constructs an EfficientNetV2-M architecture from
     [EfficientNetV2: Smaller Models and Faster Training](https://arxiv.org/abs/2104.00298).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     inverted_residual_setting, last_channel = _efficientnet_conf("efficientnet_v2_m")
     return _efficientnet(
@@ -690,20 +688,20 @@ def efficientnet_v2_m(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
         inverted_residual_setting,
         0.3,
         last_channel,
-        pretrained,
+        torch_weights,
         norm_layer=partial(eqx.experimental.BatchNorm, eps=1e-03),
         **kwargs,
     )
 
 
-def efficientnet_v2_l(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
+def efficientnet_v2_l(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
     """
     Constructs an EfficientNetV2-L architecture from
     [EfficientNetV2: Smaller Models and Faster Training](https://arxiv.org/abs/2104.00298).
 
     **Arguments:**
 
-    - `pretrained`: If `True`, the weights are loaded from `PyTorch` saved checkpoint
+    - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
     """
     inverted_residual_setting, last_channel = _efficientnet_conf("efficientnet_v2_l")
     return _efficientnet(
@@ -711,7 +709,7 @@ def efficientnet_v2_l(pretrained: bool = False, **kwargs: Any) -> EfficientNet:
         inverted_residual_setting,
         0.4,
         last_channel,
-        pretrained,
+        torch_weights,
         norm_layer=partial(eqx.experimental.BatchNorm, eps=1e-03),
         **kwargs,
     )
