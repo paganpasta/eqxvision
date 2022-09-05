@@ -100,6 +100,7 @@ nav:
           - 'getting_started/Adversarial_Attack.ipynb'
           - 'getting_started/Transfer_Learning.ipynb'
           - 'getting_started/Self-Attention Maps.ipynb'
+          - 'getting_started/FCN_Segmentation.ipynb'
     - Evaluation:
         - 'comparison.md'
     - Full API:
