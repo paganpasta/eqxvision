@@ -130,4 +130,5 @@ nav:
             - 'api/layers/mlp.md'
             - 'api/layers/patch.md'
             - 'api/layers/squeeze.md'
+        - 'api/experimental.md'
         - 'api/utils.md'
