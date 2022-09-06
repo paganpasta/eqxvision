@@ -2,12 +2,11 @@ import logging
 import os
 import sys
 import warnings
-from typing import Any, Callable, NewType, Optional
+from typing import NewType, Optional
 
 import equinox as eqx
 import jax.numpy as jnp
 import jax.tree_util as jtu
-from equinox.custom_types import PyTree
 
 
 try:
@@ -136,9 +135,7 @@ def load_torch_weights(
 
     - `model`: An `eqx.Module` for which the `jnp.ndarray` leaves are
         replaced by corresponding `PyTorch` weights.
-    - `weights`: A string either pointing to `PyTorch` weights on disk or the download `URL`.
-    - `filepath`: `Path` to the downloaded `PyTorch` model file.
-    - `url`: `URL` for the `PyTorch` model file. The file is downloaded to `/tmp/.eqx/` folder.
+    - `torch_weights`: A string either pointing to `PyTorch` weights on disk or the download `URL`.
 
     **Returns:**
         The model with weights loaded from the `PyTorch` checkpoint.
@@ -212,65 +209,3 @@ def load_torch_weights(
 
     model = jtu.tree_map(set_experimental, bn_iterator, model)
     return model
-
-
-class AuxData:
-    """A simple container for aux data."""
-
-    def __init__(self):
-        self.data = None
-
-    def update(self, x: Any):
-        self.data = x
-
-
-def _make_intermediate_layer_wrapper():
-    aux = AuxData()
-
-    class IntermediateWrapper(eqx.Module):
-        layer: eqx.Module
-
-        def __call__(self, x, *, key=None):
-            out = self.layer(x, key=key)
-            aux.update(out)
-            return out
-
-    return aux, IntermediateWrapper
-
-
-def intermediate_layer_getter(
-    model: PyTree, get_target_layers: Callable
-) -> "eqx.Module":
-    """Wraps intermediate layers of a model for accessing intermediate activations. Based on a discussion
-    [here](https://github.com/patrick-kidger/equinox/issues/186).
-
-    **Arguments:**
-
-    - `model`: A PyTree representing the neural network model
-    - `get_target_layers`: A callable function which returns a sequence
-        of layers from the `model`.
-
-    **Returns:**
-    An `equinox.Module` which contains `model` with the layers of interest wrapped for storing intermediate outputs.
-    """
-    target_layers = get_target_layers(model)
-    auxs, wrappers = zip(
-        *[_make_intermediate_layer_wrapper() for _ in range(len(target_layers))]
-    )
-    model = eqx.tree_at(
-        where=get_target_layers,
-        pytree=model,
-        replace=[
-            wrapper(target_layer)
-            for (wrapper, target_layer) in zip(wrappers, target_layers)
-        ],
-    )
-
-    class IntermediateLayerGetter(eqx.Module):
-        model: eqx.Module
-
-        def __call__(self, x, *, key=None):
-            out = self.model(x, key=key)
-            return out, auxs
-
-    return IntermediateLayerGetter(model)
