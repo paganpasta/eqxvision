@@ -6,7 +6,8 @@ import jax
 import jax.nn as jnn
 import jax.random as jr
 
-from ...utils import CLASSIFICATION_URLS, intermediate_layer_getter, load_torch_weights
+from ...experimental import intermediate_layer_getter
+from ...utils import CLASSIFICATION_URLS, load_torch_weights
 from ..classification import resnet
 from ._utils import _SimpleSegmentationModel
 
