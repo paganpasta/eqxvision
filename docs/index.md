@@ -37,7 +37,7 @@ pip install eqxvision
 
 ## What's New?
 - Backward incompatible changes to `v0.2.0` for loading a `pretrained` model.
-- `FCN` added as the first segmentation model.
+- `FCN` added as the first segmentation model (checkout the [tutorial](getting_started/FCN_Segmentation.ipynb)).
 - Almost all image classification models are ported from `torchvision`.
 - New tutorial for generating [adversarial examples](getting_started/Adversarial_Attack.ipynb) and others coming soon.
 

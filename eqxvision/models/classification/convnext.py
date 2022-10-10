@@ -7,7 +7,7 @@ import jax
 import jax.nn as jnn
 import jax.numpy as jnp
 import jax.random as jrandom
-from equinox.custom_types import Array
+from jaxtyping import Array
 
 from ...layers import ConvNormActivation, DropPath, LayerNorm2d, Linear2d
 from ...utils import CLASSIFICATION_URLS, load_torch_weights

@@ -5,7 +5,7 @@ import equinox.nn as nn
 import jax
 import jax.numpy as jnp
 import jax.random as jrandom
-from equinox.custom_types import Array
+from jaxtyping import Array
 
 
 class PatchEmbed(eqx.Module):
