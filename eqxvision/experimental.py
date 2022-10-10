@@ -1,7 +1,7 @@
 from typing import Any, Callable
 
 import equinox as eqx
-from equinox.custom_types import PyTree
+from jaxtyping import PyTree
 
 
 class AuxData:
@@ -55,7 +55,7 @@ def intermediate_layer_getter(
         The returned model will now return a `tuple` with
 
             1. The final output of `model`
-            2. A list of `AuxData` added in order the intermediate layers are called
+            2. An ordered list of intermediate activations
     """
     target_layers = get_target_layers(model)
     auxs, wrappers = zip(
@@ -75,6 +75,6 @@ def intermediate_layer_getter(
 
         def __call__(self, x, *, key=None):
             out = self.model(x, key=key)
-            return out, auxs
+            return out, [aux.data for aux in auxs]
 
     return IntermediateLayerGetter(model)

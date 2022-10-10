@@ -4,7 +4,7 @@ import equinox as eqx
 import jax
 import jax.image as jim
 import jax.random as jr
-from equinox.custom_types import Array
+from jaxtyping import Array
 
 
 class _SimpleSegmentationModel(eqx.Module):
@@ -47,12 +47,12 @@ class _SimpleSegmentationModel(eqx.Module):
         keys = jr.split(key, 3)
         _, xs = self.backbone(x, key=keys[0])
 
-        x_clf = self.classifier(xs[-1].data, key=keys[1])
+        x_clf = self.classifier(xs[-1], key=keys[1])
         target_shape = (x_clf.shape[0], x.shape[-2], x.shape[-1])
         x_clf = jim.resize(x_clf, shape=target_shape, method="bilinear")
 
         if self.aux_classifier is not None:
-            x_aux = self.aux_classifier(xs[0].data, key=keys[2])
+            x_aux = self.aux_classifier(xs[0], key=keys[2])
             target_shape = (x_aux.shape[0], x.shape[-2], x.shape[-1])
             x_aux = jim.resize(x_aux, shape=target_shape, method="bilinear")
             return x_aux, x_clf

@@ -131,6 +131,10 @@ def load_torch_weights(
           attributes mirrors the `torchvision.models` implementation.
         - The saved checkpoint should **only** contain model parameters as keys.
 
+    !!! info
+        A full list of pretrained URLs is provided
+        [here](https://github.com/paganpasta/eqxvision/blob/main/eqxvision/utils.py).
+
     **Arguments:**
 
     - `model`: An `eqx.Module` for which the `jnp.ndarray` leaves are

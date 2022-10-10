@@ -7,7 +7,7 @@ import jax
 import jax.nn as jnn
 import jax.numpy as jnp
 import jax.random as jrandom
-from equinox.custom_types import Array
+from jaxtyping import Array
 
 from ...layers import ConvNormActivation
 from ...utils import _make_divisible, load_torch_weights

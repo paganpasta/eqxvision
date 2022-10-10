@@ -5,7 +5,7 @@ import equinox.nn as nn
 import jax
 import jax.nn as jnn
 import jax.random as jrandom
-from equinox.custom_types import Array
+from jaxtyping import Array
 
 
 class SqueezeExcitation(eqx.Module):

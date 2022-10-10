@@ -7,7 +7,7 @@ import jax
 import jax.nn as jnn
 import jax.numpy as jnp
 import jax.random as jrandom
-from equinox.custom_types import Array
+from jaxtyping import Array
 
 from ...utils import load_torch_weights
 
@@ -167,22 +167,20 @@ class DenseNet(eqx.Module):
             key = jrandom.PRNGKey(0)
         # First convolution
         keys = jrandom.split(key, 2 * len(block_config) + 2)
-        self.features = nn.Sequential(
-            [
-                nn.Conv2d(
-                    3,
-                    num_init_features,
-                    kernel_size=7,
-                    stride=2,
-                    padding=3,
-                    use_bias=False,
-                    key=keys[0],
-                ),
-                eqxex.BatchNorm(num_init_features, axis_name="batch"),
-                nn.Lambda(jnn.relu),
-                nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
-            ]
-        )
+        features = [
+            nn.Conv2d(
+                3,
+                num_init_features,
+                kernel_size=7,
+                stride=2,
+                padding=3,
+                use_bias=False,
+                key=keys[0],
+            ),
+            eqxex.BatchNorm(num_init_features, axis_name="batch"),
+            nn.Lambda(jnn.relu),
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
+        ]
 
         # Each denseblock
         num_features = num_init_features
@@ -196,7 +194,7 @@ class DenseNet(eqx.Module):
                 drop_rate=drop_rate,
                 key=keys[0],
             )
-            self.features.layers.append(block)
+            features.append(block)
             num_features = num_features + num_layers * growth_rate
             if i != len(block_config) - 1:
                 trans = _Transition(
@@ -204,17 +202,18 @@ class DenseNet(eqx.Module):
                     num_output_features=num_features // 2,
                     key=keys[i * 2 + 2],
                 )
-                self.features.layers.append(trans)
+                features.append(trans)
                 num_features = num_features // 2
 
         # Final batch norm, relu and pooling
-        self.features.layers.extend(
+        features.extend(
             [
                 eqxex.BatchNorm(num_features, axis_name="batch"),
                 nn.Lambda(jnn.relu),
                 nn.AdaptiveAvgPool2d((1, 1)),
             ]
         )
+        self.features = nn.Sequential(features)
         # Linear layer
         self.classifier = nn.Linear(num_features, num_classes, key=keys[-1])
 

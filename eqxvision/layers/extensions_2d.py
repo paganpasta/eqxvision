@@ -3,7 +3,7 @@ from typing import Optional
 import equinox as eqx
 import jax
 import jax.numpy as jnp
-from equinox.custom_types import Array
+from jaxtyping import Array
 
 
 class LayerNorm2d(eqx.nn.LayerNorm):
