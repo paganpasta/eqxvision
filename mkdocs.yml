@@ -123,6 +123,7 @@ nav:
             - 'api/models/classification/vit.md'
         - Segmentation models:
             - 'api/models/segmentation/fcn.md'
+            - 'api/models/segmentation/deeplabv3.md'
         - Vision Layers:
             - 'api/layers/conv_norm_act.md'
             - 'api/layers/drop_path.md'
