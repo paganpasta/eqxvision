@@ -95,4 +95,7 @@ def net_preds():
     ckpt = torch.load("./tests/static/fcn_resnet50.pth")
     gt_dicts["fcn_resnet50"] = ckpt.detach().numpy()
 
+    ckpt = torch.load("./tests/static/deeplabv3_resnet50.pth")
+    gt_dicts["deeplabv3_resnet50"] = ckpt.detach().numpy()
+
     return gt_dicts

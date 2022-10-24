@@ -100,4 +100,5 @@ from .classification.vit import (
     vit_small,
     vit_tiny,
 )
+from .segmentation.deeplabv3 import DeepLabV3, deeplabv3
 from .segmentation.fcn import FCN, fcn

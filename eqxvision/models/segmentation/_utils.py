@@ -42,7 +42,7 @@ class _SimpleSegmentationModel(eqx.Module):
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
 
         **Returns:**
-        A tuple with outputs from the intermediate layers.
+        A tuple with outputs from the intermediate and last layers.
         """
         keys = jr.split(key, 3)
         _, xs = self.backbone(x, key=keys[0])
