@@ -92,10 +92,13 @@ def net_preds():
     gt_dicts["vgg11_bn"] = ckpt["output"].detach().numpy()
 
     # segmentation models
+    ckpt = torch.load("./tests/static/deeplabv3_resnet50.pth")
+    gt_dicts["deeplabv3_resnet50"] = ckpt.detach().numpy()
+
     ckpt = torch.load("./tests/static/fcn_resnet50.pth")
     gt_dicts["fcn_resnet50"] = ckpt.detach().numpy()
 
-    ckpt = torch.load("./tests/static/deeplabv3_resnet50.pth")
-    gt_dicts["deeplabv3_resnet50"] = ckpt.detach().numpy()
+    ckpt = torch.load("./tests/static/lraspp_mobilenetv3_large.pth")
+    gt_dicts["lraspp_mobilenetv3_large"] = ckpt
 
     return gt_dicts

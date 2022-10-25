@@ -361,7 +361,10 @@ def mobilenet_v3_large(torch_weights: str = None, **kwargs: Any) -> MobileNetV3:
 
     """
     arch = "mobilenet_v3_large"
-    inverted_residual_setting, last_channel = _mobilenet_v3_conf(arch, **kwargs)
+    dilated = kwargs.pop("dilated", False)
+    inverted_residual_setting, last_channel = _mobilenet_v3_conf(
+        arch, dilated=dilated, **kwargs
+    )
     model = _mobilenet_v3(arch, inverted_residual_setting, last_channel, **kwargs)
     if torch_weights:
         model = load_torch_weights(model, torch_weights=torch_weights)
