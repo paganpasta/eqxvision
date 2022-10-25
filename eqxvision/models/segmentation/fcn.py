@@ -38,7 +38,7 @@ def fcn(
     num_classes: Optional[int] = 21,
     backbone: "eqx.Module" = None,
     intermediate_layers: Callable = None,
-    classifier_module: "eqx.Module" = None,
+    classifier_module: "eqx.Module" = FCNHead,
     classifier_in_channels: int = 2048,
     aux_in_channels: int = None,
     silence_layers: Callable = None,
@@ -49,15 +49,14 @@ def fcn(
     """Implements FCN model from [Fully Convolutional
     Networks for Semantic Segmentation](https://arxiv.org/abs/1411.4038) paper.
 
-    !!! info
-        Sample call to load a pretrained model.
+    !!! info "Sample call"
         ```python
-            net = fcn(
-                backbone=resnet50(replace_stride_with_dilation=[False, True, True]),
-                intermediate_layers=lambda x: [x.layer3, x.layer4],
-                aux_in_channels=1024,
-                torch_weights=SEGMENTATION_URLS["fcn_resnet50"],
-            )
+        net = fcn(
+            backbone=resnet50(replace_stride_with_dilation=[False, True, True]),
+            intermediate_layers=lambda x: [x.layer3, x.layer4],
+            aux_in_channels=1024,
+            torch_weights=SEGMENTATION_URLS["fcn_resnet50"],
+        )
         ```
 
     **Arguments:**
@@ -65,17 +64,18 @@ def fcn(
     - `num_classes`: Number of classes in the segmentation task.
                     Also controls the final output shape `(num_classes, height, width)`. Defaults to `21`
     - `backbone`: The neural network to use for extracting features. If `None`, then all params are set to
-                `DeepLabV3_RESNET50` with a **pre-trained** backbone but **untrained** DeepLabV3 heads
+                `FCN_RESNET50` with a **pre-trained** backbone but an **untrained** FCN
     - `intermediate_layers`: Layers from `backbone` to be used for generating output maps. Default sets it to
-        `layer3` and `layer4` from `DeepLabV3_RESNET50`
-    - `classifier_module`: Uses the `DeepLabHead` by default
+        `layer3` and `layer4` from `FCN_RESNET50`
+    - `classifier_module`: Uses the `FCNHead` by default
     - `classifier_in_channels`: Number of input channels from the last intermediate layer
     - `aux_in_channels`: Number of channels in the auxiliary output. It is used when number of intermediate_layers
         is equal to 2.
     - `silence_layers`: Layers of a network not used in training. Typically, for a backbone ported from classification
         the `fc` layers can be dropped. This is particularly useful when loading weights from `torchvision`. By
-        default, fc layer of a model is set to identity to avoid tracking weights.
+        default, `.fc` layer of a model is set to identity to avoid tracking weights.
     - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
+
     """
     if key is None:
         key = jr.PRNGKey(0)
@@ -88,8 +88,6 @@ def fcn(
         )
     num_layers = len(intermediate_layers(backbone))
 
-    if classifier_module is None:
-        classifier_module = FCNHead
     if silence_layers is None:
         silence_layers = lambda x: x.fc
     if aux_in_channels is not None and num_layers != 2:
@@ -100,7 +98,7 @@ def fcn(
     if aux_in_channels is None and num_layers != 1:
         raise ValueError(
             f"With no aux_in_channels, the aux layer is disabled. Received {num_layers} "
-            f"from intermediate_layers, expected number of layers 1."
+            f"from intermediate_layers, expected number of layers is 1."
         )
 
     backbone = eqx.tree_at(silence_layers, backbone, replace_fn=lambda x: nn.Identity())
@@ -118,3 +116,5 @@ def fcn(
 
     if torch_weights:
         return load_torch_weights(model, torch_weights=torch_weights)
+
+    return model

@@ -82,6 +82,8 @@ plugins:
                 setup_commands:
                     - import pytkdocs_tweaks
                     - pytkdocs_tweaks.main()
+                    - import jaxtyping
+                    - jaxtyping.set_array_name_format("array")
 
                 selection:
                     inherited_members: true  # Allow looking up inherited methods
@@ -104,7 +106,7 @@ nav:
     - Evaluation:
         - 'comparison.md'
     - Full API:
-        - Classification models:
+        - Classification:
             - 'api/models/classification/alexnet.md'
             - 'api/models/classification/convnext.md'
             - 'api/models/classification/densenet.md'
@@ -121,10 +123,10 @@ nav:
             - 'api/models/classification/swin_v2.md'
             - 'api/models/classification/vgg.md'
             - 'api/models/classification/vit.md'
-        - Segmentation models:
+        - Segmentation:
             - 'api/models/segmentation/fcn.md'
             - 'api/models/segmentation/deeplabv3.md'
-        - Vision Layers:
+        - Layers:
             - 'api/layers/conv_norm_act.md'
             - 'api/layers/drop_path.md'
             - 'api/layers/extensions_2d.md'
