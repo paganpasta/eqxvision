@@ -9,7 +9,7 @@ import jax.random as jr
 from jaxtyping import Array
 
 from ...experimental import intermediate_layer_getter
-from ...utils import CLASSIFICATION_URLS, load_torch_weights
+from ...utils import load_torch_weights
 from ..classification import resnet
 from ._utils import _SimpleSegmentationModel
 from .fcn import FCNHead
@@ -139,9 +139,9 @@ def deeplabv3(
     num_classes: Optional[int] = 21,
     backbone: "eqx.Module" = None,
     intermediate_layers: Callable = None,
-    classifier_module: "eqx.Module" = DeepLabHead,
+    classifier_module: "eqx.Module" = None,
     classifier_in_channels: int = 2048,
-    aux_classifier_module: "eqx.Module" = FCNHead,
+    aux_classifier_module: "eqx.Module" = None,
     aux_in_channels: int = 1024,
     silence_layers: Callable = None,
     torch_weights: str = None,
@@ -149,7 +149,7 @@ def deeplabv3(
     key: Optional["jax.random.PRNGKey"] = None,
 ) -> DeepLabV3:
     """Implements DeepLabV3 model from
-    ["Rethinking Atrous Convolution for Semantic Image Segmentation"](https://arxiv.org/abs/1706.05587) paper.
+    [Rethinking Atrous Convolution for Semantic Image Segmentation](https://arxiv.org/abs/1706.05587) paper.
 
     !!! info "Sample call"
         ```python
@@ -167,7 +167,7 @@ def deeplabv3(
     - `num_classes`: Number of classes in the segmentation task.
                     Also controls the final output shape `(num_classes, height, width)`. Defaults to `21`
     - `backbone`: The neural network to use for extracting features. If `None`, then all params are set to
-                `DeepLabV3_RESNET50` with a **pre-trained** backbone but **untrained** DeepLabV3 heads
+                `DeepLabV3_RESNET50` with `untrained` weights
     - `intermediate_layers`: Layers from `backbone` to be used for generating output maps. Default sets it to
         `layer3` and `layer4` from `DeepLabV3_RESNET50`
     - `classifier_module`: Uses the `DeepLabHead` by default
@@ -179,15 +179,17 @@ def deeplabv3(
         the `fc` layers can be dropped. This is particularly useful when loading weights from `torchvision`. By
         default, `.fc` layer of a model is set to identity to avoid tracking weights.
     - `torch_weights`: A `Path` or `URL` for the `PyTorch` weights. Defaults to `None`
-
+    - `key`: A `jax.random.PRNGKey` used to provide randomness for parameter
     """
     if key is None:
         key = jr.PRNGKey(0)
     keys = jr.split(key, 2)
-
+    if not classifier_module:
+        classifier_module = DeepLabHead
+    if not aux_classifier_module:
+        aux_classifier_module = FCNHead
     if backbone is None:
         backbone = resnet.resnet50(
-            torch_weights=CLASSIFICATION_URLS["resnet50"],
             replace_stride_with_dilation=[False, True, True],
         )
     num_layers = len(intermediate_layers(backbone))

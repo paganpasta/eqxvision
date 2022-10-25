@@ -124,8 +124,9 @@ nav:
             - 'api/models/classification/vgg.md'
             - 'api/models/classification/vit.md'
         - Segmentation:
-            - 'api/models/segmentation/fcn.md'
             - 'api/models/segmentation/deeplabv3.md'
+            - 'api/models/segmentation/fcn.md'
+            - 'api/models/segmentation/lraspp.md'
         - Layers:
             - 'api/layers/conv_norm_act.md'
             - 'api/layers/drop_path.md'
