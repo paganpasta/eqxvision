@@ -36,8 +36,8 @@ pip install eqxvision
         ```
 
 ## What's New?
+- `FCN`, `DeepLabV3` and `LRASPP` segmentation models are now supported (checkout the [tutorial](getting_started/FCN_Segmentation.ipynb)).
 - Backward incompatible changes to `v0.2.0` for loading a `pretrained` model.
-- `FCN` and `DeepLabV3` segmentation models are now supported (checkout the [tutorial](getting_started/FCN_Segmentation.ipynb)).
 - Almost all image classification models are ported from `torchvision`.
 - New tutorial for generating [adversarial examples](getting_started/Adversarial_Attack.ipynb) and others coming soon.
 

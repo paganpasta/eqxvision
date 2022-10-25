@@ -3,7 +3,7 @@ import jax
 import jax.numpy as jnp
 import jax.random as jr
 
-from eqxvision.models import deeplabv3, resnet50
+from eqxvision.models import deeplabv3
 from eqxvision.utils import SEGMENTATION_URLS
 
 
@@ -16,7 +16,6 @@ def forward(model, x, key):
 def test_deeplabv3(demo_image, net_preds):
     img = demo_image(224)
     net = deeplabv3(
-        backbone=resnet50(replace_stride_with_dilation=[False, True, True]),
         intermediate_layers=lambda x: [x.layer3, x.layer4],
         aux_in_channels=1024,
         torch_weights=SEGMENTATION_URLS["deeplabv3_resnet50"],

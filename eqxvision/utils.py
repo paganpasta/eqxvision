@@ -18,8 +18,9 @@ _TEMP_DIR = "/tmp/.eqx"
 _Url = NewType("_Url", str)
 
 SEGMENTATION_URLS = {
-    "fcn_resnet50": "https://download.pytorch.org/models/fcn_resnet50_coco-1167a1af.pth",
     "deeplabv3_resnet50": "https://download.pytorch.org/models/deeplabv3_resnet50_coco-cd0a2569.pth",
+    "fcn_resnet50": "https://download.pytorch.org/models/fcn_resnet50_coco-1167a1af.pth",
+    "lraspp_mobilenetv3_large": "https://download.pytorch.org/models/lraspp_mobilenet_v3_large-d234d4ea.pth",
 }
 
 CLASSIFICATION_URLS = {
@@ -124,12 +125,14 @@ def load_torch_weights(
 
     ???+ warning
 
-        This method requires installation of the [`torch`](https://pypi.org/project/torch/) package.
+        - This method requires installation of the [`torch`](https://pypi.org/project/torch/) package.
 
     !!! note
 
         - This function assumes that Eqxvision's ordering of class
           attributes mirrors the `torchvision.models` implementation.
+        - This method assumes the `eqxvision` model is *not* initialised.
+            Problems arise due to initialised `BN` modules.
         - The saved checkpoint should **only** contain model parameters as keys.
 
     !!! info

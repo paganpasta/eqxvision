@@ -1,7 +1,7 @@
 from typing import Any, Callable
 
 import equinox as eqx
-from jaxtyping import PyTree
+import equinox.nn as nn
 
 
 class AuxData:
@@ -33,7 +33,7 @@ def _make_intermediate_layer_wrapper():
 
 
 def intermediate_layer_getter(
-    model: PyTree, get_target_layers: Callable
+    model: "eqx.Module", get_target_layers: Callable
 ) -> "eqx.Module":
     """Wraps intermediate layers of a model for accessing intermediate activations. Based on a discussion
     [here](https://github.com/patrick-kidger/equinox/issues/186).
@@ -49,26 +49,34 @@ def intermediate_layer_getter(
         of layers from the `model`
 
     **Returns:**
-    A `PyTree`, encapsulating `model` for storing intermediate outputs from target layers.
+    The returned model will now return a `tuple` with
 
-    !!! info
-        The returned model will now return a `tuple` with
+        0. The final output of `model`
+        1. An ordered list of intermediate activations
 
-            1. The final output of `model`
-            2. An ordered list of intermediate activations
     """
     target_layers = get_target_layers(model)
     auxs, wrappers = zip(
         *[_make_intermediate_layer_wrapper() for _ in range(len(target_layers))]
     )
-    model = eqx.tree_at(
-        where=get_target_layers,
-        pytree=model,
-        replace=[
-            wrapper(target_layer)
-            for (wrapper, target_layer) in zip(wrappers, target_layers)
-        ],
-    )
+    if isinstance(model, nn.Sequential):
+        new_modules, updated_count = [], 0
+        for idx, module in enumerate(model.layers):
+            if idx in target_layers:
+                new_modules.append(wrappers[updated_count](module))
+                updated_count += 1
+            else:
+                new_modules.append(module)
+        model = nn.Sequential(new_modules)
+    else:
+        model = eqx.tree_at(
+            where=get_target_layers,
+            pytree=model,
+            replace=[
+                wrapper(target_layer)
+                for (wrapper, target_layer) in zip(wrappers, target_layers)
+            ],
+        )
 
     class IntermediateLayerGetter(eqx.Module):
         model: eqx.Module

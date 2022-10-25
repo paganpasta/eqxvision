@@ -48,7 +48,7 @@ Picking a model and doing a forward pass is as simple as ...
 
 ## What's New?
 
-- `FCN` and `DeepLabV3` added as new image segmentation models.
+- `FCN`, `DeepLabV3` and `LRASPP` added as new image segmentation models.
 - Backward incompatible changes to `v0.2.0` for loading a `pretrained` model.
 - Almost all image classification models are ported from `torchvision`.
 - New tutorial for generating `adversarial examples` and others coming soon.
