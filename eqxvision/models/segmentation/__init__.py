@@ -1,1 +1,1 @@
-from . import fcn
+from . import deeplabv3, fcn

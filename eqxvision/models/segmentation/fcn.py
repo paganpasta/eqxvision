@@ -46,18 +46,29 @@ def fcn(
     *,
     key: Optional["jax.random.PRNGKey"] = None,
 ) -> FCN:
-    """Fully-Convolutional Network model with a ResNet-50 backbone from the [Fully Convolutional
+    """Implements FCN model from [Fully Convolutional
     Networks for Semantic Segmentation](https://arxiv.org/abs/1411.4038) paper.
+
+    !!! info
+        Sample call to load a pretrained model.
+        ```python
+            net = fcn(
+                backbone=resnet50(replace_stride_with_dilation=[False, True, True]),
+                intermediate_layers=lambda x: [x.layer3, x.layer4],
+                aux_in_channels=1024,
+                torch_weights=SEGMENTATION_URLS["fcn_resnet50"],
+            )
+        ```
 
     **Arguments:**
 
     - `num_classes`: Number of classes in the segmentation task.
                     Also controls the final output shape `(num_classes, height, width)`. Defaults to `21`
     - `backbone`: The neural network to use for extracting features. If `None`, then all params are set to
-                `FCN_RESNET50` with a **pre-trained** backbone but an **untrained** FCN
+                `DeepLabV3_RESNET50` with a **pre-trained** backbone but **untrained** DeepLabV3 heads
     - `intermediate_layers`: Layers from `backbone` to be used for generating output maps. Default sets it to
-        `layer3` and `layer4` from `FCN_RESNET50`
-    - `classifier_module`: Uses the `FCNHead` by default
+        `layer3` and `layer4` from `DeepLabV3_RESNET50`
+    - `classifier_module`: Uses the `DeepLabHead` by default
     - `classifier_in_channels`: Number of input channels from the last intermediate layer
     - `aux_in_channels`: Number of channels in the auxiliary output. It is used when number of intermediate_layers
         is equal to 2.

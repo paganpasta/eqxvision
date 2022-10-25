@@ -18,7 +18,8 @@ _TEMP_DIR = "/tmp/.eqx"
 _Url = NewType("_Url", str)
 
 SEGMENTATION_URLS = {
-    "fcn_resnet50": "https://download.pytorch.org/models/fcn_resnet50_coco-1167a1af.pth"
+    "fcn_resnet50": "https://download.pytorch.org/models/fcn_resnet50_coco-1167a1af.pth",
+    "deeplabv3_resnet50": "https://download.pytorch.org/models/deeplabv3_resnet50_coco-cd0a2569.pth",
 }
 
 CLASSIFICATION_URLS = {
