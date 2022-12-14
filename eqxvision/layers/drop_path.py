@@ -50,9 +50,12 @@ class DropPath(eqx.Module):
 
         keep_prob = 1 - self.p
         if self.mode == "global":
-            return x * jrandom.bernoulli(key, p=keep_prob)
+            noise = jrandom.bernoulli(key, p=keep_prob)
         else:
-            return x * jnp.expand_dims(
+            noise = jnp.expand_dims(
                 jrandom.bernoulli(key, p=keep_prob, shape=[x.shape[0]]).reshape(-1),
                 axis=[i for i in range(1, len(x.shape))],
             )
+        if keep_prob > 0.0:
+            noise /= keep_prob
+        return x * noise
