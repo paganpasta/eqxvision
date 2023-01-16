@@ -34,12 +34,29 @@ def test_mlp_proj(getkey):
     assert output.shape == (10, 10)
 
 
-def test_drop_path(getkey):
+def test_drop_path_global(getkey):
     @eqx.filter_jit
     def forward(net, xs, keys):
         return jax.vmap(net)(xs, key=keys)
 
-    dp = layers.DropPath(p=0.5)
+    dp = layers.DropPath(p=0.5, mode="global")
+    x = jrandom.uniform(getkey(), (10, 20), minval=1, maxval=10)
+    output = forward(dp, x, jrandom.split(getkey(), 10))
+    assert output.shape == (10, 20)
+    assert (output == 0).any()
+
+    dp_eval = eqx.tree_inference(dp, True)
+    output = forward(dp_eval, x, jrandom.split(getkey(), 10))
+    assert output.shape == (10, 20)
+    assert (output != 0).all()
+
+
+def test_drop_path_local(getkey):
+    @eqx.filter_jit
+    def forward(net, xs, keys):
+        return jax.vmap(net)(xs, key=keys)
+
+    dp = layers.DropPath(p=0.5, mode="local")
     x = jrandom.uniform(getkey(), (10, 20), minval=1, maxval=10)
     output = forward(dp, x, jrandom.split(getkey(), 10))
     assert output.shape == (10, 20)
