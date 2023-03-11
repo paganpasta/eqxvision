@@ -41,7 +41,7 @@ class TestVit:
         def forward(net, x, keys, attn=False):
             nonlocal c_counter
             c_counter += 1
-            return eqx.filter_vmap(net)(x, return_attention=attn, key=keys)
+            return jax.vmap(net, in_axes=(0, None))(x, attn, key=keys)
 
         random_input = jax.random.uniform(key=getkey(), shape=(1, 8, 32))
         answer, answer_attn = (1, 8, 32), (1, 1, 4, 8, 8)
