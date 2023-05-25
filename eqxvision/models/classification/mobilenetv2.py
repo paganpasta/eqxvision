@@ -99,7 +99,7 @@ class MobileNetV2(eqx.Module):
         width_mult: float = 1.0,
         inverted_residual_setting: Optional[List[List[int]]] = None,
         round_nearest: int = 8,
-        block: Optional["eqx.Module"] = None,Update
+        block: Optional["eqx.Module"] = None,
         norm_layer: Optional["eqx.Module"] = None,
         dropout: float = 0.2,
         *,

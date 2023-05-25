@@ -365,7 +365,7 @@ class RegNet(eqx.Module):
         if stem_type is None:
             stem_type = SimpleStemIN
         if norm_layer is None:
-            norm_layer = eqx.experimental.BatchNorm
+            norm_layer = nn.BatchNorm
         if block_type is None:
             block_type = ResBottleneckBlock
         if activation is None:
@@ -438,7 +438,7 @@ def _regnet(
 ) -> RegNet:
 
     norm_layer = kwargs.pop(
-        "norm_layer", partial(eqx.experimental.BatchNorm, eps=1e-05, momentum=0.1)
+        "norm_layer", partial(nn.BatchNorm, eps=1e-05, momentum=0.1)
     )
     model = RegNet(block_params, norm_layer=norm_layer, **kwargs)
     if torch_weights:

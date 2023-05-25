@@ -318,7 +318,7 @@ class EfficientNet(eqx.Module):
         keys = jr.split(key, 3)
 
         if norm_layer is None:
-            norm_layer = eqx.experimental.BatchNorm
+            norm_layer = nn.BatchNorm
 
         layers: List[eqx.Module] = []
 
@@ -603,7 +603,7 @@ def efficientnet_b5(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
         0.4,
         last_channel,
         torch_weights,
-        norm_layer=partial(eqx.experimental.BatchNorm, eps=0.001, momentum=0.01),
+        norm_layer=partial(nn.BatchNorm, eps=0.001, momentum=0.01),
         **kwargs,
     )
 
@@ -625,7 +625,7 @@ def efficientnet_b6(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
         0.5,
         last_channel,
         torch_weights,
-        norm_layer=partial(eqx.experimental.BatchNorm, eps=0.001, momentum=0.01),
+        norm_layer=partial(nn.BatchNorm, eps=0.001, momentum=0.01),
         **kwargs,
     )
 
@@ -647,7 +647,7 @@ def efficientnet_b7(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
         0.5,
         last_channel,
         torch_weights,
-        norm_layer=partial(eqx.experimental.BatchNorm, eps=0.001, momentum=0.01),
+        norm_layer=partial(nn.BatchNorm, eps=0.001, momentum=0.01),
         **kwargs,
     )
 
@@ -668,7 +668,7 @@ def efficientnet_v2_s(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
         0.2,
         last_channel,
         torch_weights,
-        norm_layer=partial(eqx.experimental.BatchNorm, eps=1e-03),
+        norm_layer=partial(nn.BatchNorm, eps=1e-03),
         **kwargs,
     )
 
@@ -689,7 +689,7 @@ def efficientnet_v2_m(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
         0.3,
         last_channel,
         torch_weights,
-        norm_layer=partial(eqx.experimental.BatchNorm, eps=1e-03),
+        norm_layer=partial(nn.BatchNorm, eps=1e-03),
         **kwargs,
     )
 
@@ -710,6 +710,6 @@ def efficientnet_v2_l(torch_weights: str = None, **kwargs: Any) -> EfficientNet:
         0.4,
         last_channel,
         torch_weights,
-        norm_layer=partial(eqx.experimental.BatchNorm, eps=1e-03),
+        norm_layer=partial(nn.BatchNorm, eps=1e-03),
         **kwargs,
     )

@@ -1,7 +1,6 @@
 from typing import Any, Callable, List, Optional, Sequence, Type, Union
 
 import equinox as eqx
-import equinox.experimental as nn
 import equinox.nn as nn
 import jax
 import jax.nn as jnn
@@ -142,7 +141,6 @@ class _ResNetBottleneck(eqx.Module):
         self.stride = stride
 
     def __call__(self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None):
-
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
@@ -221,7 +219,7 @@ class ResNet(eqx.Module):
 
         if nn.BatchNorm != norm_layer:
             raise NotImplementedError(
-                f"{type(norm_layer)} is not currently supported. Use `eqx.experimental.BatchNorm` instead."
+                f"{type(norm_layer)} is not currently supported. Use `nn.BatchNorm` instead."
             )
         if key is None:
             key = jrandom.PRNGKey(0)

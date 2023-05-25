@@ -286,7 +286,7 @@ class InceptionAux(eqx.Module):
 
 class BasicConv2d(eqx.Module):
     conv: nn.Conv2d
-    bn: eqx.experimental.BatchNorm
+    bn: nn.BatchNorm
 
     def __init__(
         self,
@@ -300,7 +300,7 @@ class BasicConv2d(eqx.Module):
         self.conv = nn.Conv2d(
             in_channels, out_channels, use_bias=False, key=key, **kwargs
         )
-        self.bn = eqx.experimental.BatchNorm(out_channels, axis_name="batch", eps=0.001)
+        self.bn = nn.BatchNorm(out_channels, axis_name="batch", eps=0.001)
 
     def __call__(
         self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None

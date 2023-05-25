@@ -26,7 +26,7 @@ class FCNHead(nn.Sequential):
             nn.Conv2d(
                 in_channels, inter_channels, 3, padding=1, use_bias=False, key=keys[0]
             ),
-            eqx.experimental.BatchNorm(inter_channels, axis_name="batch"),
+            nn.BatchNorm(inter_channels, axis_name="batch"),
             nn.Lambda(jnn.relu),
             nn.Dropout(0.1),
             nn.Conv2d(inter_channels, out_channels, 1, key=keys[1]),
