@@ -2,7 +2,6 @@ from functools import partial
 from typing import Any, Callable, List, Optional, Sequence
 
 import equinox as eqx
-import equinox.experimental as eqxex
 import equinox.nn as nn
 import jax
 import jax.nn as jnn
@@ -186,7 +185,7 @@ class MobileNetV3(eqx.Module):
             block = _InvertedResidual
 
         if norm_layer is None:
-            norm_layer = partial(eqxex.BatchNorm, eps=0.001, momentum=0.01)
+            norm_layer = partial(nn.BatchNorm, eps=0.001, momentum=0.01)
 
         layers: List[eqx.Module] = []
 

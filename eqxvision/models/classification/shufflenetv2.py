@@ -1,7 +1,6 @@
 from typing import Any, List, Optional
 
 import equinox as eqx
-import equinox.experimental as eqxex
 import equinox.nn as nn
 import jax
 import jax.nn as jnn
@@ -56,7 +55,7 @@ class _InvertedResidual(eqx.Module):
                         padding=1,
                         key=keys[0],
                     ),
-                    eqxex.BatchNorm(inp, axis_name="batch"),
+                    nn.BatchNorm(inp, axis_name="batch"),
                     nn.Conv2d(
                         inp,
                         branch_features,
@@ -66,7 +65,7 @@ class _InvertedResidual(eqx.Module):
                         use_bias=False,
                         key=keys[1],
                     ),
-                    eqxex.BatchNorm(branch_features, axis_name="batch"),
+                    nn.BatchNorm(branch_features, axis_name="batch"),
                     nn.Lambda(jnn.relu),
                 ]
             )
@@ -84,7 +83,7 @@ class _InvertedResidual(eqx.Module):
                     use_bias=False,
                     key=keys[2],
                 ),
-                eqxex.BatchNorm(branch_features, axis_name="batch"),
+                nn.BatchNorm(branch_features, axis_name="batch"),
                 nn.Lambda(jnn.relu),
                 self.depthwise_conv(
                     branch_features,
@@ -94,7 +93,7 @@ class _InvertedResidual(eqx.Module):
                     padding=1,
                     key=keys[3],
                 ),
-                eqxex.BatchNorm(branch_features, axis_name="batch"),
+                nn.BatchNorm(branch_features, axis_name="batch"),
                 nn.Conv2d(
                     branch_features,
                     branch_features,
@@ -104,7 +103,7 @@ class _InvertedResidual(eqx.Module):
                     use_bias=False,
                     key=keys[4],
                 ),
-                eqxex.BatchNorm(branch_features, axis_name="batch"),
+                nn.BatchNorm(branch_features, axis_name="batch"),
                 nn.Lambda(jnn.relu),
             ]
         )
@@ -188,7 +187,7 @@ class ShuffleNetV2(eqx.Module):
                     use_bias=False,
                     key=keys[0],
                 ),
-                eqxex.BatchNorm(output_channels, axis_name="batch"),
+                nn.BatchNorm(output_channels, axis_name="batch"),
                 nn.Lambda(jnn.relu),
             ]
         )
@@ -227,7 +226,7 @@ class ShuffleNetV2(eqx.Module):
                     use_bias=False,
                     key=keys[0],
                 ),
-                eqxex.BatchNorm(output_channels, axis_name="batch"),
+                nn.BatchNorm(output_channels, axis_name="batch"),
                 nn.Lambda(jnn.relu),
             ]
         )

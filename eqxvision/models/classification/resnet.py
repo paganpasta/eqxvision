@@ -1,7 +1,7 @@
 from typing import Any, Callable, List, Optional, Sequence, Type, Union
 
 import equinox as eqx
-import equinox.experimental as eqex
+import equinox.experimental as nn
 import equinox.nn as nn
 import jax
 import jax.nn as jnn
@@ -58,7 +58,7 @@ class _ResNetBasicBlock(eqx.Module):
     ):
         super(_ResNetBasicBlock, self).__init__()
         if norm_layer is None:
-            norm_layer = eqex.BatchNorm
+            norm_layer = nn.BatchNorm
         if groups != 1 or base_width != 64:
             raise ValueError("BasicBlock only supports groups=1 and base_width=64")
         if dilation > 1:
@@ -123,7 +123,7 @@ class _ResNetBottleneck(eqx.Module):
     ):
         super(_ResNetBottleneck, self).__init__()
         if norm_layer is None:
-            norm_layer = eqex.BatchNorm
+            norm_layer = nn.BatchNorm
         self.expansion = 4
         keys = jrandom.split(key, 3)
         width = int(planes * (base_width / 64.0)) * groups
@@ -217,9 +217,9 @@ class ResNet(eqx.Module):
         """
         super(ResNet, self).__init__()
         if not norm_layer:
-            norm_layer = eqex.BatchNorm
+            norm_layer = nn.BatchNorm
 
-        if eqex.BatchNorm != norm_layer:
+        if nn.BatchNorm != norm_layer:
             raise NotImplementedError(
                 f"{type(norm_layer)} is not currently supported. Use `eqx.experimental.BatchNorm` instead."
             )

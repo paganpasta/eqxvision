@@ -114,7 +114,7 @@ class _Transition(eqx.Module):
         super().__init__()
         self.layers = nn.Sequential(
             [
-                eqxex.BatchNorm(num_input_features, axis_name="batch"),
+                nn.BatchNorm(num_input_features, axis_name="batch"),
                 nn.Lambda(jnn.relu),
                 nn.Conv2d(
                     num_input_features,
@@ -176,7 +176,7 @@ class DenseNet(eqx.Module):
                 use_bias=False,
                 key=keys[0],
             ),
-            eqxex.BatchNorm(num_init_features, axis_name="batch"),
+            nn.BatchNorm(num_init_features, axis_name="batch"),
             nn.Lambda(jnn.relu),
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
         ]
@@ -207,7 +207,7 @@ class DenseNet(eqx.Module):
         # Final batch norm, relu and pooling
         features.extend(
             [
-                eqxex.BatchNorm(num_features, axis_name="batch"),
+                nn.BatchNorm(num_features, axis_name="batch"),
                 nn.Lambda(jnn.relu),
                 nn.AdaptiveAvgPool2d((1, 1)),
             ]
