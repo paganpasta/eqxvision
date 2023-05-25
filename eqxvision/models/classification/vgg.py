@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, cast, Dict, List, Optional, Union
 
 import equinox as eqx
 import equinox.nn as nn
@@ -9,6 +9,7 @@ import jax.random as jrandom
 from jaxtyping import Array
 
 from ...utils import load_torch_weights
+
 
 _cfgs: Dict[str, List[Union[str, int]]] = {
     "A": [64, "M", 128, "M", 256, 256, "M", 512, 512, "M", 512, 512, "M"],
