@@ -1,7 +1,6 @@
 from functools import partial
 from typing import Callable, Optional
 
-import equinox.experimental as eqxex
 import equinox.nn as nn
 import jax
 import jax.nn as jnn
@@ -23,7 +22,7 @@ class ConvNormActivation(nn.Sequential):
         stride: int = 1,
         padding: Optional[int] = None,
         groups: int = 1,
-        norm_layer: Optional[Callable] = eqxex.BatchNorm,
+        norm_layer: Optional[Callable] = nn.BatchNorm,
         activation_layer: Optional[Callable] = jnn.relu,
         dilation: int = 1,
         use_bias: Optional[bool] = None,
@@ -72,9 +71,9 @@ class ConvNormActivation(nn.Sequential):
         ]
         if norm_layer is not None:
             is_bn = (
-                norm_layer.func == eqxex.BatchNorm
+                norm_layer.func == nn.BatchNorm
                 if isinstance(norm_layer, partial)
-                else norm_layer == eqxex.BatchNorm
+                else norm_layer == nn.BatchNorm
             )
             if is_bn:
                 layers.append(norm_layer(out_channels, axis_name="batch"))
