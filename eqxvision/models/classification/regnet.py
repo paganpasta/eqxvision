@@ -158,11 +158,11 @@ class ResBottleneckBlock(eqx.Module):
         self.activation = activation_layer
 
     def __call__(
-        self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None
-    ) -> Array:
+        self, x: Array, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
+    ) -> Tuple[Array, nn.State]:
         keys = jr.split(key, 2)
-        x = self.proj(x, key=keys[0]) + self.f(x, key=keys[1])
-        return self.activation(x)
+        x, state = self.proj(x, state, key=keys[0]) + self.f(x, key=keys[1])
+        return self.activation(x), state
 
 
 class AnyStage(nn.Sequential):
@@ -415,7 +415,9 @@ class RegNet(eqx.Module):
             in_features=current_width, out_features=num_classes, key=keys[1]
         )
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels
@@ -423,11 +425,11 @@ class RegNet(eqx.Module):
         """
         keys = jr.split(key, 2)
         x = self.stem(x, key=keys[0])
-        x = self.trunk_output(x, key=keys[1])
+        x, state = self.trunk_output(x, state, key=keys[1])
         x = self.avgpool(x)
         x = jnp.ravel(x)
         x = self.fc(x)
-        return x
+        return x, state
 
 
 def _regnet(
@@ -436,7 +438,6 @@ def _regnet(
     torch_weights: str,
     **kwargs: Any,
 ) -> RegNet:
-
     norm_layer = kwargs.pop(
         "norm_layer", partial(nn.BatchNorm, eps=1e-05, momentum=0.1)
     )
