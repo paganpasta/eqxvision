@@ -52,18 +52,24 @@ class _DenseLayer(eqx.Module):
         self.dropout = nn.Dropout(p=float(drop_rate))
 
     def __call__(
-        self, x: Union[Array, Sequence[Array]], *, key: "jax.random.PRNGKey"
-    ) -> Array:
+        self,
+        x: Union[Array, Sequence[Array]],
+        state: nn.State,
+        *,
+        key: "jax.random.PRNGKey",
+    ) -> Tuple[Array, nn.State]:
         if isinstance(x, Array):
             prev_features = [x]
         else:
             prev_features = x
 
         concated_features = jnp.concatenate(prev_features, axis=0)
-        bottleneck_output = self.conv1(self.relu(self.norm1(concated_features)))
-        new_features = self.conv2(self.relu(self.norm2(bottleneck_output)))
+        x, state = self.norm1(concated_features, state)
+        bottleneck_output = self.conv1(self.relu(x))
+        x, state = self.norm2(bottleneck_output, state)
+        new_features = self.conv2(self.relu())
         new_features = self.dropout(new_features, key=key)
-        return new_features
+        return new_features, state
 
 
 class _DenseBlock(eqx.Module):
@@ -93,13 +99,15 @@ class _DenseBlock(eqx.Module):
             )
             self.layers.append(layer)
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         features = [x]
         keys = jrandom.split(key, self.num_layers)
         for i in range(self.num_layers):
-            new_features = self.layers[i](features, key=keys[i])
+            new_features, state = self.layers[i](features, state, key=keys[i])
             features.append(new_features)
-        return jnp.concatenate(features, 0)
+        return jnp.concatenate(features, 0), state
 
 
 class _Transition(eqx.Module):
@@ -128,8 +136,10 @@ class _Transition(eqx.Module):
             ]
         )
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
-        return self.layers(x, key=key)
+    def __call__(
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
+        return self.layers(x, state, key=key)
 
 
 class DenseNet(eqx.Module):
@@ -216,16 +226,18 @@ class DenseNet(eqx.Module):
         # Linear layer
         self.classifier = nn.Linear(num_features, num_classes, key=keys[-1])
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
-        out = self.features(x, key=key)
+        out, state = self.features(x, state, key=key)
         out = jnp.ravel(out)
         out = self.classifier(out)
-        return out
+        return out, state
 
 
 def _densenet(

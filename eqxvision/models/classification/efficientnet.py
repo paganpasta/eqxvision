@@ -177,13 +177,15 @@ class _MBConv(eqx.Module):
         self.stochastic_depth = DropPath(stochastic_depth_prob, mode="per_channel")
         self.out_channels = cnf.out_channels
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         keys = jr.split(key, 2)
-        result = self.block(x, key=keys[0])
+        result, state = self.block(x, state, key=keys[0])
         if self.use_res_connect:
             result = self.stochastic_depth(result, key=keys[1])
             result += x
-        return result
+        return result, state
 
 
 class _FusedMBConv(eqx.Module):
@@ -257,13 +259,15 @@ class _FusedMBConv(eqx.Module):
         self.stochastic_depth = DropPath(stochastic_depth_prob, mode="local")
         self.out_channels = cnf.out_channels
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         keys = jr.split(key, 2)
-        result = self.block(x, key=keys[0])
+        result, state = self.block(x, state, key=keys[0])
         if self.use_res_connect:
             result = self.stochastic_depth(result, key=keys[1])
             result += x
-        return result
+        return result, state
 
 
 class EfficientNet(eqx.Module):
@@ -389,18 +393,20 @@ class EfficientNet(eqx.Module):
             ]
         )
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input `JAX` array.
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`.
         """
         keys = jr.split(key, 2)
-        x = self.features(x, key=keys[0])
+        x, state = self.features(x, state, key=keys[0])
         x = self.avgpool(x)
         x = jnp.ravel(x)
         x = self.classifier(x, key=keys[1])
-        return x
+        return x, state
 
 
 def _efficientnet(

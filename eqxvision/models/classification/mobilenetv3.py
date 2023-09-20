@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Any, Callable, List, Optional, Sequence
+from typing import Any, Callable, List, Optional, Sequence, Tuple
 
 import equinox as eqx
 import equinox.nn as nn
@@ -119,16 +119,18 @@ class _InvertedResidual(eqx.Module):
         self.block = nn.Sequential(layers)
         self.out_channels = cnf.out_channels
 
-    def __call__(self, x, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x, state, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input `JAX` array
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
-        result = self.block(x, key=key)
+        result, state = self.block(x, state, key=key)
         if self.use_res_connect:
             result += x
-        return result
+        return result, state
 
 
 class MobileNetV3(eqx.Module):
@@ -232,18 +234,20 @@ class MobileNetV3(eqx.Module):
             ]
         )
 
-    def __call__(self, x, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x, state, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input `JAX` array
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         keys = jrandom.split(key, 3)
-        x = self.features(x, key=keys[0])
+        x, state = self.features(x, state, key=keys[0])
         x = self.avgpool(x, key=keys[1])
         x = jnp.ravel(x)
         x = self.classifier(x, key=keys[2])
-        return x
+        return x, state
 
 
 def _mobilenet_v3_conf(

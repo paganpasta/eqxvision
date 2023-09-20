@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Optional, Sequence, Type, Union
+from typing import Any, Callable, List, Optional, Sequence, Tuple, Type, Union
 
 import equinox as eqx
 import equinox.nn as nn
@@ -77,18 +77,18 @@ class _ResNetBasicBlock(eqx.Module):
         self.stride = stride
 
     def __call__(
-        self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None
-    ) -> Array:
+        self, x: Array, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
+    ) -> Tuple[Array, nn.State]:
         out = self.conv1(x)
-        out = self.bn1(out)
+        out, state = self.bn1(out, state)
         out = self.relu(out)
         out = self.conv2(out)
-        out = self.bn2(out)
+        out, state = self.bn2(out, state)
         identity = self.downsample(x)
         out += identity
         out = self.relu(out)
 
-        return out
+        return out, state
 
 
 class _ResNetBottleneck(eqx.Module):
@@ -140,24 +140,26 @@ class _ResNetBottleneck(eqx.Module):
             self.downsample = nn.Identity()
         self.stride = stride
 
-    def __call__(self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None):
+    def __call__(
+        self, x: Array, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
+    ) -> Tuple[Array, nn.State]:
         out = self.conv1(x)
-        out = self.bn1(out)
+        out, state = self.bn1(out, state)
         out = self.relu(out)
 
         out = self.conv2(out)
-        out = self.bn2(out)
+        out, state = self.bn2(out, state)
         out = self.relu(out)
 
         out = self.conv3(out)
-        out = self.bn3(out)
+        out, state = self.bn3(out, state)
 
         identity = self.downsample(x)
 
         out += identity
         out = self.relu(out)
 
-        return out
+        return out, state
 
 
 EXPANSIONS = {_ResNetBasicBlock: 1, _ResNetBottleneck: 4}
@@ -330,30 +332,33 @@ class ResNet(eqx.Module):
 
         return nn.Sequential(layers)
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels
+        - `state`: The state of the model, necessary for batch norm
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         if key is None:
             raise RuntimeError("The model requires a PRNGKey.")
         keys = jrandom.split(key, 6)
         x = self.conv1(x, key=keys[0])
-        x = self.bn1(x)
+        x, state = self.bn1(x, state)
         x = self.relu(x)
         x = self.maxpool(x)
 
-        x = self.layer1(x, key=keys[1])
-        x = self.layer2(x, key=keys[2])
-        x = self.layer3(x, key=keys[3])
-        x = self.layer4(x, key=keys[4])
+        x, state = self.layer1(x, state, key=keys[1])
+        x, state = self.layer2(x, state, key=keys[2])
+        x, state = self.layer3(x, state, key=keys[3])
+        x, state = self.layer4(x, state, key=keys[4])
 
         x = self.avgpool(x)
         x = jnp.ravel(x)
         x = self.fc(x, key=keys[5])
 
-        return x
+        return x, state
 
 
 def _resnet(block, layers, **kwargs):

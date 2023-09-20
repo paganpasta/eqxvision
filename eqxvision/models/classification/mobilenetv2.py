@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, List, Optional, Tuple
 
 import equinox as eqx
 import equinox.nn as nn
@@ -213,18 +213,20 @@ class MobileNetV2(eqx.Module):
 
         self.pool = nn.AdaptiveAvgPool2d((1, 1))
 
-    def __call__(self, x, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x, state, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input `JAX` array
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         keys = jrandom.split(key, 3)
-        x = self.features(x, key=keys[0])
+        x, state = self.features(x, state, key=keys[0])
         x = self.pool(x, key=keys[1])
         x = jnp.ravel(x)
         x = self.classifier(x, key=keys[2])
-        return x
+        return x, state
 
 
 def mobilenet_v2(torch_weights: str = None, **kwargs: Any) -> MobileNetV2:

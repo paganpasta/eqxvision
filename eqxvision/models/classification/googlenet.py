@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Callable, List, Optional, Union
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 import equinox as eqx
 import equinox.nn as nn
@@ -46,7 +46,7 @@ class GoogLeNet(eqx.Module):
         dropout: float = 0.2,
         dropout_aux: float = 0.7,
         *,
-        key: Optional["jax.random.PRNGKey"] = None
+        key: Optional["jax.random.PRNGKey"] = None,
     ) -> None:
         """
         **Arguments:**
@@ -196,7 +196,7 @@ class _Inception(eqx.Module):
         pool_proj: int,
         conv_block: Optional[Callable[..., eqx.Module]] = None,
         *,
-        key: jax.random.PRNGKey = None
+        key: jax.random.PRNGKey = None,
     ) -> None:
         super().__init__()
         if conv_block is None:
@@ -251,7 +251,7 @@ class InceptionAux(eqx.Module):
         conv_block: Optional[Callable[..., eqx.Module]] = None,
         dropout: float = 0.7,
         *,
-        key: jax.random.PRNGKey = None
+        key: jax.random.PRNGKey = None,
     ) -> None:
         super().__init__()
         if conv_block is None:
@@ -294,7 +294,7 @@ class BasicConv2d(eqx.Module):
         out_channels: int,
         *,
         key: jax.random.PRNGKey = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         super().__init__()
         self.conv = nn.Conv2d(
@@ -303,11 +303,11 @@ class BasicConv2d(eqx.Module):
         self.bn = nn.BatchNorm(out_channels, axis_name="batch", eps=0.001)
 
     def __call__(
-        self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None
-    ) -> Array:
+        self, x: Array, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
+    ) -> Tuple[Array, nn.State]:
         x = self.conv(x)
-        x = self.bn(x, key=key)
-        return jnn.relu(x)
+        x, state = self.bn(x, state, key=key)
+        return jnn.relu(x), state
 
 
 def googlenet(torch_weights: str = None, **kwargs: Any) -> GoogLeNet:
