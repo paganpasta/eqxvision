@@ -11,7 +11,7 @@ from jaxtyping import Array
 from ...utils import load_torch_weights
 
 
-class _DenseLayer(eqx.Module):
+class _DenseLayer(nn.StatefulLayer):
     norm1: nn.BatchNorm
     relu: nn.Lambda
     conv1: nn.Conv2d
@@ -67,12 +67,12 @@ class _DenseLayer(eqx.Module):
         x, state = self.norm1(concated_features, state)
         bottleneck_output = self.conv1(self.relu(x))
         x, state = self.norm2(bottleneck_output, state)
-        new_features = self.conv2(self.relu())
+        new_features = self.conv2(self.relu(x))
         new_features = self.dropout(new_features, key=key)
         return new_features, state
 
 
-class _DenseBlock(eqx.Module):
+class _DenseBlock(nn.StatefulLayer):
     layers: Sequence[eqx.Module]
     num_layers: int
 
@@ -110,7 +110,7 @@ class _DenseBlock(eqx.Module):
         return jnp.concatenate(features, 0), state
 
 
-class _Transition(eqx.Module):
+class _Transition(nn.StatefulLayer):
     layers: nn.Sequential
 
     def __init__(

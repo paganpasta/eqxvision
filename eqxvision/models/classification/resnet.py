@@ -33,13 +33,13 @@ def _conv1x1(in_planes, out_planes, stride=1, key=None):
     )
 
 
-class _ResNetBasicBlock(eqx.Module):
+class _ResNetBasicBlock(nn.StatefulLayer):
     expansion: int
     conv1: eqx.Module
-    bn1: eqx.Module
+    bn1: nn.StatefulLayer
     relu: Callable
     conv2: eqx.Module
-    bn2: eqx.Module
+    bn2: nn.StatefulLayer
     downsample: eqx.Module
     stride: int
 
@@ -73,7 +73,7 @@ class _ResNetBasicBlock(eqx.Module):
         if downsample:
             self.downsample = downsample
         else:
-            self.downsample = nn.Identity()
+            self.downsample = lambda x, state: (x, state)
         self.stride = stride
 
     def __call__(
@@ -84,14 +84,14 @@ class _ResNetBasicBlock(eqx.Module):
         out = self.relu(out)
         out = self.conv2(out)
         out, state = self.bn2(out, state)
-        identity = self.downsample(x)
+        identity, state = self.downsample(x, state)
         out += identity
         out = self.relu(out)
 
         return out, state
 
 
-class _ResNetBottleneck(eqx.Module):
+class _ResNetBottleneck(nn.StatefulLayer):
     # Bottleneck in torchvision places the stride for downsampling at 3x3 convolution(self.conv2)
     # while original implementation places the stride at the first 1x1 convolution(self.conv1)
     # according to "Deep residual learning for image recognition"https://arxiv.org/abs/1512.03385.
@@ -99,13 +99,13 @@ class _ResNetBottleneck(eqx.Module):
     # https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch.
     expansion: int
     conv1: eqx.Module
-    bn1: eqx.Module
+    bn1: nn.StatefulLayer
     conv2: eqx.Module
-    bn2: eqx.Module
+    bn2: nn.StatefulLayer
     conv3: eqx.Module
-    bn3: eqx.Module
+    bn3: nn.StatefulLayer
     relu: Callable
-    downsample: eqx.Module
+    downsample: nn.StatefulLayer
     stride: int
 
     def __init__(
@@ -137,7 +137,7 @@ class _ResNetBottleneck(eqx.Module):
         if downsample:
             self.downsample = downsample
         else:
-            self.downsample = nn.Identity()
+            self.downsample = lambda x, state: (x, state)
         self.stride = stride
 
     def __call__(
@@ -154,7 +154,7 @@ class _ResNetBottleneck(eqx.Module):
         out = self.conv3(out)
         out, state = self.bn3(out, state)
 
-        identity = self.downsample(x)
+        identity, state = self.downsample(x, state)
 
         out += identity
         out = self.relu(out)
@@ -173,13 +173,13 @@ class ResNet(eqx.Module):
     groups: Sequence[int]
     base_width: int
     conv1: eqx.Module
-    bn1: eqx.Module
+    bn1: nn.StatefulLayer
     relu: jnn.relu
     maxpool: eqx.Module
-    layer1: eqx.Module
-    layer2: eqx.Module
-    layer3: eqx.Module
-    layer4: eqx.Module
+    layer1: nn.StatefulLayer
+    layer2: nn.StatefulLayer
+    layer3: nn.StatefulLayer
+    layer4: nn.StatefulLayer
     avgpool: eqx.Module
     fc: eqx.Module
 
