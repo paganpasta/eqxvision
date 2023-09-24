@@ -12,7 +12,7 @@ from ...layers import ConvNormActivation
 from ...utils import _make_divisible, load_torch_weights
 
 
-class _InvertedResidual(eqx.Module):
+class _InvertedResidual(nn.StatefulLayer):
     stride: int
     use_res_connect: int
     conv: nn.Sequential
@@ -74,16 +74,19 @@ class _InvertedResidual(eqx.Module):
         self.conv = nn.Sequential(layers)
         self.out_channels = oup
 
-    def __call__(self, x, *, key: Optional["jax.random.PRNGKey"] = None) -> Array:
+    def __call__(
+        self, x, state, *, key: Optional["jax.random.PRNGKey"] = None
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input `JAX` array
         - `key`: Forwarded to individual `eqx.Module` attributes
         """
         if self.use_res_connect:
-            return x + self.conv(x, key=key)
+            out, state = self.conv(x, state, key=key)
+            return x + out, state
         else:
-            return self.conv(x, key=key)
+            return self.conv(x, state, key=key)
 
 
 class MobileNetV2(eqx.Module):

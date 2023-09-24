@@ -42,7 +42,7 @@ class _InvertedResidualConfig:
         return _make_divisible(channels * width_mult, 8)
 
 
-class _InvertedResidual(eqx.Module):
+class _InvertedResidual(nn.StatefulLayer):
     # Implemented as described at section 5 of MobileNetV3 paper
     use_res_connect: int
     block: nn.Sequential

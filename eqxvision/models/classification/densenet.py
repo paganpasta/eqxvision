@@ -232,6 +232,7 @@ class DenseNet(eqx.Module):
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels
+        - `state`: The state of the model, necessary for layers such as `BatchNorm`
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         out, state = self.features(x, state, key=key)

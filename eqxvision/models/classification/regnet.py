@@ -108,7 +108,7 @@ class BottleneckTransform(nn.Sequential):
         super().__init__(layers)
 
 
-class ResBottleneckBlock(eqx.Module):
+class ResBottleneckBlock(nn.StatefulLayer):
     """Residual bottleneck block: x + F(x), F = bottleneck transform."""
 
     proj: eqx.Module
@@ -131,7 +131,7 @@ class ResBottleneckBlock(eqx.Module):
         super().__init__()
 
         # Use skip connection with projection if shape changes
-        self.proj = nn.Identity()
+        self.proj = lambda x, state, key: (x, state)
         should_proj = (width_in != width_out) or (stride != 1)
         keys = jr.split(key, 2)
         if should_proj:
@@ -161,7 +161,9 @@ class ResBottleneckBlock(eqx.Module):
         self, x: Array, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
     ) -> Tuple[Array, nn.State]:
         keys = jr.split(key, 2)
-        x, state = self.proj(x, state, key=keys[0]) + self.f(x, key=keys[1])
+        out1, state = self.proj(x, state, key=keys[0])
+        out2, state = self.f(x, state, key=keys[1])
+        x = out1 + out2
         return self.activation(x), state
 
 
@@ -174,7 +176,7 @@ class AnyStage(nn.Sequential):
         width_out: int,
         stride: int,
         depth: int,
-        block_constructor: eqx.Module,
+        block_constructor: nn.StatefulLayer,
         norm_layer: Callable,
         activation_layer: Callable,
         group_width: int,
@@ -421,10 +423,11 @@ class RegNet(eqx.Module):
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels
+        - `state`: The state of the model, necessary for layers such as `BatchNorm`
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         keys = jr.split(key, 2)
-        x = self.stem(x, key=keys[0])
+        x, state = self.stem(x, state, key=keys[0])
         x, state = self.trunk_output(x, state, key=keys[1])
         x = self.avgpool(x)
         x = jnp.ravel(x)

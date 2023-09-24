@@ -92,7 +92,7 @@ class _FusedMBConvConfig(_MBConvConfigData):
         )
 
 
-class _MBConv(eqx.Module):
+class _MBConv(nn.StatefulLayer):
     use_res_connect: bool
     block: nn.Sequential
     stochastic_depth: DropPath
@@ -188,7 +188,7 @@ class _MBConv(eqx.Module):
         return result, state
 
 
-class _FusedMBConv(eqx.Module):
+class _FusedMBConv(nn.StatefulLayer):
     use_res_connect: bool
     block: nn.Sequential
     stochastic_depth: DropPath
@@ -399,6 +399,7 @@ class EfficientNet(eqx.Module):
         """**Arguments:**
 
         - `x`: The input `JAX` array.
+        - `state`: The state of the model, necessary for layers such as `BatchNorm`
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`.
         """
         keys = jr.split(key, 2)

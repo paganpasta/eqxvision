@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 
 import equinox as eqx
 import equinox.nn as nn
@@ -20,7 +20,7 @@ def _channel_shuffle(x: Array, groups: int) -> Array:
     return x
 
 
-class _InvertedResidual(eqx.Module):
+class _InvertedResidual(nn.StatefulLayer):
     stride: int
     branch1: nn.Sequential
     branch2: nn.Sequential
@@ -70,7 +70,7 @@ class _InvertedResidual(eqx.Module):
                 ]
             )
         else:
-            self.branch1 = nn.Sequential([nn.Identity])
+            self.branch1 = nn.Sequential([lambda x, state: (x, state)])
 
         self.branch2 = nn.Sequential(
             [
@@ -122,15 +122,20 @@ class _InvertedResidual(eqx.Module):
             i, o, kernel_size, stride, padding, use_bias=bias, groups=i, key=key
         )
 
-    def __call__(self, x, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         if self.stride == 1:
             x1, x2 = jnp.split(x, 2, axis=0)
-            out = jnp.concatenate((x1, self.branch2(x2)), axis=0)
+            x2, state = self.branch2(x2, state)
+            out = jnp.concatenate((x1, x2), axis=0)
         else:
-            out = jnp.concatenate((self.branch1(x), self.branch2(x)), axis=0)
+            x1, state = self.branch1(x, state)
+            x2, state = self.branch1(x, state)
+            out = jnp.concatenate((x1, x2), axis=0)
 
         out = _channel_shuffle(out, 2)
-        return out
+        return out, state
 
 
 class ShuffleNetV2(eqx.Module):
@@ -233,22 +238,25 @@ class ShuffleNetV2(eqx.Module):
         self.pool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(output_channels, num_classes, key=keys[1])
 
-    def __call__(self, x, *, key: Optional["jax.random.PRNGKey"] = None) -> Array:
+    def __call__(
+        self, x, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input `JAX` array
+        - `state`: The state of the model, necessary for layers such as `BatchNorm`
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         keys = jrandom.split(key, 5)
-        x = self.conv1(x, key=keys[0])
+        x, state = self.conv1(x, state, key=keys[0])
         x = self.maxpool(x)
-        x = self.stage2(x, key=keys[1])
-        x = self.stage3(x, key=keys[2])
-        x = self.stage4(x, key=keys[3])
-        x = self.conv5(x, key=keys[4])
+        x, state = self.stage2(x, state, key=keys[1])
+        x, state = self.stage3(x, state, key=keys[2])
+        x, state = self.stage4(x, state, key=keys[3])
+        x, state = self.conv5(x, state, key=keys[4])
         x = jnp.ravel(self.pool(x))
         x = self.fc(x)
-        return x
+        return x, state
 
 
 def _shufflenetv2(*args: Any, **kwargs: Any) -> ShuffleNetV2:
