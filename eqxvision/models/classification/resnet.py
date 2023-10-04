@@ -333,30 +333,26 @@ class ResNet(eqx.Module):
         return nn.Sequential(layers)
 
     def __call__(
-        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+        self, x: Array, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
     ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels
         - `state`: The state of the model, necessary for batch norm
-        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
-        if key is None:
-            raise RuntimeError("The model requires a PRNGKey.")
-        keys = jrandom.split(key, 6)
-        x = self.conv1(x, key=keys[0])
+        x = self.conv1(x)
         x, state = self.bn1(x, state)
         x = self.relu(x)
         x = self.maxpool(x)
 
-        x, state = self.layer1(x, state, key=keys[1])
-        x, state = self.layer2(x, state, key=keys[2])
-        x, state = self.layer3(x, state, key=keys[3])
-        x, state = self.layer4(x, state, key=keys[4])
+        x, state = self.layer1(x, state)
+        x, state = self.layer2(x, state)
+        x, state = self.layer3(x, state)
+        x, state = self.layer4(x, state)
 
         x = self.avgpool(x)
         x = jnp.ravel(x)
-        x = self.fc(x, key=keys[5])
+        x = self.fc(x)
 
         return x, state
 
