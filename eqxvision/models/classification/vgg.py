@@ -1,7 +1,6 @@
-from typing import Any, cast, Dict, List, Optional, Union
+from typing import Any, cast, Dict, List, Optional, Tuple, Union
 
 import equinox as eqx
-import equinox.experimental as eqex
 import equinox.nn as nn
 import jax
 import jax.nn as jnn
@@ -75,7 +74,7 @@ class VGG(eqx.Module):
         batch_norm: bool = True,
         dropout: float = 0.5,
         *,
-        key: Optional["jax.random.PRNGKey"] = None
+        key: Optional["jax.random.PRNGKey"] = None,
     ) -> None:
         """**Arguments:**
 
@@ -105,18 +104,21 @@ class VGG(eqx.Module):
             ]
         )
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels.
+        - `state`: The state of the model, necessary for layers such as `BatchNorm`.
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`.
         """
         keys = jrandom.split(key, 2)
-        x = self.features(x, key=keys[0])
+        x, state = self.features(x, state, key=keys[0])
         x = self.avgpool(x)
         x = jnp.ravel(x)
         x = self.classifier(x, key=keys[1])
-        return x
+        return x, state
 
 
 def _make_layers(
@@ -124,7 +126,6 @@ def _make_layers(
     batch_norm: bool = False,
     key: "jax.random.PRNGKey" = None,
 ) -> nn.Sequential:
-
     layers: List[eqx.Module] = []
     in_channels = 3
     keys = jrandom.split(key=key, num=len(cfg) - cfg.count("M"))
@@ -140,7 +141,7 @@ def _make_layers(
             if batch_norm:
                 layers += [
                     conv2d,
-                    eqex.BatchNorm(v, axis_name="batch"),
+                    nn.BatchNorm(v, axis_name="batch"),
                     nn.Lambda(jnn.relu),
                 ]
             else:

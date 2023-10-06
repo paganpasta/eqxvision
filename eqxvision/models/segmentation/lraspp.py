@@ -89,7 +89,7 @@ class LRASPPHead(eqx.Module):
                 nn.Conv2d(
                     high_channels, inter_channels, 1, use_bias=False, key=keys[0]
                 ),
-                eqx.experimental.BatchNorm(inter_channels, axis_name="batch"),
+                nn.BatchNorm(inter_channels, axis_name="batch"),
                 nn.Lambda(jnn.relu),
             ]
         )

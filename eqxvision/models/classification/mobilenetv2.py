@@ -1,7 +1,6 @@
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, List, Optional, Tuple
 
 import equinox as eqx
-import equinox.experimental as eqxex
 import equinox.nn as nn
 import jax
 import jax.nn as jnn
@@ -13,7 +12,7 @@ from ...layers import ConvNormActivation
 from ...utils import _make_divisible, load_torch_weights
 
 
-class _InvertedResidual(eqx.Module):
+class _InvertedResidual(nn.StatefulLayer):
     stride: int
     use_res_connect: int
     conv: nn.Sequential
@@ -37,7 +36,7 @@ class _InvertedResidual(eqx.Module):
         assert stride in [1, 2]
 
         if norm_layer is None:
-            norm_layer = eqxex.BatchNorm
+            norm_layer = nn.BatchNorm
 
         hidden_dim = int(round(inp * expand_ratio))
         self.use_res_connect = self.stride == 1 and inp == oup
@@ -75,16 +74,19 @@ class _InvertedResidual(eqx.Module):
         self.conv = nn.Sequential(layers)
         self.out_channels = oup
 
-    def __call__(self, x, *, key: Optional["jax.random.PRNGKey"] = None) -> Array:
+    def __call__(
+        self, x, state, *, key: Optional["jax.random.PRNGKey"] = None
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input `JAX` array
         - `key`: Forwarded to individual `eqx.Module` attributes
         """
         if self.use_res_connect:
-            return x + self.conv(x, key=key)
+            out, state = self.conv(x, state, key=key)
+            return x + out, state
         else:
-            return self.conv(x, key=key)
+            return self.conv(x, state, key=key)
 
 
 class MobileNetV2(eqx.Module):
@@ -131,7 +133,7 @@ class MobileNetV2(eqx.Module):
             block = _InvertedResidual
 
         if norm_layer is None:
-            norm_layer = eqxex.BatchNorm
+            norm_layer = nn.BatchNorm
 
         input_channel = 32
         last_channel = 1280
@@ -214,18 +216,20 @@ class MobileNetV2(eqx.Module):
 
         self.pool = nn.AdaptiveAvgPool2d((1, 1))
 
-    def __call__(self, x, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x, state, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input `JAX` array
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         keys = jrandom.split(key, 3)
-        x = self.features(x, key=keys[0])
+        x, state = self.features(x, state, key=keys[0])
         x = self.pool(x, key=keys[1])
         x = jnp.ravel(x)
         x = self.classifier(x, key=keys[2])
-        return x
+        return x, state
 
 
 def mobilenet_v2(torch_weights: str = None, **kwargs: Any) -> MobileNetV2:

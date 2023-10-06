@@ -76,7 +76,7 @@ class _VitAttention(eqx.Module):
         return x, attn
 
 
-class _VitBlock(eqx.Module):
+class _VitBlock(nn.StatefulLayer):
     norm1: eqx.Module
     attn: _VitAttention
     drop_path: DropPath
@@ -137,24 +137,30 @@ class _VitBlock(eqx.Module):
         )
 
     def __call__(
-        self, x: Array, return_attention=False, *, key: "jax.random.PRNGKey"
-    ) -> Array:
+        self,
+        x: Array,
+        state: nn.State,
+        return_attention=False,
+        *,
+        key: "jax.random.PRNGKey",
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels.
+        - `state`: The state of the model, necessary for layers such as `BatchNorm`.
         - `return_attention`: For returning the self-attention computed by the block.
         - `key`: Utilised by few layers in the network such as `Dropout` or `BatchNorm`.
         """
         keys = jrandom.split(key, 4)
-        y = jax.vmap(self.norm1)(x)
+        y, state = jax.vmap(self.norm1)(x, state)
         y, attn = self.attn(y, key=keys[0])
         if return_attention:
             return attn
         x = x + self.drop_path(y, key=keys[1])
-        y = jax.vmap(self.norm2)(x)
+        y, state = jax.vmap(self.norm2)(x, state)
         y = jax.vmap(self.mlp)(y, key=jrandom.split(keys[2], x.shape[0]))
         x = x + self.drop_path(y, key=keys[3])
-        return x
+        return x, state
 
 
 class VisionTransformer(eqx.Module):
@@ -258,19 +264,22 @@ class VisionTransformer(eqx.Module):
         )
         # ToDo: Initialization scheme of the weights
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input `JAX` array
+        - `state`: The state of the model, necessary for layers such as `BatchNorm`
         - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
         """
         keys = jrandom.split(key, len(self.blocks))
-        x = self.patch_embed(x)
+        x, state = self.patch_embed(x, state)
         x = jnp.concatenate([self.cls_token, x], axis=0) + self.pos_embed
         for key_, blk in zip(keys, self.blocks):
-            x = blk(x, key=key_)
-        x = jax.vmap(self.norm)(x)
-        return self.fc(x[0])
+            x, state = blk(x, state, key=key_)
+        x, state = jax.vmap(self.norm)(x, state)
+        return self.fc(x[0]), state
 
     def get_last_self_attention(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
         """**Arguments:**

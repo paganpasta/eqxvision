@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Callable, List, Optional, Union
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 import equinox as eqx
 import equinox.nn as nn
@@ -46,7 +46,7 @@ class GoogLeNet(eqx.Module):
         dropout: float = 0.2,
         dropout_aux: float = 0.7,
         *,
-        key: Optional["jax.random.PRNGKey"] = None
+        key: Optional["jax.random.PRNGKey"] = None,
     ) -> None:
         """
         **Arguments:**
@@ -115,8 +115,8 @@ class GoogLeNet(eqx.Module):
         self.fc = nn.Linear(1024, num_classes, key=keys[14])
 
     def __call__(
-        self, x: Array, *, key: "jax.random.PRNGKey"
-    ) -> Union[Array, Optional[Array], Optional[Array]]:
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey"
+    ) -> Tuple[Union[Array, Optional[Array], Optional[Array]], nn.State]:
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels
@@ -126,44 +126,44 @@ class GoogLeNet(eqx.Module):
             raise RuntimeError("The model requires a PRNGKey.")
         keys = jrandom.split(key, 14)
         # N x 3 x 224 x 224
-        x = self.conv1(x, key=keys[0])
+        x, state = self.conv1(x, state, key=keys[0])
         # N x 64 x 112 x 112
         x = self.maxpool1(x, key=keys[1])
         # N x 64 x 56 x 56
-        x = self.conv2(x, key=keys[2])
+        x, state = self.conv2(x, state, key=keys[2])
         # N x 64 x 56 x 56
-        x = self.conv3(x, key=keys[3])
+        x, state = self.conv3(x, state, key=keys[3])
         # N x 192 x 56 x 56
         x = self.maxpool2(x)
 
         # N x 192 x 28 x 28
-        x = self.inception3a(x, key=keys[4])
+        x, state = self.inception3a(x, state, key=keys[4])
         # N x 256 x 28 x 28
-        x = self.inception3b(x, key=keys[5])
+        x, state = self.inception3b(x, state, key=keys[5])
         # N x 480 x 28 x 28
         x = self.maxpool3(x)
         # N x 480 x 14 x 14
-        x = self.inception4a(x, key=keys[6])
+        x, state = self.inception4a(x, state, key=keys[6])
         # N x 512 x 14 x 14
         if self.aux_logits:
-            aux1 = self.aux1(x, key=keys[7])
+            aux1, state = self.aux1(x, state, key=keys[7])
 
-        x = self.inception4b(x, key=keys[8])
+        x, state = self.inception4b(x, state, key=keys[8])
         # N x 512 x 14 x 14
-        x = self.inception4c(x, key=keys[9])
+        x, state = self.inception4c(x, state, key=keys[9])
         # N x 512 x 14 x 14
-        x = self.inception4d(x, key=keys[10])
+        x, state = self.inception4d(x, state, key=keys[10])
         # N x 528 x 14 x 14
         if self.aux_logits:
-            aux2 = self.aux2(x, key=keys[11])  # Key here, a bad thing?
+            aux2, state = self.aux2(x, state, key=keys[11])  # Key here, a bad thing?
 
-        x = self.inception4e(x, key=keys[12])
+        x, state = self.inception4e(x, state, key=keys[12])
         # N x 832 x 14 x 14
         x = self.maxpool4(x)
         # N x 832 x 7 x 7
-        x = self.inception5a(x, key=keys[13])
+        x, state = self.inception5a(x, state, key=keys[13])
         # N x 832 x 7 x 7
-        x = self.inception5b(x, key=keys[14])
+        x, state = self.inception5b(x, state, key=keys[14])
         # N x 1024 x 7 x 7
 
         x = self.avgpool(x)
@@ -174,12 +174,12 @@ class GoogLeNet(eqx.Module):
         x = self.fc(x)
         # N x 1000 (num_classes)
         if self.aux_logits:
-            return x, aux2, aux1
+            return x, aux2, aux1, state
         else:
-            return x
+            return x, state
 
 
-class _Inception(eqx.Module):
+class _Inception(nn.StatefulLayer):
     branch1: eqx.Module
     branch2: nn.Sequential
     branch3: nn.Sequential
@@ -196,7 +196,7 @@ class _Inception(eqx.Module):
         pool_proj: int,
         conv_block: Optional[Callable[..., eqx.Module]] = None,
         *,
-        key: jax.random.PRNGKey = None
+        key: jax.random.PRNGKey = None,
     ) -> None:
         super().__init__()
         if conv_block is None:
@@ -226,19 +226,21 @@ class _Inception(eqx.Module):
             ]
         )
 
-    def __call__(self, x: Array, *, key: jax.random.PRNGKey = None) -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: jax.random.PRNGKey = None
+    ) -> Tuple[Array, nn.State]:
         keys = jrandom.split(key, 4)
-        branch1 = self.branch1(x, key=keys[0])
-        branch2 = self.branch2(x, key=keys[1])
-        branch3 = self.branch3(x, key=keys[2])
-        branch4 = self.branch4(x, key=keys[3])
+        branch1, state = self.branch1(x, state, key=keys[0])
+        branch2, state = self.branch2(x, state, key=keys[1])
+        branch3, state = self.branch3(x, state, key=keys[2])
+        branch4, state = self.branch4(x, state, key=keys[3])
 
         outputs = jnp.concatenate([branch1, branch2, branch3, branch4], axis=0)
-        return outputs
+        return outputs, state
 
 
-class InceptionAux(eqx.Module):
-    conv: eqx.Module
+class InceptionAux(nn.StatefulLayer):
+    conv: nn.StatefulLayer
     fc1: nn.Linear
     fc2: nn.Linear
     dropout: nn.Dropout
@@ -251,7 +253,7 @@ class InceptionAux(eqx.Module):
         conv_block: Optional[Callable[..., eqx.Module]] = None,
         dropout: float = 0.7,
         *,
-        key: jax.random.PRNGKey = None
+        key: jax.random.PRNGKey = None,
     ) -> None:
         super().__init__()
         if conv_block is None:
@@ -265,12 +267,14 @@ class InceptionAux(eqx.Module):
             (4, 4),
         )
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey" = None) -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: "jax.random.PRNGKey" = None
+    ) -> Tuple[Array, nn.State]:
         keys = jrandom.split(key, 2)
         # aux1: N x 512 x 14 x 14, aux2: N x 528 x 14 x 14
         x = self.avgpool(x)
         # aux1: N x 512 x 4 x 4, aux2: N x 528 x 4 x 4
-        x = self.conv(x, key=keys[0])
+        x, state = self.conv(x, state, key=keys[0])
         # N x 128 x 4 x 4
         x = jnp.ravel(x)
         # N x 2048
@@ -281,12 +285,12 @@ class InceptionAux(eqx.Module):
         x = self.fc2(x)
         # N x 1000 (num_classes)
 
-        return x
+        return x, state
 
 
-class BasicConv2d(eqx.Module):
+class BasicConv2d(nn.StatefulLayer):
     conv: nn.Conv2d
-    bn: eqx.experimental.BatchNorm
+    bn: nn.BatchNorm
 
     def __init__(
         self,
@@ -294,20 +298,20 @@ class BasicConv2d(eqx.Module):
         out_channels: int,
         *,
         key: jax.random.PRNGKey = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         super().__init__()
         self.conv = nn.Conv2d(
             in_channels, out_channels, use_bias=False, key=key, **kwargs
         )
-        self.bn = eqx.experimental.BatchNorm(out_channels, axis_name="batch", eps=0.001)
+        self.bn = nn.BatchNorm(out_channels, axis_name="batch", eps=0.001)
 
     def __call__(
-        self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None
-    ) -> Array:
+        self, x: Array, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
+    ) -> Tuple[Array, nn.State]:
         x = self.conv(x)
-        x = self.bn(x, key=key)
-        return jnn.relu(x)
+        x, state = self.bn(x, state, key=key)
+        return jnn.relu(x), state
 
 
 def googlenet(torch_weights: str = None, **kwargs: Any) -> GoogLeNet:

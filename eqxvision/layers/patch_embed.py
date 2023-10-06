@@ -60,14 +60,15 @@ class PatchEmbed(eqx.Module):
         self.proj = nn.Conv2d(
             in_chans, embed_dim, kernel_size=patch_size, stride=patch_size, key=key
         )
-        self.norm = norm_layer(embed_dim) if norm_layer else nn.Identity()
+        self.norm = norm_layer(embed_dim) if norm_layer else lambda x, state: (x, state)
 
     def __call__(
-        self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None
+        self, x: Array, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
     ) -> Array:
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array of shape`(in_chans, img_size[0], img_size[1])`.
+        - `state`: The state of the model, necessary for layers such as `BatchNorm`
         - `key`: Ignored
         """
         C, H, W = x.shape
@@ -80,5 +81,5 @@ class PatchEmbed(eqx.Module):
         if self.flatten:
             x = jax.vmap(jnp.ravel)(x)
             x = jnp.moveaxis(x, 0, -1)  # CHW -> NC
-        x = self.norm(x)
-        return x
+        x, state = self.norm(x, state)
+        return x, state

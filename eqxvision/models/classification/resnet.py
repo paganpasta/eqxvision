@@ -1,7 +1,6 @@
-from typing import Any, Callable, List, Optional, Sequence, Type, Union
+from typing import Any, Callable, List, Optional, Sequence, Tuple, Type, Union
 
 import equinox as eqx
-import equinox.experimental as eqex
 import equinox.nn as nn
 import jax
 import jax.nn as jnn
@@ -34,13 +33,13 @@ def _conv1x1(in_planes, out_planes, stride=1, key=None):
     )
 
 
-class _ResNetBasicBlock(eqx.Module):
+class _ResNetBasicBlock(nn.StatefulLayer):
     expansion: int
     conv1: eqx.Module
-    bn1: eqx.Module
+    bn1: nn.StatefulLayer
     relu: Callable
     conv2: eqx.Module
-    bn2: eqx.Module
+    bn2: nn.StatefulLayer
     downsample: eqx.Module
     stride: int
 
@@ -58,7 +57,7 @@ class _ResNetBasicBlock(eqx.Module):
     ):
         super(_ResNetBasicBlock, self).__init__()
         if norm_layer is None:
-            norm_layer = eqex.BatchNorm
+            norm_layer = nn.BatchNorm
         if groups != 1 or base_width != 64:
             raise ValueError("BasicBlock only supports groups=1 and base_width=64")
         if dilation > 1:
@@ -74,25 +73,25 @@ class _ResNetBasicBlock(eqx.Module):
         if downsample:
             self.downsample = downsample
         else:
-            self.downsample = nn.Identity()
+            self.downsample = lambda x, state: (x, state)
         self.stride = stride
 
     def __call__(
-        self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None
-    ) -> Array:
+        self, x: Array, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
+    ) -> Tuple[Array, nn.State]:
         out = self.conv1(x)
-        out = self.bn1(out)
+        out, state = self.bn1(out, state)
         out = self.relu(out)
         out = self.conv2(out)
-        out = self.bn2(out)
-        identity = self.downsample(x)
+        out, state = self.bn2(out, state)
+        identity, state = self.downsample(x, state)
         out += identity
         out = self.relu(out)
 
-        return out
+        return out, state
 
 
-class _ResNetBottleneck(eqx.Module):
+class _ResNetBottleneck(nn.StatefulLayer):
     # Bottleneck in torchvision places the stride for downsampling at 3x3 convolution(self.conv2)
     # while original implementation places the stride at the first 1x1 convolution(self.conv1)
     # according to "Deep residual learning for image recognition"https://arxiv.org/abs/1512.03385.
@@ -100,13 +99,13 @@ class _ResNetBottleneck(eqx.Module):
     # https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch.
     expansion: int
     conv1: eqx.Module
-    bn1: eqx.Module
+    bn1: nn.StatefulLayer
     conv2: eqx.Module
-    bn2: eqx.Module
+    bn2: nn.StatefulLayer
     conv3: eqx.Module
-    bn3: eqx.Module
+    bn3: nn.StatefulLayer
     relu: Callable
-    downsample: eqx.Module
+    downsample: nn.StatefulLayer
     stride: int
 
     def __init__(
@@ -123,7 +122,7 @@ class _ResNetBottleneck(eqx.Module):
     ):
         super(_ResNetBottleneck, self).__init__()
         if norm_layer is None:
-            norm_layer = eqex.BatchNorm
+            norm_layer = nn.BatchNorm
         self.expansion = 4
         keys = jrandom.split(key, 3)
         width = int(planes * (base_width / 64.0)) * groups
@@ -138,28 +137,29 @@ class _ResNetBottleneck(eqx.Module):
         if downsample:
             self.downsample = downsample
         else:
-            self.downsample = nn.Identity()
+            self.downsample = lambda x, state: (x, state)
         self.stride = stride
 
-    def __call__(self, x: Array, *, key: Optional["jax.random.PRNGKey"] = None):
-
+    def __call__(
+        self, x: Array, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
+    ) -> Tuple[Array, nn.State]:
         out = self.conv1(x)
-        out = self.bn1(out)
+        out, state = self.bn1(out, state)
         out = self.relu(out)
 
         out = self.conv2(out)
-        out = self.bn2(out)
+        out, state = self.bn2(out, state)
         out = self.relu(out)
 
         out = self.conv3(out)
-        out = self.bn3(out)
+        out, state = self.bn3(out, state)
 
-        identity = self.downsample(x)
+        identity, state = self.downsample(x, state)
 
         out += identity
         out = self.relu(out)
 
-        return out
+        return out, state
 
 
 EXPANSIONS = {_ResNetBasicBlock: 1, _ResNetBottleneck: 4}
@@ -173,13 +173,13 @@ class ResNet(eqx.Module):
     groups: Sequence[int]
     base_width: int
     conv1: eqx.Module
-    bn1: eqx.Module
+    bn1: nn.StatefulLayer
     relu: jnn.relu
     maxpool: eqx.Module
-    layer1: eqx.Module
-    layer2: eqx.Module
-    layer3: eqx.Module
-    layer4: eqx.Module
+    layer1: nn.StatefulLayer
+    layer2: nn.StatefulLayer
+    layer3: nn.StatefulLayer
+    layer4: nn.StatefulLayer
     avgpool: eqx.Module
     fc: eqx.Module
 
@@ -217,11 +217,11 @@ class ResNet(eqx.Module):
         """
         super(ResNet, self).__init__()
         if not norm_layer:
-            norm_layer = eqex.BatchNorm
+            norm_layer = nn.BatchNorm
 
-        if eqex.BatchNorm != norm_layer:
+        if nn.BatchNorm != norm_layer:
             raise NotImplementedError(
-                f"{type(norm_layer)} is not currently supported. Use `eqx.experimental.BatchNorm` instead."
+                f"{type(norm_layer)} is not currently supported. Use `nn.BatchNorm` instead."
             )
         if key is None:
             key = jrandom.PRNGKey(0)
@@ -332,30 +332,29 @@ class ResNet(eqx.Module):
 
         return nn.Sequential(layers)
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x: Array, state: nn.State, *, key: Optional["jax.random.PRNGKey"] = None
+    ) -> Tuple[Array, nn.State]:
         """**Arguments:**
 
         - `x`: The input. Should be a JAX array with `3` channels
-        - `key`: Required parameter. Utilised by few layers such as `Dropout` or `DropPath`
+        - `state`: The state of the model, necessary for batch norm
         """
-        if key is None:
-            raise RuntimeError("The model requires a PRNGKey.")
-        keys = jrandom.split(key, 6)
-        x = self.conv1(x, key=keys[0])
-        x = self.bn1(x)
+        x = self.conv1(x)
+        x, state = self.bn1(x, state)
         x = self.relu(x)
         x = self.maxpool(x)
 
-        x = self.layer1(x, key=keys[1])
-        x = self.layer2(x, key=keys[2])
-        x = self.layer3(x, key=keys[3])
-        x = self.layer4(x, key=keys[4])
+        x, state = self.layer1(x, state)
+        x, state = self.layer2(x, state)
+        x, state = self.layer3(x, state)
+        x, state = self.layer4(x, state)
 
         x = self.avgpool(x)
         x = jnp.ravel(x)
-        x = self.fc(x, key=keys[5])
+        x = self.fc(x)
 
-        return x
+        return x, state
 
 
 def _resnet(block, layers, **kwargs):
