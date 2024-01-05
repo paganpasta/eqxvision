@@ -211,7 +211,7 @@ class ResNet(eqx.Module):
 
         ??? Failure "Exceptions:"
 
-            - `NotImplementedError`: If a `norm_layer` other than `equinox.experimental.BatchNorm` is used
+            - `NotImplementedError`: If a `norm_layer` other than `equinox.nn.BatchNorm` is used
             - `ValueError`: If `replace_stride_with_convolution` is not `None` or a `3-tuple`
 
         """
