@@ -200,20 +200,20 @@ def load_torch_weights(
 
     model = jtu.tree_unflatten(tree_def, new_leaves)
 
-    def set_experimental(iter_bn, x):
+    def set_state(iter_bn, x):
         def set_values(y):
-            if isinstance(y, eqx.experimental.StateIndex):
+            if isinstance(y, eqx.nn.StateIndex):
                 current_val = next(iter_bn)
                 if isinstance(current_val, bool):
-                    eqx.experimental.set_state(y, jnp.asarray(False))
+                    y.set(jnp.asarray(False))
                 else:
                     running_mean, running_var = current_val, next(iter_bn)
-                    eqx.experimental.set_state(y, (running_mean, running_var))
+                    y.set((running_mean, running_var))
             return y
 
         return jtu.tree_map(
-            set_values, x, is_leaf=lambda _: isinstance(_, eqx.experimental.StateIndex)
+            set_values, x, is_leaf=lambda _: isinstance(_, eqx.nn.StateIndex)
         )
 
-    model = jtu.tree_map(set_experimental, bn_iterator, model)
+    model = jtu.tree_map(set_state, bn_iterator, model)
     return model

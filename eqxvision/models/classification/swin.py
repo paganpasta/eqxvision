@@ -757,7 +757,9 @@ class SwinTransformer(eqx.Module):
         self.avgpool = nn.AdaptiveAvgPool2d(1)
         self.head = nn.Linear(num_features, num_classes, key=keys[1])
 
-    def __call__(self, x: Array, *, key: "jax.random.PRNGKey") -> Array:
+    def __call__(
+        self, x: Array, state: Optional["nn.State"] = None, *, key: "jax.random.PRNGKey"
+    ) -> Array:
         """**Arguments:**
 
         - `x`: The input `JAX` array
@@ -769,7 +771,7 @@ class SwinTransformer(eqx.Module):
         x = self.avgpool(x)
         x = jnp.ravel(x)
         x = self.head(x, key=keys[1])
-        return x
+        return x, state
 
 
 def _swin_transformer(
